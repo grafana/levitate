@@ -1,10 +1,10 @@
 import * as yargs from "yargs";
 import { compareExports } from "./utils.compare";
+import { getImportsInfo, getGroupedImports } from "./utils.imports";
 import {
   printComparison,
   printImports as printListOfImports,
 } from "./utils.print";
-import { getImportsInfo, getGroupedImports } from "./utils.compiler";
 import {
   getCompareCliArgs,
   getListImportsCliArgs,

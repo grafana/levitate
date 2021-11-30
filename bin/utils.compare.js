@@ -3,12 +3,13 @@ exports.__esModule = true;
 exports.hasTypeChanged = exports.hasEnumChanged = exports.hasClassChanged = exports.hasVariableChanged = exports.hasFunctionChanged = exports.hasChanged = exports.areChangesBreaking = exports.compareExports = void 0;
 var ts = require("typescript");
 var utils_log_1 = require("./utils.log");
-var utils_compiler_1 = require("./utils.compiler");
+var utils_exports_1 = require("./utils.exports");
+var process_1 = require("process");
 function compareExports(prevRootFile, currentRootFile) {
     (0, utils_log_1.debug)("Old filename: %o", prevRootFile);
     (0, utils_log_1.debug)("New filename: %o", currentRootFile);
-    var prev = (0, utils_compiler_1.getExportInfo)(prevRootFile);
-    var current = (0, utils_compiler_1.getExportInfo)(currentRootFile);
+    var prev = (0, utils_exports_1.getExportInfo)(prevRootFile);
+    var current = (0, utils_exports_1.getExportInfo)(currentRootFile);
     var additions = {};
     var removals = {};
     var changes = {};
@@ -82,6 +83,11 @@ function hasFunctionChanged(prev, current) {
         .valueDeclaration;
     var currentDeclaration = current.symbol
         .valueDeclaration;
+    if (!prevDeclaration || !currentDeclaration) {
+        console.log("PREV", prev.key, prev.symbol);
+        console.log("CURRENT", current.key, current.symbol);
+        (0, process_1.exit)(1);
+    }
     // Check previous function parameters
     // (all previous parameters must be present at their previous position)
     for (var i = 0; i < prevDeclaration.parameters.length; i++) {

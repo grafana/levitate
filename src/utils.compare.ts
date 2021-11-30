@@ -2,7 +2,8 @@ import * as ts from "typescript";
 import * as fs from "fs";
 import { debug } from "./utils.log";
 import { SymbolMeta, Comparison } from "./types";
-import { getExportInfo } from "./utils.compiler";
+import { getExportInfo } from "./utils.exports";
+import { exit } from "process";
 
 export function compareExports(
   prevRootFile: string,
@@ -97,6 +98,12 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
     .valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol
     .valueDeclaration as ts.FunctionDeclaration;
+
+  if (!prevDeclaration || !currentDeclaration) {
+    console.log("PREV", prev.key, prev.symbol);
+    console.log("CURRENT", current.key, current.symbol);
+    exit(1);
+  }
 
   // Check previous function parameters
   // (all previous parameters must be present at their previous position)
