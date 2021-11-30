@@ -1,4 +1,3 @@
-import { exit } from "process";
 import * as ts from "typescript";
 import { ExportsInfo, Exports, ImportInfo, ImportsInfo } from "./types";
 
@@ -43,16 +42,12 @@ export function getExportedSymbolsForFile(
   return fileExports;
 }
 
-export function getImportsInfo(rootFile: string): ImportsInfo {
-  //   const program = createProgram(rootFile);
-  const program = ts.createProgram([rootFile], {
-    target: ts.ScriptTarget.ES5,
-    module: ts.ModuleKind.CommonJS,
-    jsx: ts.JsxEmit.React,
-    allowJs: true,
-    esModuleInterop: true,
-  });
-  const programImports = getImportsForProgram(program);
+export function getImportsInfo(
+  rootFile: string,
+  filters?: string[]
+): ImportsInfo {
+  const program = createProgram(rootFile);
+  const programImports = getImportsForProgram(program, filters);
 
   return {
     imports: programImports,
@@ -60,33 +55,19 @@ export function getImportsInfo(rootFile: string): ImportsInfo {
   };
 }
 
-export function getImportsForProgram(program: ts.Program): ImportInfo[] {
-  //   let imports = [];
+export function getImportsForProgram(
+  program: ts.Program,
+  filters?: string[]
+): ImportInfo[] {
+  let imports = [];
 
-  //   for (const sourceFile of program.getSourceFiles()) {
-  //     if (!sourceFile.isDeclarationFile) {
-  //       const fileImports = getImportsForFile(sourceFile);
-  //       imports = [...imports];
-  //     }
-  //   }
-
-  //   return imports;
-
-  console.log("SOURCE FILES: ", program.getSourceFiles().length);
   for (const sourceFile of program.getSourceFiles()) {
     if (!sourceFile.isDeclarationFile) {
-      // Walk the tree to search for classes
-      //   console.log("SOURCE FILE: ", sourceFile.fileName);
-      ts.forEachChild(sourceFile, (node) => visit(node, sourceFile.fileName));
+      imports = [...imports, ...getImportsForFile(sourceFile, filters)];
     }
   }
 
-  function visit(node: ts.Node, fileName: string) {
-    console.log(node);
-    exit(1);
-  }
-
-  return [];
+  return imports;
 }
 
 export function getImportsForFile(
@@ -96,7 +77,9 @@ export function getImportsForFile(
 ): ImportInfo[] {
   let imports = [];
 
-  ts.forEachChild(sourceFile, visit);
+  ts.forEachChild(sourceFile, (node) => visit(node));
+
+  return imports;
 
   // Checks if an import matches any of the provided package names
   function doesMatchFilters(packageName: string) {
@@ -104,21 +87,18 @@ export function getImportsForFile(
   }
 
   function visit(node: ts.Node) {
-    console.log(node.getText());
     if (
-      ts.isImportDeclaration(node)
-      //   && doesMatchFilters(getPackageName(node))
+      ts.isImportDeclaration(node) &&
+      doesMatchFilters(getPackageName(node))
     ) {
-      //   const a = getImportsForNode(node, sourceFile.fileName);
-      imports = [...imports]; //, ...getImportsForNode(node, sourceFile.fileName)];
+      imports = [...imports, ...getImportsForNode(node, sourceFile.fileName)];
+    }
 
-      // This is a namespace, visit its children
-    } else if (ts.isModuleDeclaration(node)) {
-      ts.forEachChild(node, visit);
+    // This is a namespace, visit its children
+    if (ts.isModuleDeclaration(node)) {
+      ts.forEachChild(node, (node) => visit(node));
     }
   }
-
-  return imports;
 }
 
 // A single import declaration can contain both named and default imports
@@ -127,37 +107,33 @@ export function getImportsForNode(
   fileName: string
 ): ImportInfo[] {
   const imports = [];
-  console.log("");
-  console.log("--------------------------");
-  console.log(node.getText());
-  console.log("");
-  // const packageName = getPackageName(node);
-  //   const namedImports = getNamedImportsForNode(node);
-  //   const isDefaultImport = isNodeADefaultImport(node);
-  //   const importStatementAsText = node.getText();
+  const packageName = getPackageName(node);
+  const namedImports = getNamedImportsForNode(node);
+  const isDefaultImport = isNodeADefaultImport(node);
+  const importStatementAsText = node.getText();
 
-  //   if (namedImports.length) {
-  //     namedImports.forEach((propertyName) => {
-  //       imports.push({
-  //         packageName,
-  //         isNamedImport: true,
-  //         isDefaultImport: false,
-  //         propertyName,
-  //         fileName,
-  //         importStatementAsText,
-  //       });
-  //     });
-  //   }
+  if (namedImports.length) {
+    namedImports.forEach((propertyName) => {
+      imports.push({
+        packageName,
+        isNamedImport: true,
+        isDefaultImport: false,
+        propertyName,
+        fileName,
+        importStatementAsText,
+      });
+    });
+  }
 
-  //   if (isDefaultImport) {
-  //     imports.push({
-  //       packageName,
-  //       isNamedImport: false,
-  //       isDefaultImport: true,
-  //       fileName,
-  //       importStatementAsText,
-  //     });
-  //   }
+  if (isDefaultImport) {
+    imports.push({
+      packageName,
+      isNamedImport: false,
+      isDefaultImport: true,
+      fileName,
+      importStatementAsText,
+    });
+  }
 
   return imports;
 }
@@ -218,11 +194,15 @@ export function getGroupedImports(imports: ImportInfo[]): ImportInfo[] {
 }
 
 export function createProgram(fileName: string): ts.Program {
-  return ts.createProgram([fileName], {
+  const program = ts.createProgram([fileName], {
     target: ts.ScriptTarget.ES5,
     module: ts.ModuleKind.CommonJS,
     jsx: ts.JsxEmit.React,
     allowJs: true,
     esModuleInterop: true,
   });
+
+  program.getTypeChecker();
+
+  return program;
 }

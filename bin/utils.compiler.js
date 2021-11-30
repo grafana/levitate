@@ -21,7 +21,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 exports.__esModule = true;
 exports.createProgram = exports.getGroupedImports = exports.getPackageName = exports.isNodeADefaultImport = exports.getNamedImportsForNode = exports.getImportsForNode = exports.getImportsForFile = exports.getImportsForProgram = exports.getImportsInfo = exports.getExportedSymbolsForFile = exports.getExportedSymbolsForProgram = exports.getExportInfo = void 0;
-var process_1 = require("process");
 var ts = require("typescript");
 // Returns all the exported members of a program identified by a root file (entry file)
 function getExportInfo(rootFile) {
@@ -56,107 +55,76 @@ function getExportedSymbolsForFile(sourceFile, program) {
     return fileExports;
 }
 exports.getExportedSymbolsForFile = getExportedSymbolsForFile;
-function getImportsInfo(rootFile) {
-    //   const program = createProgram(rootFile);
-    var program = ts.createProgram([rootFile], {
-        target: ts.ScriptTarget.ES5,
-        module: ts.ModuleKind.CommonJS,
-        jsx: ts.JsxEmit.React,
-        allowJs: true,
-        esModuleInterop: true
-    });
-    var programImports = getImportsForProgram(program);
+function getImportsInfo(rootFile, filters) {
+    var program = createProgram(rootFile);
+    var programImports = getImportsForProgram(program, filters);
     return {
         imports: programImports,
         program: program
     };
 }
 exports.getImportsInfo = getImportsInfo;
-function getImportsForProgram(program) {
-    //   let imports = [];
-    //   for (const sourceFile of program.getSourceFiles()) {
-    //     if (!sourceFile.isDeclarationFile) {
-    //       const fileImports = getImportsForFile(sourceFile);
-    //       imports = [...imports];
-    //     }
-    //   }
-    //   return imports;
-    console.log("SOURCE FILES: ", program.getSourceFiles().length);
-    var _loop_1 = function (sourceFile) {
-        if (!sourceFile.isDeclarationFile) {
-            // Walk the tree to search for classes
-            //   console.log("SOURCE FILE: ", sourceFile.fileName);
-            ts.forEachChild(sourceFile, function (node) { return visit(node, sourceFile.fileName); });
-        }
-    };
+function getImportsForProgram(program, filters) {
+    var imports = [];
     for (var _i = 0, _a = program.getSourceFiles(); _i < _a.length; _i++) {
         var sourceFile = _a[_i];
-        _loop_1(sourceFile);
+        if (!sourceFile.isDeclarationFile) {
+            imports = __spreadArray(__spreadArray([], imports, true), getImportsForFile(sourceFile, filters), true);
+        }
     }
-    function visit(node, fileName) {
-        console.log(node);
-        (0, process_1.exit)(1);
-    }
-    return [];
+    return imports;
 }
 exports.getImportsForProgram = getImportsForProgram;
 function getImportsForFile(sourceFile, 
 // A list of package names that we would like to filter for
 filters) {
     var imports = [];
-    ts.forEachChild(sourceFile, visit);
+    ts.forEachChild(sourceFile, function (node) { return visit(node); });
+    return imports;
     // Checks if an import matches any of the provided package names
     function doesMatchFilters(packageName) {
         return filters ? filters.some(function (filter) { return packageName === filter; }) : true;
     }
     function visit(node) {
-        console.log(node.getText());
-        if (ts.isImportDeclaration(node)
-        //   && doesMatchFilters(getPackageName(node))
-        ) {
-            //   const a = getImportsForNode(node, sourceFile.fileName);
-            imports = __spreadArray([], imports, true); //, ...getImportsForNode(node, sourceFile.fileName)];
-            // This is a namespace, visit its children
+        if (ts.isImportDeclaration(node) &&
+            doesMatchFilters(getPackageName(node))) {
+            imports = __spreadArray(__spreadArray([], imports, true), getImportsForNode(node, sourceFile.fileName), true);
         }
-        else if (ts.isModuleDeclaration(node)) {
-            ts.forEachChild(node, visit);
+        // This is a namespace, visit its children
+        if (ts.isModuleDeclaration(node)) {
+            ts.forEachChild(node, function (node) { return visit(node); });
         }
     }
-    return imports;
 }
 exports.getImportsForFile = getImportsForFile;
 // A single import declaration can contain both named and default imports
 function getImportsForNode(node, fileName) {
     var imports = [];
-    console.log("");
-    console.log("--------------------------");
-    console.log(node.getText());
-    console.log("");
-    // const packageName = getPackageName(node);
-    //   const namedImports = getNamedImportsForNode(node);
-    //   const isDefaultImport = isNodeADefaultImport(node);
-    //   const importStatementAsText = node.getText();
-    //   if (namedImports.length) {
-    //     namedImports.forEach((propertyName) => {
-    //       imports.push({
-    //         packageName,
-    //         isNamedImport: true,
-    //         isDefaultImport: false,
-    //         propertyName,
-    //         fileName,
-    //         importStatementAsText,
-    //       });
-    //     });
-    //   }
-    //   if (isDefaultImport) {
-    //     imports.push({
-    //       packageName,
-    //       isNamedImport: false,
-    //       isDefaultImport: true,
-    //       fileName,
-    //       importStatementAsText,
-    //     });
-    //   }
+    var packageName = getPackageName(node);
+    var namedImports = getNamedImportsForNode(node);
+    var isDefaultImport = isNodeADefaultImport(node);
+    var importStatementAsText = node.getText();
+    if (namedImports.length) {
+        namedImports.forEach(function (propertyName) {
+            imports.push({
+                packageName: packageName,
+                isNamedImport: true,
+                isDefaultImport: false,
+                propertyName: propertyName,
+                fileName: fileName,
+                importStatementAsText: importStatementAsText
+            });
+        });
+    }
+    if (isDefaultImport) {
+        imports.push({
+            packageName: packageName,
+            isNamedImport: false,
+            isDefaultImport: true,
+            fileName: fileName,
+            importStatementAsText: importStatementAsText
+        });
+    }
     return imports;
 }
 exports.getImportsForNode = getImportsForNode;
@@ -206,12 +174,14 @@ function getGroupedImports(imports) {
 }
 exports.getGroupedImports = getGroupedImports;
 function createProgram(fileName) {
-    return ts.createProgram([fileName], {
+    var program = ts.createProgram([fileName], {
         target: ts.ScriptTarget.ES5,
         module: ts.ModuleKind.CommonJS,
         jsx: ts.JsxEmit.React,
         allowJs: true,
         esModuleInterop: true
     });
+    program.getTypeChecker();
+    return program;
 }
 exports.createProgram = createProgram;

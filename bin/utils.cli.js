@@ -24,6 +24,7 @@ var CliError = /** @class */ (function (_super) {
     return CliError;
 }(Error));
 exports.CliError = CliError;
+// Can be used for validating CLI arguments in a more semantic way
 function getCompareCliArgs(_a) {
     var prevPackage = _a.prevPackage, currentPackage = _a.currentPackage, prevPath = _a.prevPath, currentPath = _a.currentPath;
     // Using direct paths
@@ -54,12 +55,13 @@ function getCompareCliArgs(_a) {
     }
 }
 exports.getCompareCliArgs = getCompareCliArgs;
+// Can be used for validating CLI arguments in a more semantic way
 function getListImportsCliArgs(_a) {
-    var path = _a.path, verbose = _a.verbose, json = _a.json;
+    var path = _a.path, verbose = _a.verbose, json = _a.json, filters = _a.filters;
     // Missing properties
     if (!path) {
         throw new CliError("Please check how to use this command.");
     }
-    return { path: path, isVerbose: verbose, isJson: json };
+    return { path: path, isVerbose: verbose, isJson: json, filters: filters };
 }
 exports.getListImportsCliArgs = getListImportsCliArgs;

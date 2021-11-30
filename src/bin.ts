@@ -102,18 +102,18 @@ yargs
           "Prints a verbose list including occurances as a valid JSON string representation.",
       });
 
+      yargs.option("filters", {
+        type: "string",
+        array: true,
+        describe:
+          "A white-space separated list of package names to return import information for.",
+      });
+
       //   yargs.option("repo-urls", {
       //     type: "string",
       //     default: null,
       //     array: true,
       //     describe: "A white-space separated list of git repository urls.",
-      //   });
-
-      //   yargs.option("filter", {
-      //     type: "string",
-      //     array: true,
-      //     default: null,
-      //     describe: "A white-space separated list of package names to return import information for.",
       //   });
 
       //   yargs.option("cache-dir", {
@@ -124,15 +124,16 @@ yargs
     },
     function (args) {
       try {
-        const { path, isVerbose, isJson } = getListImportsCliArgs(args);
-        const importsInfo = getImportsInfo(path);
-        // const groupedImports = getGroupedImports(importsInfo.imports);
+        const { path, isVerbose, isJson, filters } =
+          getListImportsCliArgs(args);
+        const importsInfo = getImportsInfo(path, filters);
+        const groupedImports = getGroupedImports(importsInfo.imports);
 
-        // printListOfImports({
-        //   imports: groupedImports,
-        //   isVerbose,
-        //   isJson,
-        // });
+        printListOfImports({
+          imports: groupedImports,
+          isVerbose,
+          isJson,
+        });
       } catch (e) {
         if (e instanceof CliError) {
           console.log(`ERROR: ${e.message}\n\n`);

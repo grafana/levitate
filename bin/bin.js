@@ -76,17 +76,16 @@ yargs
         demandOption: false,
         describe: "Prints a verbose list including occurances as a valid JSON string representation."
     });
+    yargs.option("filters", {
+        type: "string",
+        array: true,
+        describe: "A white-space separated list of package names to return import information for."
+    });
     //   yargs.option("repo-urls", {
     //     type: "string",
     //     default: null,
     //     array: true,
     //     describe: "A white-space separated list of git repository urls.",
-    //   });
-    //   yargs.option("filter", {
-    //     type: "string",
-    //     array: true,
-    //     default: null,
-    //     describe: "A white-space separated list of package names to return import information for.",
     //   });
     //   yargs.option("cache-dir", {
     //     type: "string",
@@ -95,14 +94,14 @@ yargs
     //   });
 }, function (args) {
     try {
-        var _a = (0, utils_cli_1.getListImportsCliArgs)(args), path = _a.path, isVerbose = _a.isVerbose, isJson = _a.isJson;
-        var importsInfo = (0, utils_compiler_1.getImportsInfo)(path);
-        // const groupedImports = getGroupedImports(importsInfo.imports);
-        // printListOfImports({
-        //   imports: groupedImports,
-        //   isVerbose,
-        //   isJson,
-        // });
+        var _a = (0, utils_cli_1.getListImportsCliArgs)(args), path = _a.path, isVerbose = _a.isVerbose, isJson = _a.isJson, filters = _a.filters;
+        var importsInfo = (0, utils_compiler_1.getImportsInfo)(path, filters);
+        var groupedImports = (0, utils_compiler_1.getGroupedImports)(importsInfo.imports);
+        (0, utils_print_1.printImports)({
+            imports: groupedImports,
+            isVerbose: isVerbose,
+            isJson: isJson
+        });
     }
     catch (e) {
         if (e instanceof utils_cli_1.CliError) {

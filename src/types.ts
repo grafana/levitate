@@ -59,4 +59,5 @@ export type ListCLIArgs = {
   path: string;
   isVerbose: boolean;
   isJson: boolean;
+  filters: string[];
 };
