@@ -19,6 +19,7 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
   const rootFileNames = program.getRootFileNames();
   let programExports = {};
 
+  // TODO: usually we are only running the tool against a single "root file", we could simplify the logic if we would only cater for that scenario instead of expecting multiple ones
   for (const sourceFile of program.getSourceFiles()) {
     if (!rootFileNames.includes(sourceFile.fileName)) {
       continue;
@@ -30,14 +31,6 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
   }
 
   return programExports;
-}
-
-export function getExportsForFile(fileName, program) {
-  const sourceFile = program.getSourceFile(fileName);
-
-  if (!sourceFile) {
-    return;
-  }
 }
 
 export function getExportedSymbolsForFile(
@@ -90,6 +83,7 @@ export function getExportPackageName(node: ts.ExportDeclaration) {
 }
 
 // TODO: there must be an easier way to do this using the compiler
+// We need to do this as we cannot find a source file by using the relative import in the files.
 export function resolveModuleName(
   moduleName: string,
   sourceFile: ts.SourceFile

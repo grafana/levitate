@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.resolveModuleName = exports.getExportPackageName = exports.getExportedSymbolsForFile = exports.getExportsForFile = exports.getExportedSymbolsForProgram = exports.getExportInfo = void 0;
+exports.resolveModuleName = exports.getExportPackageName = exports.getExportedSymbolsForFile = exports.getExportedSymbolsForProgram = exports.getExportInfo = void 0;
 var path = require("path");
 var fs = require("fs");
 var utils_compiler_1 = require("./utils.compiler");
@@ -28,6 +28,7 @@ exports.getExportInfo = getExportInfo;
 function getExportedSymbolsForProgram(program) {
     var rootFileNames = program.getRootFileNames();
     var programExports = {};
+    // TODO: usually we are only running the tool against a single "root file", we could simplify the logic if we would only cater for that scenario instead of expecting multiple ones
     for (var _i = 0, _a = program.getSourceFiles(); _i < _a.length; _i++) {
         var sourceFile = _a[_i];
         if (!rootFileNames.includes(sourceFile.fileName)) {
@@ -39,13 +40,6 @@ function getExportedSymbolsForProgram(program) {
     return programExports;
 }
 exports.getExportedSymbolsForProgram = getExportedSymbolsForProgram;
-function getExportsForFile(fileName, program) {
-    var sourceFile = program.getSourceFile(fileName);
-    if (!sourceFile) {
-        return;
-    }
-}
-exports.getExportsForFile = getExportsForFile;
 function getExportedSymbolsForFile(sourceFile, program) {
     var fileExports = {};
     var fileSymbol = program.getTypeChecker().getSymbolAtLocation(sourceFile);
@@ -85,6 +79,7 @@ function getExportPackageName(node) {
 }
 exports.getExportPackageName = getExportPackageName;
 // TODO: there must be an easier way to do this using the compiler
+// We need to do this as we cannot find a source file by using the relative import in the files.
 function resolveModuleName(moduleName, sourceFile) {
     var resolvedPath = path.join(path.dirname(sourceFile.fileName), moduleName);
     var extension = path.extname(resolvedPath);
