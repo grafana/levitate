@@ -1,4 +1,4 @@
-import { Comparison, ImportInfo } from "./types";
+import { Comparison, Exports, ImportInfo } from "./types";
 import { debug } from "./utils.log";
 import { areChangesBreaking } from "./utils.compare";
 
@@ -76,4 +76,13 @@ export function printImports({
       });
     });
   }
+}
+
+export function printExports(exports: Exports) {
+  debug("Printing results...");
+
+  console.log("");
+  console.log("===================================");
+  console.log(JSON.stringify(Object.keys(exports), null, 4));
+  console.log("===================================");
 }

@@ -20,7 +20,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 exports.__esModule = true;
-exports.getGroupedImports = exports.getPackageName = exports.isNodeADefaultImport = exports.getNamedImportsForNode = exports.getImportsForNode = exports.getImportsForFile = exports.getImportsForProgram = exports.getImportsInfo = void 0;
+exports.getGroupedImports = exports.getImportPackageName = exports.isNodeADefaultImport = exports.getNamedImportsForNode = exports.getImportsForNode = exports.getImportsForFile = exports.getImportsForProgram = exports.getImportsInfo = void 0;
 var ts = require("typescript");
 var utils_compiler_1 = require("./utils.compiler");
 function getImportsInfo(rootFile, filters) {
@@ -55,7 +55,7 @@ filters) {
     }
     function visit(node) {
         if (ts.isImportDeclaration(node) &&
-            doesMatchFilters(getPackageName(node))) {
+            doesMatchFilters(getImportPackageName(node))) {
             imports = __spreadArray(__spreadArray([], imports, true), getImportsForNode(node, sourceFile.fileName), true);
         }
         // This is a namespace, visit its children
@@ -68,7 +68,7 @@ exports.getImportsForFile = getImportsForFile;
 // A single import declaration can contain both named and default imports
 function getImportsForNode(node, fileName) {
     var imports = [];
-    var packageName = getPackageName(node);
+    var packageName = getImportPackageName(node);
     var namedImports = getNamedImportsForNode(node);
     var isDefaultImport = isNodeADefaultImport(node);
     var importStatementAsText = node.getText();
@@ -108,10 +108,10 @@ function isNodeADefaultImport(node) {
     return Boolean(node.importClause.name);
 }
 exports.isNodeADefaultImport = isNodeADefaultImport;
-function getPackageName(node) {
+function getImportPackageName(node) {
     return node.moduleSpecifier.getText().replace(/'/g, "").replace(/"/g, "");
 }
-exports.getPackageName = getPackageName;
+exports.getImportPackageName = getImportPackageName;
 // Returns a grouped list of imports
 // (The list will only include each named import from a package once, but will also contain the occurances)
 function getGroupedImports(imports) {

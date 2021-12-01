@@ -49,7 +49,7 @@ export function getImportsForFile(
   function visit(node: ts.Node) {
     if (
       ts.isImportDeclaration(node) &&
-      doesMatchFilters(getPackageName(node))
+      doesMatchFilters(getImportPackageName(node))
     ) {
       imports = [...imports, ...getImportsForNode(node, sourceFile.fileName)];
     }
@@ -67,7 +67,7 @@ export function getImportsForNode(
   fileName: string
 ): ImportInfo[] {
   const imports = [];
-  const packageName = getPackageName(node);
+  const packageName = getImportPackageName(node);
   const namedImports = getNamedImportsForNode(node);
   const isDefaultImport = isNodeADefaultImport(node);
   const importStatementAsText = node.getText();
@@ -112,7 +112,7 @@ export function isNodeADefaultImport(node: ts.ImportDeclaration): boolean {
   return Boolean(node.importClause.name);
 }
 
-export function getPackageName(node: ts.ImportDeclaration) {
+export function getImportPackageName(node: ts.ImportDeclaration) {
   return node.moduleSpecifier.getText().replace(/'/g, "").replace(/"/g, "");
 }
 

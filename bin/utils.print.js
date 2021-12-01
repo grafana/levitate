@@ -9,7 +9,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 exports.__esModule = true;
-exports.printImports = exports.printComparison = void 0;
+exports.printExports = exports.printImports = exports.printComparison = void 0;
 var utils_log_1 = require("./utils.log");
 var utils_compare_1 = require("./utils.compare");
 function printComparison(_a) {
@@ -72,3 +72,11 @@ function printImports(_a) {
     }
 }
 exports.printImports = printImports;
+function printExports(exports) {
+    (0, utils_log_1.debug)("Printing results...");
+    console.log("");
+    console.log("===================================");
+    console.log(JSON.stringify(Object.keys(exports), null, 4));
+    console.log("===================================");
+}
+exports.printExports = printExports;

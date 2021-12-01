@@ -4,12 +4,14 @@ import { getImportsInfo, getGroupedImports } from "./utils.imports";
 import {
   printComparison,
   printImports as printListOfImports,
+  printExports,
 } from "./utils.print";
 import {
   getCompareCliArgs,
   getListImportsCliArgs,
   CliError,
 } from "./utils.cli";
+import { getExportInfo } from "./utils.exports";
 
 yargs
   .scriptName("poc3")
@@ -142,6 +144,30 @@ yargs
           throw e;
         }
       }
+    }
+  )
+
+  // List exports
+  // ----------------------------
+  // Lists exports for a certain module / file / package.
+  //
+  // Example:
+  //
+  .command(
+    "list-exports",
+    "Lists exported members of a TypeScript module.",
+    (yargs) => {
+      yargs.option("path", {
+        type: "string",
+        default: null,
+        demandOption: true,
+        describe: "Path to a root module file.",
+      });
+    },
+    function ({ path }) {
+      const exportInfo = getExportInfo(path);
+
+      printExports(exportInfo.exports);
     }
   )
 

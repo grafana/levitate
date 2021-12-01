@@ -5,6 +5,7 @@ var utils_compare_1 = require("./utils.compare");
 var utils_imports_1 = require("./utils.imports");
 var utils_print_1 = require("./utils.print");
 var utils_cli_1 = require("./utils.cli");
+var utils_exports_1 = require("./utils.exports");
 yargs
     .scriptName("poc3")
     .usage("$0 <cmd> [args]")
@@ -112,5 +113,23 @@ yargs
             throw e;
         }
     }
+})
+    // List exports
+    // ----------------------------
+    // Lists exports for a certain module / file / package.
+    //
+    // Example:
+    //
+    .command("list-exports", "Lists exported members of a TypeScript module.", function (yargs) {
+    yargs.option("path", {
+        type: "string",
+        "default": null,
+        demandOption: true,
+        describe: "Path to a root module file."
+    });
+}, function (_a) {
+    var path = _a.path;
+    var exportInfo = (0, utils_exports_1.getExportInfo)(path);
+    (0, utils_print_1.printExports)(exportInfo.exports);
 })
     .help().argv;
