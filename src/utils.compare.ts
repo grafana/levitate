@@ -3,7 +3,6 @@ import * as fs from "fs";
 import { debug } from "./utils.log";
 import { SymbolMeta, Comparison } from "./types";
 import { getExportInfo } from "./utils.exports";
-import { exit } from "process";
 
 export function compareExports(
   prevRootFile: string,
@@ -62,35 +61,40 @@ export function areChangesBreaking({ changes, removals }: Comparison) {
 // Returns TRUE if the Symbol has changed in a non-compatible way
 // (Tip: use https://ts-ast-viewer.com for discovering certain types more easily)
 export function hasChanged(prev: SymbolMeta, current: SymbolMeta) {
-  if (current.symbol.flags & ts.SymbolFlags.Function) {
+  if (isFunction(current.symbol) && isFunction(prev.symbol)) {
     debug(`Checking changes for "${current.key}" (Function)`);
     return hasFunctionChanged(prev, current);
   }
 
-  if (current.symbol.flags & ts.SymbolFlags.Class) {
+  if (isClass(current.symbol) && isClass(prev.symbol)) {
     debug(`Checking changes for "${current.key}" (Class)`);
     return hasClassChanged(prev, current);
   }
 
-  if (current.symbol.flags & ts.SymbolFlags.Variable) {
+  if (isVariable(current.symbol) && isVariable(prev.symbol)) {
     debug(`Checking changes for "${current.key}" (Variable)`);
     return hasVariableChanged(prev, current);
   }
 
-  if (current.symbol.flags & ts.SymbolFlags.Interface) {
+  if (isInterface(current.symbol) && isInterface(prev.symbol)) {
     debug(`Checking changes for "${current.key}" (Interface)`);
     return hasInterfaceChanged(prev, current);
   }
 
-  if (current.symbol.flags & ts.SymbolFlags.Enum) {
+  if (isEnum(current.symbol) && isEnum(prev.symbol)) {
     debug(`Checking changes for "${current.key}" (Enum)`);
     return hasEnumChanged(prev, current);
   }
 
-  if (current.symbol.flags & ts.SymbolFlags.Type) {
+  if (isType(current.symbol) && isType(prev.symbol)) {
     debug(`Checking changes for "${current.key}" (Type)`);
     return hasTypeChanged(prev, current);
   }
+
+  // In any other case we interpret it as a change.
+  // This is a corner-cut and can easily be a wrong assumption, for example when only the syntax of a function changes from function declaration to a fat-arrow function, but functionality remains intact.
+  // TODO: verify if it is something that we can live with or if it is causing significant issues
+  return true;
 }
 
 export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
@@ -98,12 +102,6 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
     .valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol
     .valueDeclaration as ts.FunctionDeclaration;
-
-  if (!prevDeclaration || !currentDeclaration) {
-    console.log("PREV", prev.key, prev.symbol);
-    console.log("CURRENT", current.key, current.symbol);
-    exit(1);
-  }
 
   // Check previous function parameters
   // (all previous parameters must be present at their previous position)
@@ -276,4 +274,27 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
   }
 
   return false;
+}
+
+export function isFunction(symbol: ts.Symbol) {
+  return symbol.flags & ts.SymbolFlags.Function;
+}
+
+export function isClass(symbol: ts.Symbol) {
+  return symbol.flags & ts.SymbolFlags.Class;
+}
+
+export function isVariable(symbol: ts.Symbol) {
+  return symbol.flags & ts.SymbolFlags.Variable;
+}
+export function isInterface(symbol: ts.Symbol) {
+  return symbol.flags & ts.SymbolFlags.Interface;
+}
+
+export function isEnum(symbol: ts.Symbol) {
+  return symbol.flags & ts.SymbolFlags.Enum;
+}
+
+export function isType(symbol: ts.Symbol) {
+  return symbol.flags & ts.SymbolFlags.Type;
 }

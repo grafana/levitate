@@ -1,10 +1,9 @@
 "use strict";
 exports.__esModule = true;
-exports.hasTypeChanged = exports.hasEnumChanged = exports.hasClassChanged = exports.hasVariableChanged = exports.hasFunctionChanged = exports.hasChanged = exports.areChangesBreaking = exports.compareExports = void 0;
+exports.isType = exports.isEnum = exports.isInterface = exports.isVariable = exports.isClass = exports.isFunction = exports.hasTypeChanged = exports.hasEnumChanged = exports.hasClassChanged = exports.hasVariableChanged = exports.hasFunctionChanged = exports.hasChanged = exports.areChangesBreaking = exports.compareExports = void 0;
 var ts = require("typescript");
 var utils_log_1 = require("./utils.log");
 var utils_exports_1 = require("./utils.exports");
-var process_1 = require("process");
 function compareExports(prevRootFile, currentRootFile) {
     (0, utils_log_1.debug)("Old filename: %o", prevRootFile);
     (0, utils_log_1.debug)("New filename: %o", currentRootFile);
@@ -52,30 +51,34 @@ exports.areChangesBreaking = areChangesBreaking;
 // Returns TRUE if the Symbol has changed in a non-compatible way
 // (Tip: use https://ts-ast-viewer.com for discovering certain types more easily)
 function hasChanged(prev, current) {
-    if (current.symbol.flags & ts.SymbolFlags.Function) {
+    if (isFunction(current.symbol) && isFunction(prev.symbol)) {
         (0, utils_log_1.debug)("Checking changes for \"".concat(current.key, "\" (Function)"));
         return hasFunctionChanged(prev, current);
     }
-    if (current.symbol.flags & ts.SymbolFlags.Class) {
+    if (isClass(current.symbol) && isClass(prev.symbol)) {
         (0, utils_log_1.debug)("Checking changes for \"".concat(current.key, "\" (Class)"));
         return hasClassChanged(prev, current);
     }
-    if (current.symbol.flags & ts.SymbolFlags.Variable) {
+    if (isVariable(current.symbol) && isVariable(prev.symbol)) {
         (0, utils_log_1.debug)("Checking changes for \"".concat(current.key, "\" (Variable)"));
         return hasVariableChanged(prev, current);
     }
-    if (current.symbol.flags & ts.SymbolFlags.Interface) {
+    if (isInterface(current.symbol) && isInterface(prev.symbol)) {
         (0, utils_log_1.debug)("Checking changes for \"".concat(current.key, "\" (Interface)"));
         return hasInterfaceChanged(prev, current);
     }
-    if (current.symbol.flags & ts.SymbolFlags.Enum) {
+    if (isEnum(current.symbol) && isEnum(prev.symbol)) {
         (0, utils_log_1.debug)("Checking changes for \"".concat(current.key, "\" (Enum)"));
         return hasEnumChanged(prev, current);
     }
-    if (current.symbol.flags & ts.SymbolFlags.Type) {
+    if (isType(current.symbol) && isType(prev.symbol)) {
         (0, utils_log_1.debug)("Checking changes for \"".concat(current.key, "\" (Type)"));
         return hasTypeChanged(prev, current);
     }
+    // In any other case we interpret it as a change.
+    // This is a corner-cut and can easily be a wrong assumption, for example when only the syntax of a function changes from function declaration to a fat-arrow function, but functionality remains intact.
+    // TODO: verify if it is something that we can live with or if it is causing significant issues
+    return true;
 }
 exports.hasChanged = hasChanged;
 function hasFunctionChanged(prev, current) {
@@ -83,11 +86,6 @@ function hasFunctionChanged(prev, current) {
         .valueDeclaration;
     var currentDeclaration = current.symbol
         .valueDeclaration;
-    if (!prevDeclaration || !currentDeclaration) {
-        console.log("PREV", prev.key, prev.symbol);
-        console.log("CURRENT", current.key, current.symbol);
-        (0, process_1.exit)(1);
-    }
     // Check previous function parameters
     // (all previous parameters must be present at their previous position)
     for (var i = 0; i < prevDeclaration.parameters.length; i++) {
@@ -247,3 +245,27 @@ function hasTypeChanged(prev, current) {
     return false;
 }
 exports.hasTypeChanged = hasTypeChanged;
+function isFunction(symbol) {
+    return symbol.flags & ts.SymbolFlags.Function;
+}
+exports.isFunction = isFunction;
+function isClass(symbol) {
+    return symbol.flags & ts.SymbolFlags.Class;
+}
+exports.isClass = isClass;
+function isVariable(symbol) {
+    return symbol.flags & ts.SymbolFlags.Variable;
+}
+exports.isVariable = isVariable;
+function isInterface(symbol) {
+    return symbol.flags & ts.SymbolFlags.Interface;
+}
+exports.isInterface = isInterface;
+function isEnum(symbol) {
+    return symbol.flags & ts.SymbolFlags.Enum;
+}
+exports.isEnum = isEnum;
+function isType(symbol) {
+    return symbol.flags & ts.SymbolFlags.Type;
+}
+exports.isType = isType;
