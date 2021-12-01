@@ -129,7 +129,6 @@ yargs
     });
 }, function (_a) {
     var path = _a.path;
-    var exportInfo = (0, utils_exports_1.getExportInfo)(path);
-    (0, utils_print_1.printExports)(exportInfo.exports);
+    (0, utils_print_1.printExports)((0, utils_exports_1.getExportInfo)(path));
 })
     .help().argv;

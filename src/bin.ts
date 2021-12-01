@@ -165,9 +165,7 @@ yargs
       });
     },
     function ({ path }) {
-      const exportInfo = getExportInfo(path);
-
-      printExports(exportInfo.exports);
+      printExports(getExportInfo(path));
     }
   )
 

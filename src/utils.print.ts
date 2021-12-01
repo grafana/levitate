@@ -1,4 +1,4 @@
-import { Comparison, Exports, ImportInfo } from "./types";
+import { Comparison, Exports, ExportsInfo, ImportInfo } from "./types";
 import { debug } from "./utils.log";
 import { areChangesBreaking } from "./utils.compare";
 
@@ -78,11 +78,14 @@ export function printImports({
   }
 }
 
-export function printExports(exports: Exports) {
+export function printExports(exports: ExportsInfo) {
   debug("Printing results...");
 
   console.log("");
+  console.log("List of exported members:");
   console.log("===================================");
-  console.log(JSON.stringify(Object.keys(exports), null, 4));
+  console.log(
+    Object.keys(exports.exports).forEach((name) => console.log(`\t - ${name}`))
+  );
   console.log("===================================");
 }

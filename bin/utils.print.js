@@ -75,8 +75,9 @@ exports.printImports = printImports;
 function printExports(exports) {
     (0, utils_log_1.debug)("Printing results...");
     console.log("");
+    console.log("List of exported members:");
     console.log("===================================");
-    console.log(JSON.stringify(Object.keys(exports), null, 4));
+    console.log(Object.keys(exports.exports).forEach(function (name) { return console.log("\t - ".concat(name)); }));
     console.log("===================================");
 }
 exports.printExports = printExports;
