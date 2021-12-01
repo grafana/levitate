@@ -25,9 +25,10 @@ export function compareExports(
     // Addition
     if (!prev.exports[exportName]) {
       additions[exportName] = exportSymbol;
+    }
 
-      // Change
-    } else {
+    // Change
+    else {
       if (
         hasChanged(
           {
@@ -43,9 +44,9 @@ export function compareExports(
     }
   }
 
-  // Look for removals
+  // Removals
+  // (look for exported entries that cannot be found in the new version)
   for (const [exportName, exportSymbol] of Object.entries(prev.exports)) {
-    // Removal
     if (!current.exports[exportName]) {
       removals[exportName] = exportSymbol;
     }

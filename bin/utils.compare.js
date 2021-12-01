@@ -20,8 +20,8 @@ function compareExports(prevRootFile, currentRootFile) {
         // Addition
         if (!prev.exports[exportName]) {
             additions[exportName] = exportSymbol;
-            // Change
         }
+        // Change
         else {
             if (hasChanged({
                 key: exportName,
@@ -32,10 +32,10 @@ function compareExports(prevRootFile, currentRootFile) {
             }
         }
     }
-    // Look for removals
+    // Removals
+    // (look for exported entries that cannot be found in the new version)
     for (var _c = 0, _d = Object.entries(prev.exports); _c < _d.length; _c++) {
         var _e = _d[_c], exportName = _e[0], exportSymbol = _e[1];
-        // Removal
         if (!current.exports[exportName]) {
             removals[exportName] = exportSymbol;
         }
