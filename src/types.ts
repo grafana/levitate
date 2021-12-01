@@ -8,6 +8,13 @@ export type SymbolMeta = {
 
 export type Exports = Record<string, ts.Symbol>;
 
+export type Change = {
+  prev: ts.Symbol;
+  current: ts.Symbol;
+};
+
+export type Changes = Record<string, Change>;
+
 export type ExportsInfo = {
   exports: Exports;
   program: ts.Program;
@@ -42,7 +49,7 @@ export type ImportsInfo = {
 };
 
 export type Comparison = {
-  changes: Exports;
+  changes: Changes;
   additions: Exports;
   removals: Exports;
 };

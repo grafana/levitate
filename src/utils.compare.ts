@@ -21,25 +21,35 @@ export function compareExports(
   debug("Current file: %o exports", Object.keys(current.exports).length);
 
   // Look for changes introduced by the current version
-  for (const [exportName, exportSymbol] of Object.entries(current.exports)) {
+  for (const [currentExportName, currentExportSymbol] of Object.entries(
+    current.exports
+  )) {
     // Addition
-    if (!prev.exports[exportName]) {
-      additions[exportName] = exportSymbol;
+    if (!prev.exports[currentExportName]) {
+      additions[currentExportName] = currentExportSymbol;
     }
 
     // Change
+    // (present in the previous version as well)
     else {
       if (
         hasChanged(
           {
-            key: exportName,
-            symbol: prev.exports[exportName],
+            key: currentExportName,
+            symbol: prev.exports[currentExportName],
             program: prev.program,
           },
-          { key: exportName, symbol: exportSymbol, program: current.program }
+          {
+            key: currentExportName,
+            symbol: currentExportSymbol,
+            program: current.program,
+          }
         )
       ) {
-        changes[exportName] = exportSymbol;
+        changes[currentExportName] = {
+          prev: prev.exports[currentExportName],
+          current: currentExportSymbol,
+        };
       }
     }
   }
@@ -92,10 +102,10 @@ export function hasChanged(prev: SymbolMeta, current: SymbolMeta) {
     return hasTypeChanged(prev, current);
   }
 
-  // In any other case we interpret it as a change.
-  // This is a corner-cut and can easily be a wrong assumption, for example when only the syntax of a function changes from function declaration to a fat-arrow function, but functionality remains intact.
+  // In any other case we interpret it as a NON-CHANGE.
+  // This is a corner-cut and can easily be a wrong assumption.
   // TODO: verify if it is something that we can live with or if it is causing significant issues
-  return true;
+  return false;
 }
 
 export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {

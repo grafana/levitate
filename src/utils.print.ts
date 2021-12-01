@@ -1,30 +1,57 @@
-import { Comparison, Exports, ExportsInfo, ImportInfo } from "./types";
+import * as colors from "colors/safe";
+import * as printDiff from "print-diff";
+import { Comparison, ExportsInfo, ImportInfo } from "./types";
 import { debug } from "./utils.log";
 import { areChangesBreaking } from "./utils.compare";
 
 export function printComparison({ changes, additions, removals }: Comparison) {
   debug("Printing results...");
+  const isBreaking = areChangesBreaking({ changes, additions, removals });
 
-  const objToPrint = {
-    isBreaking: areChangesBreaking({ changes, additions, removals }),
+  if (isBreaking) {
+    console.log(colors.red("Breaking changes!\n\n"));
+  } else {
+    console.log(colors.bold("All is good.\n\n"));
+  }
 
-    // Show name and textual "value" of added members
-    additions: Object.keys(additions).map((name) => ({
-      name,
-      value: additions[name].declarations[0].getText(),
-    })),
-
-    // Only showing the names of the changed members currently
-    changes: Object.keys(changes),
-
-    // Only showing the names of the removed members currently
-    removals: Object.keys(removals),
-  };
-
+  console.log("ADDITIONS");
+  console.log("===================================");
+  Object.keys(additions).forEach((name) => {
+    console.log(`\t ${name}`);
+    console.log(colors.grey(`\t ${additions[name].declarations[0].getText()}`));
+    console.log("");
+  });
   console.log("");
+  console.log("");
+
+  console.log("REMOVALS");
   console.log("===================================");
-  console.log(JSON.stringify(objToPrint, null, 4));
+  if (!Object.keys(removals).length) {
+    console.log("No removals.");
+  }
+  Object.keys(removals).forEach((name) => {
+    console.log(`\t ${name}`);
+    console.log(colors.grey(`\t ${removals[name].declarations[0].getText()}`));
+    console.log("");
+  });
+  console.log("");
+  console.log("");
+
+  console.log("CHANGES");
   console.log("===================================");
+  Object.keys(changes).forEach((name) => {
+    const prevDeclaration = changes[name].prev.declarations[0].getText();
+    const currentDeclaration = changes[name].current.declarations[0].getText();
+    console.log(`\t ${name}`);
+    console.log("");
+
+    if (prevDeclaration === currentDeclaration) {
+      console.log(`\t\t No changes!`);
+    } else {
+      printDiff(currentDeclaration, prevDeclaration);
+    }
+    console.log("");
+  });
 }
 
 export function printImports({

@@ -16,19 +16,27 @@ function compareExports(prevRootFile, currentRootFile) {
     (0, utils_log_1.debug)("Current file: %o exports", Object.keys(current.exports).length);
     // Look for changes introduced by the current version
     for (var _i = 0, _a = Object.entries(current.exports); _i < _a.length; _i++) {
-        var _b = _a[_i], exportName = _b[0], exportSymbol = _b[1];
+        var _b = _a[_i], currentExportName = _b[0], currentExportSymbol = _b[1];
         // Addition
-        if (!prev.exports[exportName]) {
-            additions[exportName] = exportSymbol;
+        if (!prev.exports[currentExportName]) {
+            additions[currentExportName] = currentExportSymbol;
         }
         // Change
+        // (present in the previous version as well)
         else {
             if (hasChanged({
-                key: exportName,
-                symbol: prev.exports[exportName],
+                key: currentExportName,
+                symbol: prev.exports[currentExportName],
                 program: prev.program
-            }, { key: exportName, symbol: exportSymbol, program: current.program })) {
-                changes[exportName] = exportSymbol;
+            }, {
+                key: currentExportName,
+                symbol: currentExportSymbol,
+                program: current.program
+            })) {
+                changes[currentExportName] = {
+                    prev: prev.exports[currentExportName],
+                    current: currentExportSymbol
+                };
             }
         }
     }
@@ -75,10 +83,10 @@ function hasChanged(prev, current) {
         (0, utils_log_1.debug)("Checking changes for \"".concat(current.key, "\" (Type)"));
         return hasTypeChanged(prev, current);
     }
-    // In any other case we interpret it as a change.
-    // This is a corner-cut and can easily be a wrong assumption, for example when only the syntax of a function changes from function declaration to a fat-arrow function, but functionality remains intact.
+    // In any other case we interpret it as a NON-CHANGE.
+    // This is a corner-cut and can easily be a wrong assumption.
     // TODO: verify if it is something that we can live with or if it is causing significant issues
-    return true;
+    return false;
 }
 exports.hasChanged = hasChanged;
 function hasFunctionChanged(prev, current) {
