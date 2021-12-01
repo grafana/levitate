@@ -9,7 +9,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 exports.__esModule = true;
-exports.printExports = exports.printImports = exports.printComparison = void 0;
+exports.getTabs = exports.indent = exports.printExports = exports.printImports = exports.printComparison = void 0;
 var colors = require("colors/safe");
 var printDiff = require("print-diff");
 var utils_log_1 = require("./utils.log");
@@ -28,7 +28,7 @@ function printComparison(_a) {
     console.log("===================================");
     Object.keys(additions).forEach(function (name) {
         console.log("\t ".concat(name));
-        console.log(colors.grey("\t ".concat(additions[name].declarations[0].getText())));
+        console.log(colors.grey(indent(additions[name].declarations[0].getText(), 2)));
         console.log("");
     });
     console.log("");
@@ -110,3 +110,19 @@ function printExports(exports) {
     console.log("===================================");
 }
 exports.printExports = printExports;
+function indent(str, tabsCount) {
+    var output = "";
+    str.split("\n").map(function (line) {
+        output += "".concat(getTabs(tabsCount)).concat(line, "\n");
+    });
+    return output;
+}
+exports.indent = indent;
+function getTabs(count) {
+    var tabs = "";
+    for (var i = 0; i < count; i++) {
+        tabs += "\t";
+    }
+    return tabs;
+}
+exports.getTabs = getTabs;

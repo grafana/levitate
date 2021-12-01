@@ -18,7 +18,9 @@ export function printComparison({ changes, additions, removals }: Comparison) {
   console.log("===================================");
   Object.keys(additions).forEach((name) => {
     console.log(`\t ${name}`);
-    console.log(colors.grey(`\t ${additions[name].declarations[0].getText()}`));
+    console.log(
+      colors.grey(indent(additions[name].declarations[0].getText(), 2))
+    );
     console.log("");
   });
   console.log("");
@@ -115,4 +117,24 @@ export function printExports(exports: ExportsInfo) {
     Object.keys(exports.exports).forEach((name) => console.log(`\t - ${name}`))
   );
   console.log("===================================");
+}
+
+export function indent(str: string, tabsCount: number) {
+  let output = "";
+
+  str.split("\n").map((line) => {
+    output += `${getTabs(tabsCount)}${line}\n`;
+  });
+
+  return output;
+}
+
+export function getTabs(count: number) {
+  let tabs = "";
+
+  for (let i = 0; i < count; i++) {
+    tabs += "\t";
+  }
+
+  return tabs;
 }

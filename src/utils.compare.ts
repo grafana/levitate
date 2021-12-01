@@ -1,5 +1,4 @@
 import * as ts from "typescript";
-import * as fs from "fs";
 import { debug } from "./utils.log";
 import { SymbolMeta, Comparison } from "./types";
 import { getExportInfo } from "./utils.exports";

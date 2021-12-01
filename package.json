@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./bin",
-    "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./bin",
+    "dev": "tsc-watch ./src/bin.ts --outDir ./bin",
     "dev-compare": "nodemon --exec 'tsc ./src/bin.compare.ts --m commonjs --outDir ./bin && node ./bin/bin.compare.js ./fixtures/bundle-old.ts ./fixtures/bundle-new.ts'",
     "dev-imports": "nodemon --exec 'tsc ./src/bin.imports.ts --m commonjs --outDir ./bin && node ./bin/bin.imports.js'"
   },
