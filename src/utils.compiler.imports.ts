@@ -144,7 +144,7 @@ export function getGroupedImports(imports: ImportInfo[]): ImportInfo[] {
     } else {
       groupedImports.push({
         ...i,
-        occurances: [],
+        occurances: [i],
         count: 1,
       });
     }

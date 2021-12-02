@@ -9,57 +9,68 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 exports.__esModule = true;
-exports.getTabs = exports.indent = exports.printExports = exports.printImports = exports.printComparison = void 0;
+exports.indentLine = exports.indentLines = exports.printExports = exports.printImports = exports.printComparison = void 0;
 var colors = require("colors/safe");
-var printDiff = require("print-diff");
 var utils_log_1 = require("./utils.log");
 var utils_compare_1 = require("./utils.compare");
+var utils_diff_1 = require("./utils.diff");
 function printComparison(_a) {
     var changes = _a.changes, additions = _a.additions, removals = _a.removals;
     (0, utils_log_1.debug)("Printing results...");
     var isBreaking = (0, utils_compare_1.areChangesBreaking)({ changes: changes, additions: additions, removals: removals });
-    if (isBreaking) {
-        console.log(colors.red("Breaking changes!\n\n"));
-    }
-    else {
-        console.log(colors.bold("All is good.\n\n"));
-    }
-    console.log("ADDITIONS");
-    console.log("===================================");
+    console.log("");
+    console.log(colors.green(colors.bold(" ADDITIONS (".concat(Object.keys(additions).length, ")"))));
+    console.log(" Exports that were introduced in the current version.");
+    console.log("======================================================================");
     Object.keys(additions).forEach(function (name) {
-        console.log("\t ".concat(name));
-        console.log(colors.grey(indent(additions[name].declarations[0].getText(), 2)));
+        console.log("\t ".concat(colors.bold(name), " ").concat(colors.gray("(".concat(additions[name].declarations[0].getSourceFile().fileName, ")"))));
+        console.log(colors.grey(indentLines(colors.bold(additions[name].declarations[0].getText()), 1)));
         console.log("");
     });
     console.log("");
     console.log("");
-    console.log("REMOVALS");
-    console.log("===================================");
+    console.log(colors.green(colors.bold(" REMOVALS (".concat(Object.keys(removals).length, ")"))));
+    console.log(" Exports that were removed in the current version.");
+    console.log("======================================================================");
     if (!Object.keys(removals).length) {
         console.log("No removals.");
     }
     Object.keys(removals).forEach(function (name) {
-        console.log("\t ".concat(name));
+        console.log("\t ".concat(colors.bold(name), " ").concat(colors.gray("(".concat(removals[name].declarations[0].getSourceFile().fileName, ")"))));
         console.log(colors.grey("\t ".concat(removals[name].declarations[0].getText())));
         console.log("");
     });
     console.log("");
     console.log("");
-    console.log("CHANGES");
-    console.log("===================================");
+    console.log(colors.green(colors.bold(" CHANGES (".concat(Object.keys(changes).length, ")"))));
+    console.log(" Exports that have changed compared to the previous version.");
+    console.log("======================================================================");
+    if (!Object.keys(changes).length) {
+        console.log("No changes.");
+    }
     Object.keys(changes).forEach(function (name) {
         var prevDeclaration = changes[name].prev.declarations[0].getText();
         var currentDeclaration = changes[name].current.declarations[0].getText();
-        console.log("\t ".concat(name));
+        console.log("\t ".concat(colors.bold(name)));
+        console.log("\t ".concat(colors.gray(changes[name].current.declarations[0].getSourceFile().fileName)));
         console.log("");
         if (prevDeclaration === currentDeclaration) {
             console.log("\t\t No changes!");
         }
         else {
-            printDiff(currentDeclaration, prevDeclaration);
+            console.log(indentLines((0, utils_diff_1.getDiff)(prevDeclaration, currentDeclaration), 2));
         }
         console.log("");
     });
+    if (isBreaking) {
+        console.log("");
+        console.log(colors.bgRed(colors.bold(colors.white(" FAIL "))) +
+            " " +
+            colors.bold(colors.red("There were possible breaking changes, please check the differences.\n\n")));
+    }
+    else {
+        console.log(colors.bold(colors.green("All is good!\n\n")));
+    }
 }
 exports.printComparison = printComparison;
 function printImports(_a) {
@@ -83,16 +94,18 @@ function printImports(_a) {
         // Loop through all the packages
         Object.keys(importsByPackageName_1).forEach(function (packageName) {
             console.log("");
-            console.log(packageName);
+            console.log(colors.bold(packageName) +
+                " " +
+                colors.gray("(".concat(importsByPackageName_1[packageName].length, " imports)")));
             console.log("===============================");
             // Loop through all the imports from a certain package
             importsByPackageName_1[packageName].forEach(function (i) {
                 var name = i.isDefaultImport ? "default" : i.propertyName;
-                console.log("\t ".concat(name, " (").concat(i.count, " occurances)"));
+                console.log("\t ".concat(colors.green(colors.bold(name)), " ").concat(colors.gray("(".concat(i.count, " occurances)"))));
                 if (isVerbose) {
                     i.occurances.forEach(function (ii) {
-                        console.log("\t\t Filename: ".concat(ii.fileName));
-                        console.log("\t\t Import statement: ".concat(ii.importStatementAsText));
+                        console.log("\t\t ".concat(colors.bold(colors.gray("Filename")), ": ").concat(colors.gray(ii.fileName)));
+                        console.log("\t\t ".concat(colors.gray(colors.bold("Import statement")), ": ").concat(colors.gray(ii.importStatementAsText)));
                         console.log("");
                     });
                 }
@@ -110,19 +123,17 @@ function printExports(exports) {
     console.log("===================================");
 }
 exports.printExports = printExports;
-function indent(str, tabsCount) {
-    var output = "";
-    str.split("\n").map(function (line) {
-        output += "".concat(getTabs(tabsCount)).concat(line, "\n");
-    });
-    return output;
+function indentLines(str, tabsCount) {
+    return str
+        .split("\n")
+        .reduce(function (acc, line) { return "".concat(acc).concat(indentLine(line, tabsCount), "\n"); }, "");
 }
-exports.indent = indent;
-function getTabs(count) {
+exports.indentLines = indentLines;
+function indentLine(str, count) {
     var tabs = "";
     for (var i = 0; i < count; i++) {
         tabs += "\t";
     }
-    return tabs;
+    return "".concat(tabs).concat(str);
 }
-exports.getTabs = getTabs;
+exports.indentLine = indentLine;

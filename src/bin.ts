@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
 import { compareExports } from "./utils.compare";
-import { getImportsInfo, getGroupedImports } from "./utils.imports";
+import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import {
   printComparison,
   printImports as printListOfImports,
@@ -11,7 +11,7 @@ import {
   getListImportsCliArgs,
   CliError,
 } from "./utils.cli";
-import { getExportInfo } from "./utils.exports";
+import { getExportInfo } from "./utils.compiler.exports";
 
 yargs
   .scriptName("poc3")

@@ -2,10 +2,10 @@
 exports.__esModule = true;
 var yargs = require("yargs");
 var utils_compare_1 = require("./utils.compare");
-var utils_imports_1 = require("./utils.imports");
+var utils_compiler_imports_1 = require("./utils.compiler.imports");
 var utils_print_1 = require("./utils.print");
 var utils_cli_1 = require("./utils.cli");
-var utils_exports_1 = require("./utils.exports");
+var utils_compiler_exports_1 = require("./utils.compiler.exports");
 yargs
     .scriptName("poc3")
     .usage("$0 <cmd> [args]")
@@ -96,8 +96,8 @@ yargs
 }, function (args) {
     try {
         var _a = (0, utils_cli_1.getListImportsCliArgs)(args), path = _a.path, isVerbose = _a.isVerbose, isJson = _a.isJson, filters = _a.filters;
-        var importsInfo = (0, utils_imports_1.getImportsInfo)(path, filters);
-        var groupedImports = (0, utils_imports_1.getGroupedImports)(importsInfo.imports);
+        var importsInfo = (0, utils_compiler_imports_1.getImportsInfo)(path, filters);
+        var groupedImports = (0, utils_compiler_imports_1.getGroupedImports)(importsInfo.imports);
         (0, utils_print_1.printImports)({
             imports: groupedImports,
             isVerbose: isVerbose,
@@ -129,6 +129,6 @@ yargs
     });
 }, function (_a) {
     var path = _a.path;
-    (0, utils_print_1.printExports)((0, utils_exports_1.getExportInfo)(path));
+    (0, utils_print_1.printExports)((0, utils_compiler_exports_1.getExportInfo)(path));
 })
     .help().argv;

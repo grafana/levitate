@@ -1,7 +1,7 @@
 import * as ts from "typescript";
-import { debug } from "./utils.log";
 import { SymbolMeta, Comparison } from "./types";
-import { getExportInfo } from "./utils.exports";
+import { debug } from "./utils.log";
+import { getExportInfo } from "./utils.compiler.exports";
 
 export function compareExports(
   prevRootFile: string,

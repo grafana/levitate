@@ -3,12 +3,12 @@ exports.__esModule = true;
 exports.isType = exports.isEnum = exports.isInterface = exports.isVariable = exports.isClass = exports.isFunction = exports.hasTypeChanged = exports.hasEnumChanged = exports.hasClassChanged = exports.hasVariableChanged = exports.hasFunctionChanged = exports.hasChanged = exports.areChangesBreaking = exports.compareExports = void 0;
 var ts = require("typescript");
 var utils_log_1 = require("./utils.log");
-var utils_exports_1 = require("./utils.exports");
+var utils_compiler_exports_1 = require("./utils.compiler.exports");
 function compareExports(prevRootFile, currentRootFile) {
     (0, utils_log_1.debug)("Old filename: %o", prevRootFile);
     (0, utils_log_1.debug)("New filename: %o", currentRootFile);
-    var prev = (0, utils_exports_1.getExportInfo)(prevRootFile);
-    var current = (0, utils_exports_1.getExportInfo)(currentRootFile);
+    var prev = (0, utils_compiler_exports_1.getExportInfo)(prevRootFile);
+    var current = (0, utils_compiler_exports_1.getExportInfo)(currentRootFile);
     var additions = {};
     var removals = {};
     var changes = {};
