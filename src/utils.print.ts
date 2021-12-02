@@ -137,31 +137,33 @@ export function printImports({
       console.log("===============================");
 
       // Loop through all the imports from a certain package
-      importsByPackageName[packageName].forEach((i) => {
-        const name = i.isDefaultImport ? "default" : i.propertyName;
+      importsByPackageName[packageName]
+        .sort((a, b) => b.count - a.count)
+        .forEach((i) => {
+          const name = i.isDefaultImport ? "default" : i.propertyName;
 
-        console.log(
-          `\t ${colors.green(colors.bold(name))} ${colors.gray(
-            `(${i.count} occurances)`
-          )}`
-        );
+          console.log(
+            `\t ${colors.green(colors.bold(name))} ${colors.gray(
+              `(${i.count} occurances)`
+            )}`
+          );
 
-        if (isVerbose) {
-          i.occurances.forEach((ii) => {
-            console.log(
-              `\t\t ${colors.bold(colors.gray("Filename"))}: ${colors.gray(
-                ii.fileName
-              )}`
-            );
-            console.log(
-              `\t\t ${colors.gray(
-                colors.bold("Import statement")
-              )}: ${colors.gray(ii.importStatementAsText)}`
-            );
-            console.log("");
-          });
-        }
-      });
+          if (isVerbose) {
+            i.occurances.forEach((ii) => {
+              console.log(
+                `\t\t ${colors.bold(colors.gray("Filename"))}: ${colors.gray(
+                  ii.fileName
+                )}`
+              );
+              console.log(
+                `\t\t ${colors.gray(
+                  colors.bold("Import statement")
+                )}: ${colors.gray(ii.importStatementAsText)}`
+              );
+              console.log("");
+            });
+          }
+        });
     });
   }
 }

@@ -99,7 +99,9 @@ function printImports(_a) {
                 colors.gray("(".concat(importsByPackageName_1[packageName].length, " imports)")));
             console.log("===============================");
             // Loop through all the imports from a certain package
-            importsByPackageName_1[packageName].forEach(function (i) {
+            importsByPackageName_1[packageName]
+                .sort(function (a, b) { return b.count - a.count; })
+                .forEach(function (i) {
                 var name = i.isDefaultImport ? "default" : i.propertyName;
                 console.log("\t ".concat(colors.green(colors.bold(name)), " ").concat(colors.gray("(".concat(i.count, " occurances)"))));
                 if (isVerbose) {
