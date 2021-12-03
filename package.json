@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "description": "An experimental tool for helping to understand APIs used by plugins and detecting breaking changes.",
-  "main": "index.js",
+  "main": "src/index.ts",
+  "bin":{
+    "poc3": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist",
     "dev": "tsc-watch ./src/bin.ts",
@@ -11,14 +14,16 @@
     "dev-imports": "nodemon --exec yarn run dev:imports",
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
-    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev-package ./fixtures/bundle-old.ts --current-package ./fixtures/bundle-new.ts",
-    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports"
+    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev-package ./fixtures/compare/bundle-old.ts --current-package ./fixtures/compare/bundle-new.ts",
+    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "workspaces":[
+    "./fixtures/imports/**"
+  ],
   "dependencies": {
-    "@grafana/data": "8.2.5",
     "chalk": "^5.0.0",
     "colors": "^1.4.0",
     "debug": "^4.3.2",
@@ -39,6 +44,7 @@
   "nodemonConfig": {
     "watch": [
       "*.ts",
+      "*.tsx",
       "package.json"
     ],
     "ext": "*",
