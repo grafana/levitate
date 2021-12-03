@@ -5,10 +5,10 @@
   "description": "An experimental tool for helping to understand APIs used by plugins and detecting breaking changes.",
   "main": "index.js",
   "scripts": {
-    "build": "tsc ./src/bin.ts --m commonjs --outDir ./bin",
+    "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist",
     "dev": "tsc-watch ./src/bin.ts --outDir ./bin",
-    "dev-compare": "nodemon --exec 'tsc ./src/bin.compare.ts --m commonjs --outDir ./bin && node ./bin/bin.compare.js ./fixtures/bundle-old.ts ./fixtures/bundle-new.ts'",
-    "dev-imports": "nodemon --exec 'tsc ./src/bin.imports.ts --m commonjs --outDir ./bin && node ./bin/bin.imports.js'"
+    "dev-compare": "nodemon --exec 'tsc ./src/bin.ts --m commonjs --outDir ./dist && node ./dist/bin.js compare --prev-package ./fixtures/bundle-old.ts --current-package ./fixtures/bundle-new.ts'",
+    "dev-imports": "nodemon --exec 'tsc ./src/bin.ts --m commonjs --outDir ./dist && node ./dist/bin.js list-imports'"
   },
   "keywords": [],
   "author": "",

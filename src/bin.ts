@@ -22,7 +22,7 @@ yargs
   // Prints out a comparison between files / packages / etc.
   //
   // Example: (@grafana/data:8.2.5 is only installed in this project for testing purposes, will be removed later)
-  // $> node ./bin/bin.js compare --current-package ./node_modules/@grafana/data/index.d.ts --prev-package ../grafana/packages/grafana-data/dist/index.d.ts
+  // $> node ./dist/bin.js compare --current-package ./node_modules/@grafana/data/index.d.ts --prev-package ../grafana/packages/grafana-data/dist/index.d.ts
   .command(
     "compare",
     "Compares the exports of packages.",

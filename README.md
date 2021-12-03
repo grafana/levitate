@@ -17,7 +17,7 @@ yarn install
 yarn build
 
 # Comparing exports of different versions of a package
-node ./bin/bin.js compare \
+node ./dist/bin.js compare \
     --current-package <PATH-TO-A-PACKAGE>/index.d.ts \
     --prev-package <PATH-TO-A-PACKAGE>/index.d.ts
 ```
@@ -29,7 +29,7 @@ node ./bin/bin.js compare \
 yarn build
 
 # List the imports used by a program
-node ./bin/bin.js list-imports \
+node ./dist/bin.js list-imports \
     --path <PATH-TO-A-PACKAGE>/module.ts \
     --filters "@common/pages" "@grafana/data" \
     --verbose
@@ -42,6 +42,6 @@ node ./bin/bin.js list-imports \
 yarn build
 
 # List the exports of a compiled package
-node ./bin/bin.js list-exports \
+node ./dist/bin.js list-exports \
     --path <PATH-TO-A-PACKAGE>/index.d.ts
 ```
