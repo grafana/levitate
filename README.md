@@ -5,7 +5,6 @@ An experimental tool for helping to understand APIs used by plugins and detectin
 ## Install
 
 ```bash
-# Build the binary
 yarn install
 ```
 
@@ -39,6 +38,7 @@ node ./bin/bin.js list-imports \
 **List exports**
 
 ```bash
+# Build the binary
 yarn build
 
 # List the exports of a compiled package
