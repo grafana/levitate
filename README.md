@@ -26,9 +26,19 @@ node ./bin/bin.js compare \
 ```bash
 yarn build
 
-# Comparing exports of different versions of a package
+# List the imports used by a program
 node ./bin/bin.js list-imports \
     --path <PATH-TO-A-PACKAGE>/module.ts \
     --filters "@common/pages" "@grafana/data" \
     --verbose
+```
+
+**List exports**
+
+```bash
+yarn build
+
+# List the exports of a compiled package
+node ./bin/bin.js list-exports \
+    --path <PATH-TO-A-PACKAGE>/index.d.ts
 ```
