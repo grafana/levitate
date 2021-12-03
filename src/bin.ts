@@ -1,4 +1,5 @@
 import * as yargs from "yargs";
+import * as path from "path";
 import { compareExports } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import {
@@ -58,7 +59,12 @@ yargs
     function (args) {
       try {
         const { prevPath, currentPath } = getCompareCliArgs(args);
-        const comparison = compareExports(prevPath, currentPath);
+        const prevPathResolved = path.resolve(process.cwd(), prevPath);
+        const currentPathResolved = path.resolve(process.cwd(), currentPath);
+        const comparison = compareExports(
+          prevPathResolved,
+          currentPathResolved
+        );
 
         printComparison(comparison);
       } catch (e) {

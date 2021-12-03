@@ -5,6 +5,7 @@ import { ExportsInfo, Exports } from "./types";
 import { COMPILER_OPTIONS, createProgram } from "./utils.compiler";
 
 // Returns all the exported members of a program identified by a root file (entry file)
+// @param rootFile - Has to be an absolute path
 export function getExportInfo(rootFile: string): ExportsInfo {
   const program = createProgram(rootFile);
   const programExports = getExportedSymbolsForProgram(program);
