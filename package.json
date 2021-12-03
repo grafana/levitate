@@ -6,9 +6,13 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist",
-    "dev": "tsc-watch ./src/bin.ts --outDir ./dist",
-    "dev-compare": "nodemon --exec 'tsc ./src/bin.ts --m commonjs --outDir ./dist && node ./dist/bin.js compare --prev-package ./fixtures/bundle-old.ts --current-package ./fixtures/bundle-new.ts'",
-    "dev-imports": "nodemon --exec 'tsc ./src/bin.ts --m commonjs --outDir ./dist && node ./dist/bin.js list-imports'"
+    "dev": "tsc-watch ./src/bin.ts",
+    "dev-compare": "nodemon --exec yarn run dev:compare",
+    "dev-imports": "nodemon --exec yarn run dev:imports",
+    "dev:compare": "run-s build fixtures:compare",
+    "dev:imports": "run-s build fixtures:imports",
+    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev-package ./fixtures/bundle-old.ts --current-package ./fixtures/bundle-new.ts",
+    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports"
   },
   "keywords": [],
   "author": "",
@@ -26,12 +30,16 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.10",
+    "@types/yargs": "^17.0.7",
     "nodemon": "^2.0.15",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.5.0",
     "tsc-watch": "^4.5.0"
   },
   "nodemonConfig": {
     "watch": [
-      "*.ts"
+      "*.ts",
+      "package.json"
     ],
     "ext": "*",
     "events": {

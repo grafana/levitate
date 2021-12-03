@@ -2,16 +2,8 @@ import * as yargs from "yargs";
 import * as path from "path";
 import { compareExports } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
-import {
-  printComparison,
-  printImports as printListOfImports,
-  printExports,
-} from "./utils.print";
-import {
-  getCompareCliArgs,
-  getListImportsCliArgs,
-  CliError,
-} from "./utils.cli";
+import { printComparison, printImports as printListOfImports, printExports } from "./utils.print";
+import { getCompareCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
 import { getExportInfo } from "./utils.compiler.exports";
 
 yargs
@@ -45,26 +37,22 @@ yargs
       yargs.option("prev-path", {
         type: "string",
         default: null,
-        describe:
-          "A path to the previous version of a module. (Overrides --prev-package)",
+        describe: "A path to the previous version of a module. (Overrides --prev-package)",
       });
 
       yargs.option("current-path", {
         type: "string",
         default: null,
-        describe:
-          "A path to the current version of a module. (Overrides --current-package)",
+        describe: "A path to the current version of a module. (Overrides --current-package)",
       });
     },
     function (args) {
       try {
+        // @ts-ignore
         const { prevPath, currentPath } = getCompareCliArgs(args);
         const prevPathResolved = path.resolve(process.cwd(), prevPath);
         const currentPathResolved = path.resolve(process.cwd(), currentPath);
-        const comparison = compareExports(
-          prevPathResolved,
-          currentPathResolved
-        );
+        const comparison = compareExports(prevPathResolved, currentPathResolved);
 
         printComparison(comparison);
       } catch (e) {
@@ -106,15 +94,13 @@ yargs
         type: "boolean",
         default: false,
         demandOption: false,
-        describe:
-          "Prints a verbose list including occurances as a valid JSON string representation.",
+        describe: "Prints a verbose list including occurances as a valid JSON string representation.",
       });
 
       yargs.option("filters", {
         type: "string",
         array: true,
-        describe:
-          "A white-space separated list of package names to return import information for.",
+        describe: "A white-space separated list of package names to return import information for.",
       });
 
       //   yargs.option("repo-urls", {
@@ -132,8 +118,8 @@ yargs
     },
     function (args) {
       try {
-        const { path, isVerbose, isJson, filters } =
-          getListImportsCliArgs(args);
+        // @ts-ignore
+        const { path, isVerbose, isJson, filters } = getListImportsCliArgs(args);
         const importsInfo = getImportsInfo(path, filters);
         const groupedImports = getGroupedImports(importsInfo.imports);
 
@@ -170,7 +156,7 @@ yargs
         describe: "Path to a root module file.",
       });
     },
-    function ({ path }) {
+    function ({ path }: { path: string }) {
       printExports(getExportInfo(path));
     }
   )

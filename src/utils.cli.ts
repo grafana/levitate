@@ -1,4 +1,4 @@
-import { CompareCLIArgs, ListCLIArgs } from "./types";
+import { CompareCLIArgs, ListCLIArgs } from './types';
 
 export class CliError extends Error {}
 
@@ -18,9 +18,7 @@ export function getCompareCliArgs({
 
     // Missing direct paths
   } else if (prevPath || currentPath) {
-    throw new CliError(
-      "Please provide both `--current-path` and `--prev-path` when using direct paths."
-    );
+    throw new CliError('Please provide both `--current-path` and `--prev-path` when using direct paths.');
 
     // Using package paths (will resolve to .d.ts files)
   } else if (prevPackage && currentPackage) {
@@ -31,26 +29,19 @@ export function getCompareCliArgs({
 
     // Missing package paths
   } else if (prevPackage || currentPackage) {
-    throw new CliError(
-      "Please provide both `--current-package` and `--prev-package` when using package paths."
-    );
+    throw new CliError('Please provide both `--current-package` and `--prev-package` when using package paths.');
 
     // Missing options
   } else {
-    throw new CliError("Please check how to use this command.");
+    throw new CliError('Please check how to use this command.');
   }
 }
 
 // Can be used for validating CLI arguments in a more semantic way
-export function getListImportsCliArgs({
-  path,
-  verbose,
-  json,
-  filters,
-}): ListCLIArgs {
+export function getListImportsCliArgs({ path, verbose, json, filters }): ListCLIArgs {
   // Missing properties
   if (!path) {
-    throw new CliError("Please check how to use this command.");
+    throw new CliError('Please check how to use this command.');
   }
 
   return { path, isVerbose: verbose, isJson: json, filters };
