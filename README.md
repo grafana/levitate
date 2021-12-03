@@ -5,6 +5,7 @@ An experimental tool for helping to understand APIs used by plugins and detectin
 ## Install
 
 ```bash
+# Build the binary
 yarn install
 ```
 
@@ -13,6 +14,7 @@ yarn install
 **Compare exports of packages**
 
 ```bash
+# Build the binary
 yarn build
 
 # Comparing exports of different versions of a package
@@ -24,6 +26,7 @@ node ./bin/bin.js compare \
 **List imports**
 
 ```bash
+# Build the binary
 yarn build
 
 # List the imports used by a program
