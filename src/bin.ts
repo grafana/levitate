@@ -3,8 +3,9 @@ import * as path from "path";
 import { compareExports } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import { printComparison, printImports as printListOfImports, printExports } from "./utils.print";
-import { getCompareCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
+import { getCompareCliArgs, getGobbleCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
 import { getExportInfo } from "./utils.compiler.exports";
+import { gobble } from "./gobble";
 
 yargs
   .scriptName("poc3")
@@ -161,4 +162,43 @@ yargs
     }
   )
 
+  // Gobble imports
+  // ----------------------------
+  // Lists imports for given github repos
+  //
+  // Example:
+  //
+  .command(
+    "gobble",
+    "Lists imports used from a github repo",
+    (yargs) => {
+      yargs.option("repositories", {
+        type: "string",
+        array: true,
+        demandOption: true,
+        describe: "Git repos to gobble",
+      });
+      yargs.option("filters", {
+        type: "string",
+        array: true,
+        describe: "A white-space separated list of package names to return import information for.",
+      });
+      yargs.option("cacheDir", {
+        type: "string",
+        default: null,
+        describe: "A directory to cache cloned repos",
+      });
+    },
+    async function (args) {
+      // @ts-ignore
+      const { repositories, cacheDir, filters } = getGobbleCliArgs(args);
+      repositories.forEach(async (repository) => {
+        const gobbleImports = await gobble({ repository, cacheDir, filters });
+        const countImports = gobbleImports.reduce((total, imports) => {
+          return total + imports.count;
+        }, 0);
+        console.log(`${repository} contains ${countImports} imports from ${filters}`);
+      });
+    }
+  )
   .help().argv;

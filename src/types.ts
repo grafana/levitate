@@ -68,3 +68,9 @@ export type ListCLIArgs = {
   isJson: boolean;
   filters: string[];
 };
+
+export type GobbleCLIArgs = {
+  repositories: string[];
+  filters: string[];
+  cacheDir: string;
+};
