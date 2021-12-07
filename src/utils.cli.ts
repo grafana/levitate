@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { CompareCLIArgs, ListCLIArgs, GobbleCLIArgs } from "./types";
-import { installPackage, uninstallPackage, getTypeDefinitionFilePath } from "./utils.npm";
 
 export class CliError extends Error {}
 
@@ -52,26 +51,4 @@ export function getGobbleCliArgs({ repositories, cacheDir, filters, jsonlines })
   }
 
   return { repositories, cacheDir, filters, jsonlines: Boolean(jsonlines) };
-}
-
-// Resolves a package name / URL to a package / path to a local package (usually coming from the command line),
-// downloads the package if needed and returns an absolute path pointing to the `index.d.ts` file in the package folder.
-// Throws an error if either the package was not found or the `index.d.ts` file is not present.
-export async function resolvePackage(packageName: string) {
-  const localPath = path.resolve(process.cwd(), packageName);
-
-  // Local path
-  if (fs.existsSync(localPath)) {
-    return getTypeDefinitionFilePath(localPath);
-  }
-
-  // Install NPM package
-  const tmpFolderName = await installPackage(packageName);
-  const typeDefinitionFilePath = getTypeDefinitionFilePath(tmpFolderName);
-
-  if (!fs.existsSync(typeDefinitionFilePath)) {
-    throw new CliError(`Could not find "index.d.ts" for "${packageName}" at "${tmpFolderName}".`);
-  }
-
-  return typeDefinitionFilePath;
 }

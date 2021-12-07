@@ -3,7 +3,8 @@ import * as path from "path";
 import { compareExports } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import { printComparison, printImports as printListOfImports, printExports } from "./utils.print";
-import { getCompareCliArgs, getGobbleCliArgs, getListImportsCliArgs, CliError, resolvePackage } from "./utils.cli";
+import { getCompareCliArgs, getGobbleCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
+import { resolvePackage } from "./utils.npm";
 import { getExportInfo } from "./utils.compiler.exports";
 import { gobble } from "./gobble";
 
@@ -41,10 +42,12 @@ yargs
       try {
         const prevPathResolved = await resolvePackage(prev);
         const currentPathResolved = await resolvePackage(current);
+
         const comparison = compareExports(prevPathResolved, currentPathResolved);
 
         printComparison(comparison);
       } catch (e) {
+        console.log("===== ERROR");
         if (e instanceof CliError) {
           console.log(`ERROR: ${e.message}\n\n`);
           yargs.showHelp();

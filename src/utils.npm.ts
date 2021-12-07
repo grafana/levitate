@@ -1,38 +1,77 @@
 import * as path from "path";
 import * as fs from "fs";
 import execa from "execa";
+import { CliError } from "./utils.cli";
+import ora from "ora";
 
 export const TYPE_DEFINITION_FILE_NAME = "index.d.ts";
 export const TMP_FOLDER = ".tmp";
+export const SPINNERS = [];
+
+// Resolves a package name / URL to a package / path to a local package (usually coming from the command line),
+// downloads the package if needed and returns an absolute path pointing to the `index.d.ts` file in the package folder.
+// Throws an error if either the package was not found or the `index.d.ts` file is not present.
+export async function resolvePackage(packageName: string) {
+  const localPath = path.resolve(process.cwd(), packageName);
+
+  // Local path
+  if (fs.existsSync(localPath)) {
+    return getTypeDefinitionFilePath(localPath);
+  }
+
+  startSpinner(packageName);
+
+  // Install NPM package
+  const tmpFolderName = await installPackage(packageName);
+  const installedPackagePath = getInstalledPackagePath(packageName);
+  const typeDefinitionFilePath = getTypeDefinitionFilePath(installedPackagePath);
+
+  if (!fs.existsSync(typeDefinitionFilePath)) {
+    failSpinner(packageName, `Could not find "index.d.ts" for "${packageName}" at "${tmpFolderName}"`);
+  }
+
+  succeedSpinner(packageName, `Installed ${packageName} successfully`);
+
+  return typeDefinitionFilePath;
+}
 
 export async function installPackage(packageName: string) {
-  const tmpPackageFolder = createTmpPackageFolder(packageName);
+  const tmpPackageFolder = await createTmpPackageFolder(packageName);
 
-  await execa("npm", ["install"], { execPath: tmpPackageFolder });
+  setSpinner(packageName, `Installing ${packageName}`);
+
+  try {
+    process.chdir(tmpPackageFolder);
+    await execa("npm", ["init", "-y"], { execPath: tmpPackageFolder });
+    await execa("npm", ["install", packageName], { execPath: tmpPackageFolder });
+  } catch (error) {
+    failSpinner(packageName, `Failed installing ${packageName}`);
+  }
 
   return tmpPackageFolder;
 }
 
-export function uninstallPackage(packageName: string) {
-  removeTmpFolder(packageName);
+export async function uninstallPackage(packageName: string) {
+  await removeTmpFolder(packageName);
 }
 
 export function getTmpFolderName(packageName: string) {
   return path.resolve(path.join(__dirname, "..", TMP_FOLDER, sanitize(packageName)));
 }
 
-export function removeTmpFolder(packageName: string) {
+export async function removeTmpFolder(packageName: string) {
   const tmpPackageFolder = getTmpFolderName(packageName);
 
-  if (fs.existsSync(tmpPackageFolder)) {
-    fs.unlinkSync(tmpPackageFolder);
-  }
+  await execa("rm", ["-rf", tmpPackageFolder]);
 }
 
-export function createTmpPackageFolder(packageName: string) {
+export async function createTmpPackageFolder(packageName: string) {
+  const spinner = getSpinner(packageName);
   const tmpPackageFolder = getTmpFolderName(packageName);
 
-  removeTmpFolder(packageName);
+  spinner.text = `Creating temporary folder for "${packageName}"`;
+  await removeTmpFolder(packageName);
+
   fs.mkdirSync(tmpPackageFolder, { recursive: true });
 
   return tmpPackageFolder;
@@ -44,4 +83,38 @@ export function getTypeDefinitionFilePath(folder: string) {
 
 export function sanitize(folder: string) {
   return folder.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+}
+
+export function getInstalledPackagePath(packageName: string) {
+  const tmpFolderName = getTmpFolderName(packageName);
+  const packageNameWithoutVersion = packageName.replace(
+    /@[~^]?(latest|canary|[\dvx*]+(?:[-.](?:[\dx*]+|alpha|beta))*)/gi,
+    ""
+  );
+
+  return path.join(tmpFolderName, "node_modules", packageNameWithoutVersion);
+}
+
+function startSpinner(packageName) {
+  getSpinner(packageName).start();
+}
+
+function setSpinner(packageName: string, msg: string) {
+  getSpinner(packageName).text = msg;
+}
+
+function succeedSpinner(packageName: string, msg: string) {
+  getSpinner(packageName).succeed(msg);
+}
+
+function failSpinner(packageName: string, msg: string) {
+  getSpinner(packageName).fail(msg);
+}
+
+function getSpinner(packageName: string): ora.Ora {
+  if (!SPINNERS[packageName]) {
+    SPINNERS[packageName] = ora(`Initialising ${packageName}`);
+  }
+
+  return SPINNERS[packageName];
 }

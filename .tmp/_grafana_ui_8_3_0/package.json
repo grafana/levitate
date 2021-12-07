@@ -1,0 +1,15 @@
+{
+  "name": "_grafana_ui_8_3_0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grafana/ui": "^8.3.0"
+  }
+}
