@@ -1,0 +1,42 @@
+{
+  "name": "poc3-bq",
+  "version": "0.0.1",
+  "private": true,
+  "description": "An extension to stort import data into big query",
+  "main": "src/index.ts",
+  "bin": {
+    "poc3-bq": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc ./src/index.ts",
+    "dev": "tsc-watch ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "JSONStream": "^1.3.5",
+    "chalk": "^5.0.0",
+    "typescript": "^4.5.2",
+    "yargs": "^17.2.1"
+  },
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.2",
+    "@types/jsonstream": "^0.8.30",
+    "@types/node": "^16.11.10",
+    "@types/yargs": "^17.0.7",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.0",
+    "tsc-watch": "^4.5.0"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "*.ts",
+      "package.json"
+    ],
+    "ext": "*",
+    "events": {
+      "start": "cls || clear"
+    }
+  }
+}
