@@ -3,6 +3,7 @@ import { pipeline } from "stream/promises";
 import { parser } from "stream-json/jsonl/Parser";
 import { mapper } from "./mapper";
 import { bigQueryTable } from "./bigQuery";
+import { jsonLineBreak } from "./jsonLineBreak";
 
 (async function () {
   try {
@@ -22,6 +23,7 @@ import { bigQueryTable } from "./bigQuery";
       process.stdin,
       parser(),
       mapper(),
+      jsonLineBreak(),
       bigQueryTable({
         dataset,
         table,

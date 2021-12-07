@@ -5,7 +5,9 @@ type Options = {
   table: string;
 };
 
-const client = new BigQuery();
+const client = new BigQuery({
+  keyFilename: __dirname + "./../raintank-dev.json",
+});
 
 export function bigQueryTable(options: Options) {
   const { dataset, table } = options;

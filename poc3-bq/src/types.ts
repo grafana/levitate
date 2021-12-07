@@ -1,3 +1,8 @@
+export type JsonRow = {
+  key: number;
+  value: PluginImportInfo;
+};
+
 export type PluginImportInfo = {
   pluginId: string;
   pluginVersion: string;

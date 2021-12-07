@@ -1,11 +1,11 @@
 import { Transform } from "stream";
-import { BigQueryRow, PluginImportInfo } from "./types";
+import { BigQueryRow, JsonRow, PluginImportInfo } from "./types";
 
 export function mapper(): Transform {
   return new Transform({
     objectMode: true,
-    transform: (info: PluginImportInfo, encoding, done) => {
-      done(null, mapToBigQueryRow(info));
+    transform: (row: JsonRow, encoding, done) => {
+      done(null, mapToBigQueryRow(row.value));
     },
   });
 }
