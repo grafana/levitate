@@ -1,29 +1,33 @@
-import * as yargs from "yargs";
+import yargs from "yargs";
+import { pipeline } from "stream/promises";
+import { parser } from "stream-json/jsonl/Parser";
+import { mapper } from "./mapper";
+import { bigQueryTable } from "./bigQuery";
 
-yargs
-  .scriptName("poc3-bq")
-  .usage("$0 <cmd> [args]")
-  .command(
-    "gobble",
-    "Lists imports used from a github repo",
-    (yargs) => {
-      yargs.option("repositories", {
-        type: "string",
-        array: true,
-        demandOption: true,
-        describe: "Git repos to gobble",
-      });
-      yargs.option("filters", {
-        type: "string",
-        array: true,
-        describe: "A white-space separated list of package names to return import information for.",
-      });
-      yargs.option("cacheDir", {
-        type: "string",
-        default: null,
-        describe: "A directory to cache cloned repos",
-      });
-    },
-    async function (args) {}
-  )
-  .help().argv;
+(async function () {
+  try {
+    const argv = await yargs
+      .scriptName("poc3-bq")
+      .usage("$0 -d [dataset] -t [table]")
+      .alias("d", "dataset")
+      .alias("t", "table")
+      .demandOption(["d", "t"])
+      .string(["d", "t"])
+      .help("h")
+      .alias("h", "help").argv;
+
+    const { d: dataset, t: table } = argv;
+
+    await pipeline(
+      process.stdin,
+      parser(),
+      mapper(),
+      bigQueryTable({
+        dataset,
+        table,
+      })
+    );
+  } catch (error) {
+    console.error("failed to run poc3-bq due too: ", error);
+  }
+})();
