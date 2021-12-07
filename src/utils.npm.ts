@@ -3,6 +3,8 @@ import * as fs from "fs";
 import execa from "execa";
 import { CliError } from "./utils.cli";
 import ora from "ora";
+import tar from "tar";
+import fetch from "node-fetch";
 
 export const TYPE_DEFINITION_FILE_NAME = "index.d.ts";
 export const TMP_FOLDER = ".tmp";
@@ -22,12 +24,12 @@ export async function resolvePackage(packageName: string) {
   startSpinner(packageName);
 
   // Install NPM package
-  const tmpFolderName = await installPackage(packageName);
-  const installedPackagePath = getInstalledPackagePath(packageName);
+  // const installedPackagePath = await installNpmPackage(packageName);
+  const installedPackagePath = await downloadNpmPackageAsTarball(packageName);
   const typeDefinitionFilePath = getTypeDefinitionFilePath(installedPackagePath);
 
   if (!fs.existsSync(typeDefinitionFilePath)) {
-    failSpinner(packageName, `Could not find "index.d.ts" for "${packageName}" at "${tmpFolderName}"`);
+    failSpinner(packageName, `Could not find "index.d.ts" for "${packageName}" at "${installedPackagePath}"`);
   }
 
   succeedSpinner(packageName, `Installed ${packageName} successfully`);
@@ -35,7 +37,7 @@ export async function resolvePackage(packageName: string) {
   return typeDefinitionFilePath;
 }
 
-export async function installPackage(packageName: string) {
+export async function installNpmPackage(packageName: string) {
   const tmpPackageFolder = await createTmpPackageFolder(packageName);
 
   setSpinner(packageName, `Installing ${packageName}`);
@@ -48,7 +50,7 @@ export async function installPackage(packageName: string) {
     failSpinner(packageName, `Failed installing ${packageName}`);
   }
 
-  return tmpPackageFolder;
+  return getInstalledNpmPackagePath(packageName);
 }
 
 export async function uninstallPackage(packageName: string) {
@@ -85,7 +87,7 @@ export function sanitize(folder: string) {
   return folder.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 }
 
-export function getInstalledPackagePath(packageName: string) {
+export function getInstalledNpmPackagePath(packageName: string) {
   const tmpFolderName = getTmpFolderName(packageName);
   const packageNameWithoutVersion = packageName.replace(
     /@[~^]?(latest|canary|[\dvx*]+(?:[-.](?:[\dx*]+|alpha|beta))*)/gi,
@@ -95,7 +97,39 @@ export function getInstalledPackagePath(packageName: string) {
   return path.join(tmpFolderName, "node_modules", packageNameWithoutVersion);
 }
 
-function startSpinner(packageName) {
+export async function downloadNpmPackageAsTarball(packageName: string) {
+  const tmpFolderName = await createTmpPackageFolder(packageName);
+  const url = await getPackageTarBallUrl(packageName);
+  const tarballPath = path.join(tmpFolderName, path.basename(url));
+
+  setSpinner(packageName, `Downloading tarball for ${packageName}`);
+  await downloadFile(url, tarballPath);
+
+  tar.x({ C: tmpFolderName, file: tarballPath, sync: true });
+
+  return path.join(tmpFolderName, "package");
+}
+
+export async function getPackageTarBallUrl(packageName: string) {
+  setSpinner(packageName, `Fetching package tarball for ${packageName}`);
+
+  const { stdout } = await execa("npm", ["view", packageName, "dist.tarball"]);
+
+  return stdout;
+}
+
+export async function downloadFile(url: string, path: string) {
+  const res = await fetch(url);
+  const fileStream = fs.createWriteStream(path);
+
+  await new Promise((resolve, reject) => {
+    res.body.pipe(fileStream);
+    res.body.on("error", reject);
+    fileStream.on("finish", resolve);
+  });
+}
+
+function startSpinner(packageName: string) {
   getSpinner(packageName).start();
 }
 
