@@ -43,6 +43,14 @@ export type ImportInfo = {
   occurances?: ImportInfo[];
 };
 
+export type PluginImportInfo = ImportInfo & {
+  pluginId: string;
+  pluginVersion: string;
+  pluginType: string;
+  repository: string;
+  pluginName: string;
+};
+
 export type ImportsInfo = {
   imports: ImportInfo[];
   program: ts.Program;

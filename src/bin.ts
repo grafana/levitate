@@ -194,10 +194,12 @@ yargs
       const { repositories, cacheDir, filters } = getGobbleCliArgs(args);
       repositories.forEach(async (repository) => {
         const gobbleImports = await gobble({ repository, cacheDir, filters });
+        console.log(gobbleImports);
+  
         const countImports = gobbleImports.reduce((total, imports) => {
           return total + imports.count;
         }, 0);
-        console.log(`${repository} contains ${countImports} imports from ${filters}`);
+        // console.log(`${repository} contains ${countImports} imports from ${filters}`);
       });
     }
   )
