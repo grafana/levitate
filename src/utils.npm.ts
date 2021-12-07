@@ -3,7 +3,7 @@ import * as fs from "fs";
 import execa from "execa";
 
 export const TYPE_DEFINITION_FILE_NAME = "index.d.ts";
-export const TMP_FOLDER_PREFIX = ".tmp-";
+export const TMP_FOLDER = ".tmp";
 
 export async function installPackage(packageName: string) {
   const tmpPackageFolder = createTmpPackageFolder(packageName);
@@ -18,7 +18,7 @@ export function uninstallPackage(packageName: string) {
 }
 
 export function getTmpFolderName(packageName: string) {
-  return path.resolve(path.join(__dirname, "..", `${TMP_FOLDER_PREFIX}-${packageName}`));
+  return path.resolve(path.join(__dirname, "..", TMP_FOLDER, sanitize(packageName)));
 }
 
 export function removeTmpFolder(packageName: string) {
@@ -33,11 +33,15 @@ export function createTmpPackageFolder(packageName: string) {
   const tmpPackageFolder = getTmpFolderName(packageName);
 
   removeTmpFolder(packageName);
-  fs.mkdirSync(tmpPackageFolder);
+  fs.mkdirSync(tmpPackageFolder, { recursive: true });
 
   return tmpPackageFolder;
 }
 
 export function getTypeDefinitionFilePath(folder: string) {
-  return path.join(folder, TMP_FOLDER_PREFIX);
+  return path.join(folder, TYPE_DEFINITION_FILE_NAME);
+}
+
+export function sanitize(folder: string) {
+  return folder.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 }
