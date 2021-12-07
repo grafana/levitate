@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
-    "dev": "tsc-watch ./src/bin.ts",
+    "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev-compare": "nodemon --exec yarn run dev:compare",
     "dev-imports": "nodemon --exec yarn run dev:imports",
     "dev-gobble": "nodemon --exec yarn run dev:gobble",

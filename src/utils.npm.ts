@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
-import { execa } from "execa";
+import execa from "execa";
 
 export const TYPE_DEFINITION_FILE_NAME = "index.d.ts";
 export const TMP_FOLDER_PREFIX = ".tmp-";
