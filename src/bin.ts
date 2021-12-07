@@ -3,7 +3,7 @@ import * as path from "path";
 import { compareExports } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import { printComparison, printImports as printListOfImports, printExports } from "./utils.print";
-import { getCompareCliArgs, getGobbleCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
+import { getCompareCliArgs, getGobbleCliArgs, getListImportsCliArgs, CliError, resolvePackage } from "./utils.cli";
 import { getExportInfo } from "./utils.compiler.exports";
 import { gobble } from "./gobble";
 
@@ -16,43 +16,31 @@ yargs
   // Prints out a comparison between files / packages / etc.
   //
   // Example: (@grafana/data:8.2.5 is only installed in this project for testing purposes, will be removed later)
-  // $> node ./dist/bin.js compare --current-package ./node_modules/@grafana/data/index.d.ts --prev-package ../grafana/packages/grafana-data/dist/index.d.ts
+  // $> node ./dist/bin.js compare --current ./node_modules/@grafana/data/index.d.ts --prev @grafana/data@canary
   .command(
     "compare",
     "Compares the exports of packages.",
     (yargs) => {
-      yargs.option("prev-package", {
+      yargs.option("prev", {
         type: "string",
         default: null,
+        demandOption: true,
         describe:
-          "A path to the previous version of the package directory which contains an `index.d.ts` type definition file.",
+          "Previous package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory (Make sure it contains an `index.d.ts` type definition file.)",
       });
 
-      yargs.option("current-package", {
+      yargs.option("current", {
         type: "string",
         default: null,
+        demandOption: true,
         describe:
-          "A path to the current version of the package directory which contains an `index.d.ts` type definition file.",
-      });
-
-      yargs.option("prev-path", {
-        type: "string",
-        default: null,
-        describe: "A path to the previous version of a module. (Overrides --prev-package)",
-      });
-
-      yargs.option("current-path", {
-        type: "string",
-        default: null,
-        describe: "A path to the current version of a module. (Overrides --current-package)",
+          "Current package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory (Make sure it contains an `index.d.ts` type definition file.)",
       });
     },
-    function (args) {
+    async function ({ prev, current }: { prev: string; current: string }) {
       try {
-        // @ts-ignore
-        const { prevPath, currentPath } = getCompareCliArgs(args);
-        const prevPathResolved = path.resolve(process.cwd(), prevPath);
-        const currentPathResolved = path.resolve(process.cwd(), currentPath);
+        const prevPathResolved = await resolvePackage(prev);
+        const currentPathResolved = await resolvePackage(current);
         const comparison = compareExports(prevPathResolved, currentPathResolved);
 
         printComparison(comparison);

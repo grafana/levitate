@@ -1,0 +1,47 @@
+import { DateTime } from '../datetime/moment_wrapper';
+export interface RawTimeRange {
+    from: DateTime | string;
+    to: DateTime | string;
+}
+export interface TimeRange {
+    from: DateTime;
+    to: DateTime;
+    raw: RawTimeRange;
+}
+/**
+ * Type to describe relative time to now in seconds.
+ * @internal
+ */
+export interface RelativeTimeRange {
+    from: number;
+    to: number;
+}
+export interface AbsoluteTimeRange {
+    from: number;
+    to: number;
+}
+export interface IntervalValues {
+    interval: string;
+    intervalMs: number;
+}
+export declare type TimeZoneUtc = 'utc';
+export declare type TimeZoneBrowser = 'browser';
+export declare type TimeZone = TimeZoneBrowser | TimeZoneUtc | string;
+export declare const DefaultTimeZone: TimeZone;
+export interface TimeOption {
+    from: string;
+    to: string;
+    display: string;
+}
+export interface TimeOptions {
+    [key: string]: TimeOption[];
+}
+export declare type TimeFragment = string | DateTime;
+export declare const TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+export declare function getDefaultTimeRange(): TimeRange;
+/**
+ * Returns the default realtive time range.
+ *
+ * @public
+ */
+export declare function getDefaultRelativeTimeRange(): RelativeTimeRange;

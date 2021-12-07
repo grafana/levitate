@@ -1,0 +1,11 @@
+import { CSSObject } from '@emotion/css';
+import { GrafanaTheme, GrafanaTheme2 } from '@grafana/data';
+export declare function cardChrome(theme: GrafanaTheme2): string;
+export declare function hoverColor(color: string, theme: GrafanaTheme2): string;
+export declare function listItem(theme: GrafanaTheme2): string;
+export declare function listItemSelected(theme: GrafanaTheme2): string;
+export declare function mediaUp(breakpoint: string): string;
+export declare const focusCss: (theme: GrafanaTheme) => string;
+export declare function getMouseFocusStyles(theme: GrafanaTheme2): CSSObject;
+export declare function getFocusStyles(theme: GrafanaTheme2): CSSObject;
+export declare const getTooltipContainerStyles: (theme: GrafanaTheme2) => string;

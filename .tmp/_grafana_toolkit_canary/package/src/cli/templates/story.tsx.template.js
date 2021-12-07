@@ -1,0 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.storyTpl = void 0;
+exports.storyTpl = "\nimport React from 'react';\nimport { <%= name %> } from './<%= name %>';\nimport { withCenteredStory } from '@grafana/ui/src/utils/storybook/withCenteredStory';\nimport mdx from './<%= name %>.mdx';\n\n\nexport default {\n  title: '<%= group %>/<%= name %>',\n  component: <%= name %>,\n  decorators: [withCenteredStory],\n  parameters: {\n    docs: {\n      page: mdx,\n    },\n  },\n};\n\nexport const Basic = () => {\n  return <<%= name %> />;\n};\n";
+//# sourceMappingURL=story.tsx.template.js.map

@@ -1,0 +1,1 @@
+export declare const docsTpl = "import { ArgsTable } from '@storybook/addon-docs/blocks';\nimport { <%= name %> } from './<%= name %>';\n\n# <%= name %>\n\n### Usage\n\n```jsx\nimport { <%= name %> } from '@grafana/ui';\n\n<<%= name %> />\n```\n\n### Props\n<ArgsTable of={<%= name %>} />\n";

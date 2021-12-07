@@ -1,0 +1,14 @@
+import { Column, Row } from 'react-table';
+import { Property } from 'csstype';
+import { DataFrame, Field, SelectableValue } from '@grafana/data';
+import { FooterItem } from './types';
+export declare function getTextAlign(field?: Field): Property.JustifyContent;
+export declare function getColumns(data: DataFrame, availableWidth: number, columnMinWidth: number, footerValues?: FooterItem[]): Column[];
+export declare function filterByValue(field?: Field): (rows: Row[], id: string, filterValues?: SelectableValue<any>[] | undefined) => Row<{}>[];
+export declare function calculateUniqueFieldValues(rows: any[], field?: Field): Record<string, any>;
+export declare function rowToFieldValue(row: any, field?: Field): string;
+export declare function valuesToOptions(unique: Record<string, any>): SelectableValue[];
+export declare function sortOptions(a: SelectableValue, b: SelectableValue): number;
+export declare function getFilteredOptions(options: SelectableValue[], filterValues?: SelectableValue[]): SelectableValue[];
+export declare function sortCaseInsensitive(a: Row<any>, b: Row<any>, id: string): number;
+export declare function sortNumber(rowA: Row<any>, rowB: Row<any>, id: string): 0 | 1 | -1;

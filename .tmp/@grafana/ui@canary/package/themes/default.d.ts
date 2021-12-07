@@ -1,0 +1,22 @@
+import { GrafanaThemeCommons } from '@grafana/data';
+export declare const commonColorsPalette: {
+    gray98: string;
+    gray97: string;
+    gray95: string;
+    gray90: string;
+    gray85: string;
+    gray70: string;
+    gray60: string;
+    gray33: string;
+    gray25: string;
+    gray15: string;
+    gray10: string;
+    gray05: string;
+    blue95: string;
+    blue85: string;
+    blue80: string;
+    blue77: string;
+    red88: string;
+};
+declare const theme: GrafanaThemeCommons;
+export default theme;
