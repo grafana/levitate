@@ -188,18 +188,27 @@ yargs
         default: null,
         describe: "A directory to cache cloned repos",
       });
+      yargs.option("jsonlines", {
+        type: "boolean",
+        default: false,
+        describe: "Specify this flag to output JSON Lines",
+      });
     },
     async function (args) {
       // @ts-ignore
-      const { repositories, cacheDir, filters } = getGobbleCliArgs(args);
+      const { repositories, cacheDir, filters, jsonlines } = getGobbleCliArgs(args);
       repositories.forEach(async (repository) => {
         const gobbleImports = await gobble({ repository, cacheDir, filters });
-        console.log(gobbleImports);
-  
-        const countImports = gobbleImports.reduce((total, imports) => {
-          return total + imports.count;
-        }, 0);
-        // console.log(`${repository} contains ${countImports} imports from ${filters}`);
+
+        if (jsonlines) {
+          for (const gi of gobbleImports) {
+            console.log(JSON.stringify(gi));
+          }
+        }
+
+        if (!jsonlines) {
+          console.log(gobbleImports);
+        }
       });
     }
   )
