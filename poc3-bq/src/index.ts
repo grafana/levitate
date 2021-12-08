@@ -1,9 +1,10 @@
 import yargs from "yargs";
 import { pipeline } from "stream/promises";
 import { parser } from "stream-json/jsonl/Parser";
-import { mapper } from "./mapper";
+import { stringer } from "stream-json/jsonl/Stringer";
 import { bigQueryTable } from "./bigQuery";
-import { jsonLineBreak } from "./jsonLineBreak";
+import { mapper } from "./mapper";
+import { printProgress } from "./printProgress";
 
 (async function () {
   try {
@@ -23,7 +24,8 @@ import { jsonLineBreak } from "./jsonLineBreak";
       process.stdin,
       parser(),
       mapper(),
-      jsonLineBreak(),
+      printProgress(),
+      stringer(),
       bigQueryTable({
         dataset,
         table,
