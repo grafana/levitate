@@ -6,7 +6,7 @@ export function printProgress(): Transform {
     objectMode: true,
     transform: (row: BigQueryRow, encoding, done) => {
       console.log(`Sending stats for: ${row.plugin.id} / ${row.package_name}`);
-      done();
+      done(null, row);
     },
   });
 }
