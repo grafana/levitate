@@ -64,6 +64,7 @@ export function printComparison({ changes, additions, removals }: Comparison) {
         " " +
         chalk.bold.red("There were possible breaking changes, please check the differences.\n\n")
     );
+    process.exit(1);
   } else {
     console.log("");
     console.log(

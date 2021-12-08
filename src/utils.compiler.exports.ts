@@ -34,17 +34,21 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
   return programExports;
 }
 
-export function getExportedSymbolsForFile(
-  sourceFile: ts.SourceFile,
-  program: ts.Program
-): Exports {
+export function getExportedSymbolsForFile(sourceFile: ts.SourceFile, program: ts.Program): Exports {
   const fileExports = {};
   const fileSymbol = program.getTypeChecker().getSymbolAtLocation(sourceFile);
 
   // Loop through exports
   if (fileSymbol?.exports) {
     fileSymbol.exports.forEach((exportValue, exportName) => {
-      // Get wildcard (`export * from`) exports
+      // Wildcard exports (`export * from`)
+      //
+      // ATTENTION!
+      // We currently cannot detect changes in wildcard exports from 3rd party packages, e.g. `export * from 'rxjs'`
+      // This has two difficulties:
+      //   1) we need to install all 3rd party dependencies as well, which would take longer (this is working, just being slow)
+      //   2) we need to be able to resolve external module names (e.g. "rxjs") to a source file name, this is not implemented yet
+      // In order to make these work the `resolveModuleName()` function needs to be updated.
       if (exportName === "__export") {
         // Loop through all the wildcard exports
         exportValue.declarations.forEach((declaration) => {
@@ -55,21 +59,17 @@ export function getExportedSymbolsForFile(
 
           // Find exported members recursively
           if (resolvedSourceFile) {
-            const resolvedExports = getExportedSymbolsForFile(
-              resolvedSourceFile,
-              program
-            );
+            const resolvedExports = getExportedSymbolsForFile(resolvedSourceFile, program);
 
             // TODO: check if it can be an issue that we can possibly override already existing exports
             Object.keys(resolvedExports).forEach((resolvedExportName) => {
-              fileExports[resolvedExportName] =
-                resolvedExports[resolvedExportName];
+              fileExports[resolvedExportName] = resolvedExports[resolvedExportName];
             });
           }
         });
       }
 
-      // Get mamed and default exports
+      // Named exports & Default exports
       else if (exportName) {
         fileExports[exportName] = exportValue;
       }
@@ -85,10 +85,7 @@ export function getExportPackageName(node: ts.ExportDeclaration) {
 
 // TODO: there must be an easier way to do this using the compiler
 // We need to do this as we cannot find a source file by using the relative import in the files.
-export function resolveModuleName(
-  moduleName: string,
-  sourceFile: ts.SourceFile
-) {
+export function resolveModuleName(moduleName: string, sourceFile: ts.SourceFile) {
   const resolvedPath = path.join(path.dirname(sourceFile.fileName), moduleName);
   const extension = path.extname(resolvedPath);
 
