@@ -1,5 +1,6 @@
 import * as yargs from "yargs";
 import * as path from "path";
+import chalk from "chalk";
 import { compareExports } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import { printComparison, printImports as printListOfImports, printExports } from "./utils.print";
@@ -7,6 +8,7 @@ import { getCompareCliArgs, getGobbleCliArgs, getListImportsCliArgs, CliError } 
 import { resolvePackage } from "./utils.npm";
 import { getExportInfo } from "./utils.compiler.exports";
 import { gobble } from "./gobble";
+import { exit } from "process";
 
 yargs
   .scriptName("poc3")
@@ -47,12 +49,15 @@ yargs
 
         printComparison(comparison);
       } catch (e) {
-        console.log("===== ERROR");
+        console.log("");
+        console.log(chalk.bgRed.bold.white(" ERROR "));
+
         if (e instanceof CliError) {
           console.log(`ERROR: ${e.message}\n\n`);
           yargs.showHelp();
         } else {
-          throw e;
+          console.log(e);
+          exit(1);
         }
       }
     }

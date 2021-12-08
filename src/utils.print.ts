@@ -65,7 +65,10 @@ export function printComparison({ changes, additions, removals }: Comparison) {
         chalk.bold.red("There were possible breaking changes, please check the differences.\n\n")
     );
   } else {
-    console.log(chalk.bold.green("All is good!\n\n"));
+    console.log("");
+    console.log(
+      chalk.bgGreen.bold.yellow(" SUCCESS ") + " " + chalk.bold.green("There were no breaking changes introduced.\n\n")
+    );
   }
 }
 

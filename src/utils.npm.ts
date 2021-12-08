@@ -18,7 +18,13 @@ export async function resolvePackage(packageName: string) {
 
   // Local path
   if (fs.existsSync(localPath)) {
-    return getTypeDefinitionFilePath(localPath);
+    if (fs.existsSync(getTypeDefinitionFilePath(localPath))) {
+      return getTypeDefinitionFilePath(localPath);
+    } else {
+      const errorMsg = `Could not find type definition file at "${getTypeDefinitionFilePath(localPath)}"`;
+      failSpinner(packageName, errorMsg);
+      throw new Error(errorMsg);
+    }
   }
 
   startSpinner(packageName);
@@ -29,7 +35,9 @@ export async function resolvePackage(packageName: string) {
   const typeDefinitionFilePath = getTypeDefinitionFilePath(installedPackagePath);
 
   if (!fs.existsSync(typeDefinitionFilePath)) {
-    failSpinner(packageName, `Could not find "index.d.ts" for "${packageName}" at "${installedPackagePath}"`);
+    const errorMsg = `Could not find type definition file at "${getTypeDefinitionFilePath(localPath)}"`;
+    failSpinner(packageName, errorMsg);
+    throw new Error(errorMsg);
   }
 
   succeedSpinner(packageName, `Installed ${packageName} successfully`);
