@@ -23,7 +23,7 @@ function printAdditions(additions: Exports) {
   printHeading(chalk.green(`ADDITIONS (${count})`));
 
   if (!count) {
-    console.log("No additions.");
+    console.log(chalk.gray("  No additions."));
     return;
   }
 
@@ -53,7 +53,7 @@ function printRemovals(removals: Exports) {
   printHeading(chalk.red(`REMOVALS (${count})`));
 
   if (!count) {
-    console.log("No removals.");
+    console.log(chalk.gray("  No removals."));
     return;
   }
 
@@ -83,7 +83,8 @@ function printChanges(changes: Changes) {
   printHeading(chalk.yellow(`CHANGES (${count})`));
 
   if (!count) {
-    console.log("No changes.");
+    console.log(chalk.gray("  No changes."));
+    return;
   }
 
   const table = Table(
@@ -113,19 +114,13 @@ function printChanges(changes: Changes) {
 function printVerdict(isBreaking: boolean) {
   if (isBreaking) {
     printSpacing(2);
-    printRedLabel("FAIL");
-    console.log(chalk.bold.red("There were possible breaking changes, please check the differences.\n\n"));
+    console.log(chalk.bold.red("  ✘ There were possible breaking changes, please check the differences.\n\n"));
 
     return;
   }
 
   printSpacing(2);
-  printGreenLabel("SUCCESS");
-  console.log(chalk.bold.green("There were no breaking changes introduced.\n\n"));
-}
-
-function printGreenLabel(text: string) {
-  console.log(chalk.bgGreen.bold.white(` ${text} `));
+  console.log(chalk.bold.green("  ✔ No breaking changes introduced.\n\n"));
 }
 
 // 🥃
