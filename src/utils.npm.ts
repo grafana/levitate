@@ -2,7 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import execa from "execa";
 import { CliError } from "./utils.cli";
-import { startSpinner, setSpinner, getSpinner, failSpinner, succeedSpinner } from "./utils.spinner";
+import { startSpinner, setSpinner, failSpinner, succeedSpinner } from "./utils.spinner";
 import ora from "ora";
 import tar from "tar";
 import fetch from "node-fetch";
@@ -77,10 +77,9 @@ export async function removeTmpFolder(packageName: string) {
 }
 
 export async function createTmpPackageFolder(packageName: string) {
-  const spinner = getSpinner(packageName);
   const tmpPackageFolder = getTmpFolderName(packageName);
 
-  spinner.text = `Creating temporary folder for "${packageName}"`;
+  setSpinner(packageName, `Creating temporary folder for "${packageName}"`);
   await removeTmpFolder(packageName);
 
   fs.mkdirSync(tmpPackageFolder, { recursive: true });
