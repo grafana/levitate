@@ -16,7 +16,7 @@ yarn install
 # Build the binary
 yarn build
 
-# Comparing exports of different versions of a package
+# Use poc3 to get all imports for packages and send to big query
 <poc3> gobble [args] | node ./dist/index.js \
     -dataset gcom_plugins \
     -table grafana_import
