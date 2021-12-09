@@ -24,7 +24,8 @@
   "author": "",
   "license": "ISC",
   "workspaces": [
-    "./fixtures/imports/**"
+    "./fixtures/imports/**",
+    "poc3-bq"
   ],
   "dependencies": {
     "chalk": "^5.0.0",

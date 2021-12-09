@@ -81,4 +81,5 @@ export type GobbleCLIArgs = {
   repositories: string[];
   filters: string[];
   cacheDir: string;
+  jsonlines: boolean;
 };
