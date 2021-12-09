@@ -2,6 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import execa from "execa";
 import { CliError } from "./utils.cli";
+import { startSpinner, setSpinner, getSpinner, failSpinner, succeedSpinner } from "./utils.spinner";
 import ora from "ora";
 import tar from "tar";
 import fetch from "node-fetch";
@@ -135,28 +136,4 @@ export async function downloadFile(url: string, path: string) {
     res.body.on("error", reject);
     fileStream.on("finish", resolve);
   });
-}
-
-function startSpinner(packageName: string) {
-  getSpinner(packageName).start();
-}
-
-function setSpinner(packageName: string, msg: string) {
-  getSpinner(packageName).text = msg;
-}
-
-function succeedSpinner(packageName: string, msg: string) {
-  getSpinner(packageName).succeed(msg);
-}
-
-function failSpinner(packageName: string, msg: string) {
-  getSpinner(packageName).fail(msg);
-}
-
-function getSpinner(packageName: string): ora.Ora {
-  if (!SPINNERS[packageName]) {
-    SPINNERS[packageName] = ora(`Initialising ${packageName}`);
-  }
-
-  return SPINNERS[packageName];
 }
