@@ -8,7 +8,7 @@
     "poc3": "dist/index.js"
   },
   "scripts": {
-    "bundle": "ncc build ./src/bin.ts -o dist/",
+    "bundle": "ncc build ./src/bin.ts -o dist/ -C",
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev-compare": "nodemon --exec yarn run dev:compare",
