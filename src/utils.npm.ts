@@ -67,7 +67,7 @@ export async function uninstallPackage(packageName: string) {
 }
 
 export function getTmpFolderName(packageName: string) {
-  return path.resolve(path.join(__dirname, "..", TMP_FOLDER, sanitize(packageName)));
+  return path.resolve(path.join(__dirname, "..", TMP_FOLDER, packageName));
 }
 
 export async function removeTmpFolder(packageName: string) {
@@ -89,10 +89,6 @@ export async function createTmpPackageFolder(packageName: string) {
 
 export function getTypeDefinitionFilePath(folder: string) {
   return path.join(folder, TYPE_DEFINITION_FILE_NAME);
-}
-
-export function sanitize(folder: string) {
-  return folder.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 }
 
 export function getInstalledNpmPackagePath(packageName: string) {

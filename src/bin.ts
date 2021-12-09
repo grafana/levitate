@@ -1,10 +1,11 @@
 import * as yargs from "yargs";
 import * as path from "path";
 import chalk from "chalk";
-import { compareExports } from "./utils.compare";
+import { compareExports, areChangesBreaking } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
-import { printComparison, printImports as printListOfImports, printExports } from "./utils.print";
-import { getCompareCliArgs, getGobbleCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
+import { printImports as printListOfImports, printExports } from "./utils.print";
+import { printComparison } from "./utils.print.comparison";
+import { getGobbleCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
 import { resolvePackage } from "./utils.npm";
 import { getExportInfo } from "./utils.compiler.exports";
 import { gobble } from "./gobble";
@@ -44,10 +45,14 @@ yargs
       try {
         const prevPathResolved = await resolvePackage(prev);
         const currentPathResolved = await resolvePackage(current);
-
         const comparison = compareExports(prevPathResolved, currentPathResolved);
+        const isBreaking = areChangesBreaking(comparison);
 
         printComparison(comparison);
+
+        if (isBreaking) {
+          exit(1);
+        }
       } catch (e) {
         console.log("");
         console.log(chalk.bgRed.bold.white(" ERROR "));
