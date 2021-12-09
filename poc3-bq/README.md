@@ -28,7 +28,7 @@ yarn build
 # Build the binary
 yarn build
 
-# List the imports used by a program
+# Pipe an already existing json file of package imports and send to big query
 cat example.json | node ./dist/index.js \
     -dataset gcom_plugins \
     -table grafana_import
