@@ -5,11 +5,12 @@
   "description": "An experimental tool for helping to understand APIs used by plugins and detecting breaking changes.",
   "main": "src/index.ts",
   "bin": {
-    "poc3": "./dist/index.js"
+    "poc3": "dist/index.js"
   },
   "scripts": {
+    "bundle": "ncc build ./src/bin.ts -o dist/ -C",
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
-    "dev": "tsc-watch ./src/bin.ts",
+    "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev-compare": "nodemon --exec yarn run dev:compare",
     "dev-imports": "nodemon --exec yarn run dev:imports",
     "dev-gobble": "nodemon --exec yarn run dev:gobble",
@@ -28,20 +29,23 @@
     "poc3-bq"
   ],
   "dependencies": {
-    "chalk": "^5.0.0",
-    "colors": "^1.4.0",
+    "chalk": "^4.1.2",
     "debug": "^4.3.2",
     "diff": "^5.0.0",
+    "execa": "^5.1.1",
     "fast-glob": "^3.2.7",
-    "indent-string": "^5.0.0",
-    "print-diff": "^1.0.0",
+    "node-fetch": "^2.6.6",
+    "ora": "5.4.1",
     "simple-git": "^2.48.0",
+    "tar": "^6.1.11",
+    "tty-table": "^4.1.5",
     "typescript": "^4.5.2",
     "yargs": "^17.2.1"
   },
   "devDependencies": {
     "@types/node": "^16.11.10",
     "@types/yargs": "^17.0.7",
+    "@vercel/ncc": "^0.33.0",
     "nodemon": "^2.0.15",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.0",
@@ -60,5 +64,13 @@
     "events": {
       "start": "cls || clear"
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grafana/poc3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/grafana/poc3/issues"
+  },
+  "homepage": "https://github.com/grafana/poc3#readme"
 }

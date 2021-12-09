@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { CompareCLIArgs, ListCLIArgs, GobbleCLIArgs } from "./types";
 
 export class CliError extends Error {}

@@ -1,15 +1,8 @@
 import * as diff from "diff";
-import * as colors from "colors/safe";
+import chalk from "chalk";
 
 function getDiffLegend() {
-  return (
-    "\n" +
-    colors.bgGreen("+ Added") +
-    " " +
-    colors.bgRed("- Removed") +
-    "\n" +
-    "\n"
-  );
+  return "\n" + chalk.green("+ Added") + " " + chalk.red("- Removed") + "\n" + "\n";
 }
 
 export function getDiff(prev, current) {
@@ -27,10 +20,10 @@ function getDiffForLine(line) {
   switch (line[0]) {
     // Added lines
     case "+":
-      return colors.bgGreen(line);
+      return chalk.green(line);
     // Removed lines
     case "-":
-      return colors.bgRed(line);
+      return chalk.red(line);
     case " ":
       return line;
     case "@":

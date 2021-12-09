@@ -2,11 +2,12 @@ import * as ts from "typescript";
 import { SymbolMeta, Comparison } from "./types";
 import { debug } from "./utils.log";
 import { getExportInfo } from "./utils.compiler.exports";
+import { startSpinner, setSpinner, succeedSpinner } from "./utils.spinner";
 
-export function compareExports(
-  prevRootFile: string,
-  currentRootFile: string
-): Comparison {
+export function compareExports(prevRootFile: string, currentRootFile: string): Comparison {
+  setSpinner("compare", "Detecting changes between versions");
+  startSpinner("compare");
+
   debug("Old filename: %o", prevRootFile);
   debug("New filename: %o", currentRootFile);
 
@@ -20,9 +21,7 @@ export function compareExports(
   debug("Current file: %o exports", Object.keys(current.exports).length);
 
   // Look for changes introduced by the current version
-  for (const [currentExportName, currentExportSymbol] of Object.entries(
-    current.exports
-  )) {
+  for (const [currentExportName, currentExportSymbol] of Object.entries(current.exports)) {
     // Addition
     if (!prev.exports[currentExportName]) {
       additions[currentExportName] = currentExportSymbol;
@@ -60,6 +59,8 @@ export function compareExports(
       removals[exportName] = exportSymbol;
     }
   }
+
+  succeedSpinner("compare", "Successfully compared versions");
 
   return { changes, additions, removals };
 }
@@ -108,10 +109,8 @@ export function hasChanged(prev: SymbolMeta, current: SymbolMeta) {
 }
 
 export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
-  const prevDeclaration = prev.symbol
-    .valueDeclaration as ts.FunctionDeclaration;
-  const currentDeclaration = current.symbol
-    .valueDeclaration as ts.FunctionDeclaration;
+  const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
+  const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
 
   // Check previous function parameters
   // (all previous parameters must be present at their previous position)
@@ -122,10 +121,7 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
     }
 
     // Changed parameter at the old position
-    if (
-      currentDeclaration.parameters[i].getText() !==
-      prevDeclaration.parameters[i].getText()
-    ) {
+    if (currentDeclaration.parameters[i].getText() !== prevDeclaration.parameters[i].getText()) {
       return true;
     }
   }
@@ -135,9 +131,7 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
   for (let i = 0; i < currentDeclaration.parameters.length; i++) {
     if (
       !prevDeclaration.parameters[i] &&
-      !current.program
-        .getTypeChecker()
-        .isOptionalParameter(currentDeclaration.parameters[i])
+      !current.program.getTypeChecker().isOptionalParameter(currentDeclaration.parameters[i])
     ) {
       return true;
     }
@@ -153,18 +147,14 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
 }
 
 function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
-  const prevDeclaration = prev.symbol
-    .declarations[0] as ts.InterfaceDeclaration;
-  const currentDeclaration = current.symbol
-    .declarations[0] as ts.InterfaceDeclaration;
+  const prevDeclaration = prev.symbol.declarations[0] as ts.InterfaceDeclaration;
+  const currentDeclaration = current.symbol.declarations[0] as ts.InterfaceDeclaration;
 
   // Check previous members
   // (all previous members must be left intact, otherwise any code that depends on them can possibly have type errors)
   for (let i = 0; i < prevDeclaration.members.length; i++) {
     const prevMemberText = prevDeclaration.members[i].getText();
-    const currentMember = currentDeclaration.members.find(
-      (member) => prevMemberText === member.getText()
-    );
+    const currentMember = currentDeclaration.members.find((member) => prevMemberText === member.getText());
 
     // Member is missing in the current declaration, or has changed
     // TODO: This is quite basic at the moment, it could be refined to give less "false negatives".
@@ -178,9 +168,7 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
   // (only optional new members are allowed)
   for (let i = 0; i < currentDeclaration.members.length; i++) {
     const currentMemberText = currentDeclaration.members[i].getText();
-    const prevMember = prevDeclaration.members.find(
-      (member) => currentMemberText === member.getText()
-    );
+    const prevMember = prevDeclaration.members.find((member) => currentMemberText === member.getText());
 
     if (!prevMember && !currentDeclaration.members[i].questionToken) {
       return true;
@@ -192,8 +180,7 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
 
 export function hasVariableChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.declarations[0] as ts.VariableDeclaration;
-  const currentDeclaration = current.symbol
-    .declarations[0] as ts.VariableDeclaration;
+  const currentDeclaration = current.symbol.declarations[0] as ts.VariableDeclaration;
 
   // Changed if anything has changed in its type signature
   // (any type changes can cause issues in the code that depends on them)
@@ -206,16 +193,13 @@ export function hasVariableChanged(prev: SymbolMeta, current: SymbolMeta) {
 
 export function hasClassChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.declarations[0] as ts.ClassDeclaration;
-  const currentDeclaration = current.symbol
-    .declarations[0] as ts.ClassDeclaration;
+  const currentDeclaration = current.symbol.declarations[0] as ts.ClassDeclaration;
 
   // Check previous members
   // (all previous members must be left intact, otherwise any code that depends on them can possibly have type errors)
   for (let i = 0; i < prevDeclaration.members.length; i++) {
     const prevMemberText = prevDeclaration.members[i].getText();
-    const currentMember = currentDeclaration.members.find(
-      (member) => prevMemberText === member.getText()
-    );
+    const currentMember = currentDeclaration.members.find((member) => prevMemberText === member.getText());
 
     // Member is missing in the current declaration, or has changed
     // TODO: This is quite basic at the moment, it could be refined to give less "false negatives".
@@ -229,15 +213,10 @@ export function hasClassChanged(prev: SymbolMeta, current: SymbolMeta) {
   // (only optional new members are allowed)
   for (let i = 0; i < currentDeclaration.members.length; i++) {
     const currentMemberText = currentDeclaration.members[i].getText();
-    const prevMember = prevDeclaration.members.find(
-      (member) => currentMemberText === member.getText()
-    );
+    const prevMember = prevDeclaration.members.find((member) => currentMemberText === member.getText());
 
     // The `questionToken` is not available on certain member types, but we don't let ourselves to be bothered by it being `undefined`
-    if (
-      !prevMember &&
-      !(currentDeclaration.members[i] as ts.PropertyDeclaration).questionToken
-    ) {
+    if (!prevMember && !(currentDeclaration.members[i] as ts.PropertyDeclaration).questionToken) {
       return true;
     }
   }
@@ -247,16 +226,13 @@ export function hasClassChanged(prev: SymbolMeta, current: SymbolMeta) {
 
 export function hasEnumChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.declarations[0] as ts.EnumDeclaration;
-  const currentDeclaration = current.symbol
-    .declarations[0] as ts.EnumDeclaration;
+  const currentDeclaration = current.symbol.declarations[0] as ts.EnumDeclaration;
 
   // Check previous members
   // (all previous members must be left intact, otherwise any code that depends on them can possibly have type errors)
   for (let i = 0; i < prevDeclaration.members.length; i++) {
     const prevMemberText = prevDeclaration.members[i].getText();
-    const currentMember = currentDeclaration.members.find(
-      (member) => prevMemberText === member.getText()
-    );
+    const currentMember = currentDeclaration.members.find((member) => prevMemberText === member.getText());
 
     // Member is missing in the current declaration, or has changed
     if (!currentMember) {
@@ -271,10 +247,8 @@ export function hasEnumChanged(prev: SymbolMeta, current: SymbolMeta) {
 }
 
 export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
-  const prevDeclaration = prev.symbol
-    .declarations[0] as ts.TypeAliasDeclaration;
-  const currentDeclaration = current.symbol
-    .declarations[0] as ts.TypeAliasDeclaration;
+  const prevDeclaration = prev.symbol.declarations[0] as ts.TypeAliasDeclaration;
+  const currentDeclaration = current.symbol.declarations[0] as ts.TypeAliasDeclaration;
 
   // Changed if anything has changed.
   // (This is a bit tricky, as a type declaration can be a `FunctionType`, a `UnionType`, a `TypeLiteral`, etc. A `TypeLiteral` should need to be checked similarly to a Class or an Interface.)
