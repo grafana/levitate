@@ -1,1 +1,0 @@
-export declare const componentTpl = "import React, { FC } from 'react';\n\nexport interface Props {};\n\nexport const <%= name %>: FC<Props> = (props) => {\n  return (\n    <div>Hello world!</div>\n  )\n};\n";
