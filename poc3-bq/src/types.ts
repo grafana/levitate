@@ -31,4 +31,5 @@ export type BigQueryRow = {
   statement?: string;
   is_named?: boolean;
   is_default?: boolean;
+  property_name?: string;
 };

@@ -23,5 +23,6 @@ function mapToBigQueryRow(info: PluginImportInfo): BigQueryRow {
     statement: info.importStatementAsText,
     package_name: info.packageName,
     file_name: info.fileName,
+    property_name: info.propertyName,
   };
 }
