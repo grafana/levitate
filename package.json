@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "bundle": "ncc build ./src/bin.ts -o dist/ -C",
-    "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
+    "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop && chmod +x ./dist/bin.js",
     "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev-compare": "nodemon --exec yarn run dev:compare",
     "dev-imports": "nodemon --exec yarn run dev:imports",
