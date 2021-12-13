@@ -7,6 +7,9 @@
   "bin": {
     "levitate": "dist/bin.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "bundle": "ncc build ./src/bin.ts -o dist/ -C",
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
@@ -22,8 +25,8 @@
     "fixtures:gobble": "DEBUG=*:simple-git node ./dist/bin.js gobble --repositories 'https://github.com/grafana/clock-panel' 'https://github.com/alexanderzobnin/grafana-zabbix' --filters @grafana/ui @grafana/data @grafana/runtime"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
+  "license": "Apache-2.0",
   "workspaces": [
     "./fixtures/imports/**",
     "poc3-bq"
