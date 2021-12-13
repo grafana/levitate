@@ -1,6 +1,6 @@
-# POC 3
+# 🔮 Levitate
 
-An experimental tool for helping to understand APIs used by plugins and detecting breaking changes.
+A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).
 
 ## Install
 
@@ -8,9 +8,22 @@ An experimental tool for helping to understand APIs used by plugins and detectin
 yarn install
 ```
 
+## Develop
+
+```bash
+# Watches for source file changes and builds the app to /dist
+yarn dev
+
+# Builds the app to /dist
+yarn build
+
+# Compiles and bundles the app into a single file
+yarn bundle
+```
+
 ## Usage
 
-**Compare exports of packages**
+**Compare exports of different package versions**
 
 ```bash
 # Build the binary
@@ -18,8 +31,8 @@ yarn build
 
 # Comparing exports of different versions of a package
 node ./dist/bin.js compare \
-    --current-package <PATH-TO-A-PACKAGE>/index.d.ts \
-    --prev-package <PATH-TO-A-PACKAGE>/index.d.ts
+    --prev @grafana/ui@8.2.5 \
+    --current @grafana/ui@canary
 ```
 
 **List imports**
