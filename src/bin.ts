@@ -1,5 +1,6 @@
+#!/usr/bin/env node
+
 import * as yargs from "yargs";
-import * as path from "path";
 import chalk from "chalk";
 import { compareExports, areChangesBreaking } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
