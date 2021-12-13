@@ -1,11 +1,11 @@
 {
-  "name": "@grafana/poc3",
-  "version": "0.0.1",
+  "name": "@grafana/levitate",
+  "version": "0.1.0",
   "private": true,
-  "description": "An experimental tool for helping to understand APIs used by plugins and detecting breaking changes.",
+  "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "src/index.ts",
   "bin": {
-    "poc3": "dist/index.js"
+    "levitate": "dist/bin.js"
   },
   "scripts": {
     "bundle": "ncc build ./src/bin.ts -o dist/ -C",
@@ -67,10 +67,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grafana/poc3.git"
+    "url": "git+https://github.com/grafana/levitate.git"
   },
   "bugs": {
-    "url": "https://github.com/grafana/poc3/issues"
+    "url": "https://github.com/grafana/levitate/issues"
   },
-  "homepage": "https://github.com/grafana/poc3#readme"
+  "homepage": "https://github.com/grafana/levitate#readme"
 }
