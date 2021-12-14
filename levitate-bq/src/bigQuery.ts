@@ -8,7 +8,7 @@ type Options = {
 };
 
 const client = new BigQuery({
-  keyFilename: process.env["BIGQUERY_KEY_FILENAME"],
+  keyFilename: path.join(__dirname, process.env["BIGQUERY_KEY_FILENAME"] ?? ''),
 });
 
 export function writeToBigQueryTable(options: Options) {
@@ -17,28 +17,24 @@ export function writeToBigQueryTable(options: Options) {
 }
 
 export async function applySchemaToBigQuery(options: Options): Promise<void> {
-  try {
-    const schema = createSchema();
-    const dataset = client.dataset(options.dataset);
-    const table = dataset.table(options.table);
-    
-    const [exists] = await table.exists();
+  const schema = createSchema();
+  const dataset = client.dataset(options.dataset);
+  const table = dataset.table(options.table);
 
-    if (exists) {
-      await table.setMetadata({ schema });
-      return;
-    }
+  const [exists] = await table.exists();
 
-    await dataset.createTable(options.table, {
-      schema,
-      timePartitioning: {
-        type: "DAY",
-        field: "created",
-      },
-    });
-  } catch (error: unknown) {
-    console.error('Failed to apply big query schema', error);
+  if (exists) {
+    await table.setMetadata({ schema });
+    return;
   }
+
+  await dataset.createTable(options.table, {
+    schema,
+    timePartitioning: {
+      type: "DAY",
+      field: "created",
+    },
+  });
 }
 
 function createSchema(): bigquery.ITableSchema {
