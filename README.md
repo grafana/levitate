@@ -26,11 +26,8 @@ yarn bundle
 **Compare exports of different package versions**
 
 ```bash
-# Build the binary
-yarn build
-
 # Compare exports of different versions of a package
-node ./dist/bin.js compare \
+npx @grafana/levitate compare \
     --prev @grafana/ui@8.2.5 \
     --current @grafana/ui@canary
 ```
@@ -38,11 +35,8 @@ node ./dist/bin.js compare \
 **List imports**
 
 ```bash
-# Build the binary
-yarn build
-
 # List the imports used by a program
-node ./dist/bin.js list-imports \
+npx @grafana/levitate list-imports \
     --path <PATH-TO-A-PACKAGE>/module.ts \
     --filters "@common/pages" "@grafana/data" \
     --verbose
@@ -51,10 +45,7 @@ node ./dist/bin.js list-imports \
 **List exports**
 
 ```bash
-# Build the binary
-yarn build
-
 # List the exports of a compiled package
-node ./dist/bin.js list-exports \
+npx @grafana/levitate list-exports \
     --path <PATH-TO-A-PACKAGE>/index.d.ts
 ```
