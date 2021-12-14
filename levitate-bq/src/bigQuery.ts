@@ -1,4 +1,6 @@
 import { BigQuery } from "@google-cloud/bigquery";
+import type bigquery from "@google-cloud/bigquery/build/src/types";
+import path from "path";
 
 type Options = {
   dataset: string;
@@ -6,10 +8,97 @@ type Options = {
 };
 
 const client = new BigQuery({
-  keyFilename: __dirname + "./../raintank-dev.json",
+  keyFilename: process.env["BIGQUERY_KEY_FILENAME"],
 });
 
-export function bigQueryTable(options: Options) {
+export function writeToBigQueryTable(options: Options) {
   const { dataset, table } = options;
   return client.dataset(dataset).table(table).createWriteStream("json");
+}
+
+export async function applySchemaToBigQuery(options: Options): Promise<void> {
+  try {
+    const schema = createSchema();
+    const dataset = client.dataset(options.dataset);
+    const table = dataset.table(options.table);
+    
+    const [exists] = await table.exists();
+
+    if (exists) {
+      await table.setMetadata({ schema });
+      return;
+    }
+
+    await dataset.createTable(options.table, {
+      schema,
+      timePartitioning: {
+        type: "DAY",
+        field: "created",
+      },
+    });
+  } catch (error: unknown) {
+    console.error('Failed to apply big query schema', error);
+  }
+}
+
+function createSchema(): bigquery.ITableSchema {
+  return {
+    fields: [
+      {
+        name: "created",
+        type: "TIMESTAMP",
+        mode: "REQUIRED",
+      },
+      {
+        name: "plugin_id",
+        type: "STRING",
+        mode: "REQUIRED",
+      },
+      {
+        name: "plugin_repository",
+        type: "STRING",
+        mode: "REQUIRED",
+      },
+      {
+        name: "plugin_version",
+        type: "STRING",
+        mode: "NULLABLE",
+      },
+      {
+        name: "plugin_type",
+        type: "STRING",
+        mode: "NULLABLE",
+      },
+      {
+        name: "is_default_import",
+        type: "BoOLEAN",
+        mode: "NULLABLE",
+      },
+      {
+        name: "is_named_import",
+        type: "BoOLEAN",
+        mode: "NULLABLE",
+      },
+      {
+        name: "import_statement",
+        type: "STRING",
+        mode: "NULLABLE",
+      },
+      {
+        name: "package_name",
+        type: "STRING",
+        mode: "NULLABLE",
+      },
+      {
+        name: "file_name",
+        type: "STRING",
+        mode: "REQUIRED",
+      },
+      {
+        name: "property_name",
+        type: "STRING",
+        mode: "NULLABLE",
+      },
+    ],
+  };
 }

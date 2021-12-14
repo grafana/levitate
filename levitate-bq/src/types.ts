@@ -17,19 +17,17 @@ export type PluginImportInfo = {
   importStatementAsText?: string;
 };
 
-export type BigQueryPlugin = {
-  id: string;
-  repository: string;
-  type?: string;
-  version?: string;
-};
 
 export type BigQueryRow = {
-  plugin: BigQueryPlugin;
-  package_name: string;
+  created: string;
+  plugin_id: string;
+  plugin_repository: string;
+  plugin_version?: string;
+  plugin_type?: string;
+  is_default_import?: boolean;
+  is_named_import?: boolean;
+  import_statement?: string;
+  package_name?: string;
   file_name: string;
-  statement?: string;
-  is_named?: boolean;
-  is_default?: boolean;
   property_name?: string;
 };
