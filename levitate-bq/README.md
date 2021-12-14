@@ -16,6 +16,9 @@ yarn install
 # Build the binary
 yarn build
 
+# Specify the google bigquery credentials file path via
+export BIGQUERY_KEY_FILENAME="/credentials.json"
+
 # Use levitate to get all imports for packages and send to big query
 npx @grafana/levitate gobble [args] | node ./dist/index.js \
     -dataset gcom_plugins \
