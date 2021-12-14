@@ -26,10 +26,6 @@
   "keywords": [],
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
   "license": "Apache-2.0",
-  "workspaces": [
-    "./fixtures/imports/**",
-    "poc3-bq"
-  ],
   "dependencies": {
     "chalk": "^4.1.2",
     "debug": "^4.3.2",
