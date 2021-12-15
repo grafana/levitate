@@ -12,15 +12,14 @@ export function mapper(): Transform {
 
 function mapToBigQueryRow(info: PluginImportInfo): BigQueryRow {
   return {
-    plugin: {
-      id: info.pluginId,
-      repository: info.repository,
-      version: info.pluginVersion,
-      type: info.pluginType,
-    },
-    is_default: info.isDefaultImport,
-    is_named: info.isNamedImport,
-    statement: info.importStatementAsText,
+    created: new Date().toISOString(),
+    plugin_id: info.pluginId,
+    plugin_repository: info.repository,
+    plugin_version: info.pluginVersion,
+    plugin_type: info.pluginType,
+    is_default_import: info.isDefaultImport,
+    is_named_import: info.isNamedImport,
+    import_statement: info.importStatementAsText,
     package_name: info.packageName,
     file_name: info.fileName,
     property_name: info.propertyName,

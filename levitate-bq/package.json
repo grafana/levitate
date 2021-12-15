@@ -1,11 +1,11 @@
 {
-  "name": "poc3-bq",
+  "name": "levitate-bq",
   "version": "0.0.1",
   "private": true,
-  "description": "An extension to stort import data into big query",
+  "description": "An extension to store levitate metrics into big query",
   "main": "src/index.ts",
   "bin": {
-    "poc3-bq": "./dist/index.js"
+    "levitate-bq": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
