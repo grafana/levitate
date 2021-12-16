@@ -1,4 +1,4 @@
-name:  Plugins metrics to BigQuery
+name: metrics-to-bigquery
 on: [push]
 
   # schedule:
