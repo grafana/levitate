@@ -18,21 +18,16 @@ jobs:
       - name: Find plugins to levitate
         uses: satackey/action-js-inline@v0.0.2
         with:
-          service-account-key: ${{ secrets.BQ_SA_KEY }}
-          project-id: ${{ secrets.BQ_PROJECT }}
-          dataset: plugins_data
-          table: grafana_imports
           required-packages: axios @google-cloud/bigquery
           script: |
             const core = require('@actions/core');
             const axios = require('axios');
             const { BigQuery } = require('@google-cloud/bigquery');
 
-            const credentialsJson = core.getInput("service-account-key");
-            const credentials = JSON.parse(credentialsJson);
-            const projectId = core.getInput("project-id");
-            const table = core.getInput("table");
-            const dataset = core.getInput("dataset");
+            const credentials = JSON.parse("${{ secrets.BQ_SA_KEY }}");
+            const projectId = "${{ secrets.BQ_PROJECT }}";
+            const table = "grafana_imports";
+            const dataset = "plugins_data";
 
             const client = new BigQuery({ credentials, projectId });
             const rows = await client.dataset(dataset).table(table).query(`
