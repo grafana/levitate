@@ -1,0 +1,44 @@
+name:  Plugins metrics to BigQuery
+on: [push]
+
+  # schedule:
+  #   # * is a special character in YAML so you have to quote this string
+  #   - cron:  '0 */2 * * *'
+
+jobs:
+  build:
+    name: setup-build-levitate-store
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Find plugins to levitate
+        uses: satackey/action-js-inline@v0.0.2
+        with:
+          service-account-key: ${{ secrets.BQ_SA_KEY }}
+          project-id: ${{ secrets.BQ_PROJECT }}
+          dataset: plugins_data
+          table: grafana_imports
+          required-packages: axios @google-cloud/bigquery
+          script: |
+            const core = require('@actions/core');
+            const axios = require('axios');
+            const { BigQuery } = require('@google-cloud/bigquery');
+
+            const credentialsJson = core.getInput("service-account-key");
+            const credentials = JSON.parse(credentialsJson);
+            const projectId = core.getInput("project-id");
+            const table = core.getInput("table");
+            const dataset = core.getInput("dataset");
+
+            const client = new BigQuery({ credentials, projectId });
+            const rows = await client.dataset(dataset).table(table).query(`
+              SELECT plugin_id, plugin_version
+              FROM \`${projectId}.${dataset}.${table}\`
+              GROUP BY plugin_id, plugin_version
+            `);
+
+            console.log('rows', rows);
