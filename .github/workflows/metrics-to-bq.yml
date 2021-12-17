@@ -31,7 +31,7 @@ jobs:
         with:
           script: |
             const script = require('./.github/workflows/scripts/plugins-to-levitate.js');
-            await script();
+            return await script();
 
       - name: Levitate plugins
         uses: actions/github-script@v5
