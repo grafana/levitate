@@ -2,7 +2,7 @@ const grafanaPackages = ["@grafana/ui", "@grafana/data", "@grafana/runtime"];
 
 module.exports = async ({ core, exec }) => {
   const fs = require("fs");
-  
+
   const pluginsPath = process.env.PLUGINS_FILE_PATH;
   const table = process.env.BQ_TABLE;
   const dataset = process.env.BQ_DATASET;
@@ -14,14 +14,17 @@ module.exports = async ({ core, exec }) => {
     try {
       core.startGroup(`Plugin: ${plugin.slug} (v${plugin.version})`);
 
-      await exec.exec(`/bin/bash -c 'node node_modules/.bin/levitate gobble \
-        --repositories ${plugin.url} \
-        --filters ${grafanaPackages.join(" ")} \
-        --jsonlines | \
-        node node_modules/.bin/levitate-bq \
-          --dataset ${dataset} \
-          --table ${table}'
-      `);
+      await exec.exec(
+        [
+          "/bin/bash -c 'node node_modules/.bin/levitate gobble",
+          `--repositories ${plugin.url}`,
+          `--filters ${grafanaPackages.join(" ")}`,
+          "--jsonlines |",
+          "node node_modules/.bin/levitate-bq",
+          `--dataset ${dataset}`,
+          `--table ${table}'`,
+        ].join(" ")
+      );
     } catch (error) {
       failed.push(plugin);
       core.error(`FAILED: ${plugin.slug} (${plugin.version}) - ${error}`);
