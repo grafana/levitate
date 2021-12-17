@@ -14,7 +14,7 @@ module.exports = async ({ core, exec }) => {
     try {
       core.startGroup(`Plugin: ${plugin.slug} (v${plugin.version})`);
 
-      await exec.exec(`bin/bash -c 'node node_modules/.bin/levitate gobble \
+      await exec.exec(`/bin/bash -c 'node node_modules/.bin/levitate gobble \
         --repositories ${plugin.url} \
         --filters ${grafanaPackages.join(" ")} \
         --jsonlines | \
