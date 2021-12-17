@@ -32,10 +32,7 @@ jobs:
           script: |
             const script = require('./.github/workflows/scripts/plugins-to-levitate.js');
             return await script();
-
-      - name: Debug directory
-        run: ls
-
+            
       - name: Levitate plugins
         uses: actions/github-script@v5
         env:

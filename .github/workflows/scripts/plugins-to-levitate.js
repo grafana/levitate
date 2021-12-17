@@ -40,7 +40,7 @@ module.exports = async () => {
     return toLevitate;
   }, []);
 
-  const filePath = "./plugins.json";
+  const filePath = "plugins.json";
 
   await writeToFile(fs, filePath, pluginsToLevitate);
   return filePath;

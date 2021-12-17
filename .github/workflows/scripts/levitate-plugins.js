@@ -7,6 +7,7 @@ module.exports = async ({ core, exec }) => {
   const table = process.env.BQ_TABLE;
   const dataset = process.env.BQ_DATASET;
 
+  core.info(`Listing plugins to levitate from ${pluginsPath}`);
   const plugins = await readFile(fs, pluginsPath);
 
   for (const plugin of plugins) {
