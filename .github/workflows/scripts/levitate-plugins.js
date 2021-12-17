@@ -37,8 +37,9 @@ module.exports = async ({ core, exec }) => {
   }
 
   if (failed.length > 0) {
-    core.setFailed(`ERROR: ${failed.length} plugins failed to be levitated`);
+    core.setFailed(`ERROR: ${failed.length} plugins failed.`);
   }
+  core.info(`INFO: ${plugins.length - failed.length} plugins succeeded.`);
 };
 
 function readFile(fs, path) {
