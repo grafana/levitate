@@ -13,15 +13,14 @@ module.exports = async ({ core, exec }) => {
   for (const plugin of plugins) {
     try {
       core.startGroup(`Plugin: ${plugin.slug} (v${plugin.version})`);
-      core.info(`INFO: running levitate commands`);
 
-      await exec.exec(`node node_modules/.bin/levitate gobble \
+      await exec.exec(`bin/bash -c 'node node_modules/.bin/levitate gobble \
         --repositories ${plugin.url} \
         --filters ${grafanaPackages.join(" ")} \
         --jsonlines | \
         node node_modules/.bin/levitate-bq \
           --dataset ${dataset} \
-          --table ${table}
+          --table ${table}'
       `);
     } catch (error) {
       failed.push(plugin);
