@@ -23,12 +23,12 @@ jobs:
       
       - name: Find plugins to levitate
         uses: actions/github-script@v5
+        env:
+          BQ_SA_KEY: '${{ secrets.BQ_SA_KEY }}'
+          BQ_PROJECT: '${{ secrets.BQ_PROJECT }}'
+          BQ_DATASET: 'plugins_data'
+          BQ_TABLE: 'grafana_imports'
         with:
           script: |
             const script = require('./.github/workflows/scripts/metrics-to-bq.js');
-            const options = {
-              credentials: JSON.parse('${{ secrets.BQ_SA_KEY }}'),
-              projectId: '${{ secrets.BQ_PROJECT }}'
-            };
-
-            await script({context, core, options});
+            await script({context, core });
