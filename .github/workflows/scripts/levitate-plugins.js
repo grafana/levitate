@@ -5,7 +5,7 @@ const grafanaPackages = [
 ];
 
 module.exports = async ({ core, exec }) => {
-    const plugins = JSON.parse(process.env.PLUGINS ?? '[]');
+    const plugins = JSON.parse(process.env.PLUGINS);
     const table = process.env.BQ_TABLE;
     const dataset = process.env.BQ_DATASET;
 
