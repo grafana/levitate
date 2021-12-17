@@ -7,33 +7,28 @@ on: [push]
 
 jobs:
   build:
-    name: setup-build-levitate-store
+    name: run-levitate-on-gcom-plugins
     runs-on: ubuntu-latest
     environment: production
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Find plugins to levitate
-        uses: satackey/action-js-inline@v0.0.2
+      
+      - name: Setup environment
+        uses: actions/setup-node@v2
         with:
-          required-packages: axios @google-cloud/bigquery
+          node-version: 16
+      - run: npm install @google-cloud/bigquery axios
+      
+      - name: Find plugins to levitate
+        uses: actions/github-script@v5
+        with:
           script: |
-            const core = require('@actions/core');
-            const axios = require('axios');
-            const { BigQuery } = require('@google-cloud/bigquery');
+            const script = require('./.github/workflows/scripts/metrics-to-bq.js');
+            const options = {
+              credentials: JSON.parse("${{ secrets.BQ_SA_KEY }}"),
+              projectId: "${{ secrets.BQ_PROJECT }}"
+            };
 
-            const credentials = JSON.parse("${{ secrets.BQ_SA_KEY }}");
-            const projectId = "${{ secrets.BQ_PROJECT }}";
-            const table = "grafana_imports";
-            const dataset = "plugins_data";
-
-            const client = new BigQuery({ credentials, projectId });
-            const rows = await client.dataset(dataset).table(table).query(`
-              SELECT plugin_id, plugin_version
-              FROM \`${projectId}.${dataset}.${table}\`
-              GROUP BY plugin_id, plugin_version
-            `);
-
-            console.log('rows', rows);
+            await script({context, core, options});
