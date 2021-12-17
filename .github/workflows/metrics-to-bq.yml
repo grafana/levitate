@@ -27,8 +27,8 @@ jobs:
           script: |
             const script = require('./.github/workflows/scripts/metrics-to-bq.js');
             const options = {
-              credentials: JSON.parse("${{ secrets.BQ_SA_KEY }}"),
-              projectId: "${{ secrets.BQ_PROJECT }}"
+              credentials: JSON.parse('${{ secrets.BQ_SA_KEY }}'),
+              projectId: '${{ secrets.BQ_PROJECT }}'
             };
 
             await script({context, core, options});
