@@ -8,11 +8,12 @@ module.exports = async ({ core, exec }) => {
   const dataset = process.env.BQ_DATASET;
 
   const plugins = await readFile(fs, pluginsPath);
+  const failed = [];
 
   for (const plugin of plugins) {
     try {
       core.startGroup(`Plugin: ${plugin.slug} (v${plugin.version})`);
-      core.info(`running levitate commands`);
+      core.info(`INFO: running levitate commands`);
 
       await exec.exec(`node node_modules/.bin/levitate gobble \
         --repositories ${plugin.url} \
@@ -23,10 +24,15 @@ module.exports = async ({ core, exec }) => {
           --table ${table}
       `);
     } catch (error) {
-      core.error(`levitate commands failed: ${error}`);
+      failed.push(plugin);
+      core.error(`FAILED: ${plugin.slug} (${plugin.version}) - ${error}`);
     } finally {
       core.endGroup();
     }
+  }
+
+  if (failed.length > 0) {
+    core.setFailed(`ERROR: ${failed.length} plugins failed to be levitated`);
   }
 };
 
