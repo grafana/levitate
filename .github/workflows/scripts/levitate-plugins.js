@@ -3,11 +3,12 @@ const grafanaPackages = ["@grafana/ui", "@grafana/data", "@grafana/runtime"];
 module.exports = async ({ core, exec }) => {
   const fs = require("fs");
   
+  await readDir(fs, core);
+
   const pluginsPath = process.env.PLUGINS_FILE_PATH;
   const table = process.env.BQ_TABLE;
   const dataset = process.env.BQ_DATASET;
 
-  core.info(`Listing plugins to levitate from ${pluginsPath}`);
   const plugins = await readFile(fs, pluginsPath);
 
   for (const plugin of plugins) {
@@ -39,4 +40,15 @@ function readFile(fs, path) {
       return resolve(JSON.parse(data));
     });
   });
+}
+
+function readDir(fs, core) {
+  return new Promise((resolve, reject) => {
+    fs.readdir(testFolder, (err, files) => {
+      if (err) return reject(err);
+      files.forEach(file => {
+        core.info(file);
+      });
+    });
+  })
 }
