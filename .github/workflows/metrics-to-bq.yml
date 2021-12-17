@@ -4,6 +4,11 @@ on: [push]
   # schedule:
   #   # * is a special character in YAML so you have to quote this string
   #   - cron:  '0 */2 * * *'
+env:
+  BQ_SA_KEY: '${{ secrets.BQ_SA_KEY }}'
+  BQ_PROJECT: '${{ secrets.BQ_PROJECT }}'
+  BQ_DATASET: 'plugins_data'
+  BQ_TABLE: 'grafana_imports'
 
 jobs:
   build:
@@ -23,17 +28,17 @@ jobs:
       - name: Find plugins to levitate
         id: plugins-to-levitate
         uses: actions/github-script@v5
-        env:
-          BQ_SA_KEY: '${{ secrets.BQ_SA_KEY }}'
-          BQ_PROJECT: '${{ secrets.BQ_PROJECT }}'
-          BQ_DATASET: 'plugins_data'
-          BQ_TABLE: 'grafana_imports'
         with:
           script: |
-            const script = require('./.github/workflows/scripts/metrics-to-bq.js');
-            await script({context, core });
+            const script = require('./.github/workflows/scripts/plugins-to-levitate.js');
+            await script({ core, io });
       
-      # - name: Levitate plugins
-      #   uses: actions/github-script@v5
-      #   with:
-      #     script: |
+      - name: Levitate plugins
+        run: npm install @grafana/levitate @grafana/levitate-bq
+        uses: actions/github-script@v5
+        env:
+          PLUGINS_FILE_PATH: '${{ steps.plugins-to-levitate.outputs.plugins-file-path }}'
+        with:
+          script: |
+            const script = require('./.github/workflows/scripts/levitate-plugins.js');
+            await script({ core, exec });

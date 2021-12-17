@@ -1,6 +1,8 @@
-module.exports = async ({ context, core }) => {
+module.exports = async ({ core, io }) => {
     const { BigQuery } = require('@google-cloud/bigquery');
     const axios = require('axios');
+    const fs = require('fs/promises');
+    const path = require('path');
     
     const credentials = process.env.BQ_SA_KEY;
     const projectId = process.env.BQ_PROJECT;
@@ -39,8 +41,12 @@ module.exports = async ({ context, core }) => {
       return toLevitate;
     }, []);
 
-    const output = JSON.stringify(pluginsToLevitate);
-    core.setOutput('plugins_to_levitate', output);
+    const pluginsFile = 'tmp/plugins.json';
+
+    await io.mkdirP(path.dirname(pluginsFile));
+    await fs.writeFile(pluginsFile, JSON.stringify(pluginsToLevitate));
+    
+    core.setOutput('plugins-file-path', pluginsFile);
 };
 
 function createKey(slug, version) {
