@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-      - run: npm install @google-cloud/bigquery axios
+      - run: npm install @google-cloud/bigquery axios @grafana/levitate @grafana/levitate-bq
       
       - name: Find plugins to levitate
         id: plugins-to-levitate
@@ -34,7 +34,6 @@ jobs:
             await script({ core, io });
       
       - name: Levitate plugins
-        run: npm install @grafana/levitate @grafana/levitate-bq
         uses: actions/github-script@v5
         env:
           PLUGINS_FILE_PATH: '${{ steps.plugins-to-levitate.outputs.plugins-file-path }}'
