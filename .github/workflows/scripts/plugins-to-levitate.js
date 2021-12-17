@@ -1,8 +1,6 @@
-module.exports = async ({ core, io }) => {
+module.exports = async () => {
     const { BigQuery } = require('@google-cloud/bigquery');
     const axios = require('axios');
-    const fs = require('fs/promises');
-    const path = require('path');
     
     const credentials = process.env.BQ_SA_KEY;
     const projectId = process.env.BQ_PROJECT;
@@ -30,7 +28,7 @@ module.exports = async ({ core, io }) => {
       url: 'https://grafana.com/api/plugins'
     });
 
-    const pluginsToLevitate = data.items.reduce((toLevitate, item) => {
+    return data.items.reduce((toLevitate, item) => {
       const { slug, version, url } = item;
       const key = createKey(slug, version);
 
@@ -40,13 +38,6 @@ module.exports = async ({ core, io }) => {
 
       return toLevitate;
     }, []);
-
-    const pluginsFile = 'tmp/plugins.json';
-
-    await io.mkdirP(path.dirname(pluginsFile));
-    await fs.writeFile(pluginsFile, JSON.stringify(pluginsToLevitate));
-    
-    core.setOutput('plugins-file-path', pluginsFile);
 };
 
 function createKey(slug, version) {

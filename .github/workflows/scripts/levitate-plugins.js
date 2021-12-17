@@ -5,14 +5,9 @@ const grafanaPackages = [
 ];
 
 module.exports = async ({ core, exec }) => {
-    const fs = require('fs/promises');
-
-    const pluginsFilePath = process.env.PLUGINS_FILE_PATH;
+    const plugins = JSON.parse(process.env.PLUGINS ?? '[]');
     const table = process.env.BQ_TABLE;
     const dataset = process.env.BQ_DATASET;
-
-    const pluginsJson = await fs.readFile(pluginsFilePath);
-    const plugins = JSON.parse(pluginsJson ?? '{}');
 
     for (const plugin of plugins) {
         try {

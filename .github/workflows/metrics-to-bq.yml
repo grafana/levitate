@@ -31,12 +31,12 @@ jobs:
         with:
           script: |
             const script = require('./.github/workflows/scripts/plugins-to-levitate.js');
-            await script({ core, io });
+            await script();
       
       - name: Levitate plugins
         uses: actions/github-script@v5
         env:
-          PLUGINS_FILE_PATH: '${{ steps.plugins-to-levitate.outputs.plugins-file-path }}'
+          PLUGINS: '${{ steps.plugins-to-levitate.outputs.result }}'
         with:
           script: |
             const script = require('./.github/workflows/scripts/levitate-plugins.js');
