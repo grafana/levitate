@@ -14,15 +14,14 @@ module.exports = async ({ core, exec }) => {
       core.startGroup(`Plugin: ${plugin.slug} (v${plugin.version})`);
       core.info(`running levitate commands`);
 
-      await exec.exec(`
-                ./node_modules/.bin/levitate gobble \
-                    --repositories ${plugin.url} \
-                    --filters ${grafanaPackages.join(" ")} \
-                    --jsonlines \
-                    | ./node_modules/.bin/levitate-bq \
-                        --dataset ${dataset} \
-                        --table ${table}
-            `);
+      await exec.exec(`node node_modules/.bin/levitate gobble \
+        --repositories ${plugin.url} \
+        --filters ${grafanaPackages.join(" ")} \
+        --jsonlines \
+        | node node_modules/.bin/levitate-bq \
+          --dataset ${dataset} \
+          --table ${table}
+      `);
     } catch (error) {
       core.error(`levitate commands failed: ${error}`);
     } finally {
