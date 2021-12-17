@@ -16,13 +16,13 @@ module.exports = async ({ core, exec }) => {
 
       await exec.exec(
         [
-          "/bin/bash -c 'node node_modules/.bin/levitate gobble",
+          '/bin/bash -c "node node_modules/.bin/levitate gobble',
           `--repositories ${plugin.url}`,
           `--filters ${grafanaPackages.join(" ")}`,
           "--jsonlines |",
           "node node_modules/.bin/levitate-bq",
           `--dataset ${dataset}`,
-          `--table ${table}'`,
+          `--table ${table}"`,
         ].join(" ")
       );
     } catch (error) {
