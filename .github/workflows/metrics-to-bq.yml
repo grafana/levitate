@@ -29,10 +29,11 @@ jobs:
         id: plugins-to-levitate
         uses: actions/github-script@v5
         with:
+          result-encoding: string
           script: |
             const script = require('./.github/workflows/scripts/plugins-to-levitate.js');
             return await script();
-            
+
       - name: Levitate plugins
         uses: actions/github-script@v5
         env:
