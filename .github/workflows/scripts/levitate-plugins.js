@@ -44,11 +44,12 @@ function readFile(fs, path) {
 
 function readDir(fs, core) {
   return new Promise((resolve, reject) => {
-    fs.readdir(testFolder, (err, files) => {
+    fs.readdir(".", (err, files) => {
       if (err) return reject(err);
       files.forEach(file => {
         core.info(file);
       });
+      resolve();
     });
   })
 }
