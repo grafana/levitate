@@ -19,7 +19,7 @@ module.exports = async ({ context, core }) => {
     `);
 
     const pluginsToSkip = rows.reduce((toSkip, row) => {
-      toSkip[createKey(row.plugin_id, row.plugin_version)];
+      toSkip[createKey(row.plugin_id, row.plugin_version)] = true;
       return toSkip;
     }, {});
 
@@ -30,8 +30,9 @@ module.exports = async ({ context, core }) => {
 
     const pluginsToLevitate = data.items.reduce((toLevitate, item) => {
       const { slug, version, url } = item;
+      const key = createKey(slug, version);
 
-      if (!toSkip[createKey(slug, version)] && existsOnGithub(url)) {
+      if (!pluginsToSkip[key] && existsOnGithub(url)) {
         toLevitate.push({ slug, version, url });
       }
 

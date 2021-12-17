@@ -9,7 +9,6 @@ jobs:
   build:
     name: run-levitate-on-gcom-plugins
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       - name: Checkout
@@ -22,6 +21,7 @@ jobs:
       - run: npm install @google-cloud/bigquery axios
       
       - name: Find plugins to levitate
+        id: plugins-to-levitate
         uses: actions/github-script@v5
         env:
           BQ_SA_KEY: '${{ secrets.BQ_SA_KEY }}'
@@ -32,3 +32,8 @@ jobs:
           script: |
             const script = require('./.github/workflows/scripts/metrics-to-bq.js');
             await script({context, core });
+      
+      # - name: Levitate plugins
+      #   uses: actions/github-script@v5
+      #   with:
+      #     script: |
