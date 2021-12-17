@@ -7,7 +7,7 @@ import { getImportsInfo } from "./utils.compiler.imports";
 import { PluginImportInfo } from "./types";
 import { pathExists, updateRepository, cloneRepository } from "./utils";
 
-export async function gobble({ repository, filters, cacheDir }) {
+export async function gobble({ repository, filters, cacheDir, jsonlines }) {
   const repoName = repository.split("/")[repository.split("/").length - 1];
   const baseDir = cacheDir ? cacheDir : path.resolve(process.cwd(), homedir(), ".gobble-cache");
   const repoDir = path.join(baseDir, repoName);
@@ -29,7 +29,9 @@ export async function gobble({ repository, filters, cacheDir }) {
   const filtersHaveMatch = Object.keys(dependencies).some((dep) => filters.includes(dep));
 
   if (!filtersHaveMatch) {
-    console.log(`no dependencies match filters... skipping repo: ${repoName} `);
+    if (!jsonlines) {
+      console.warn(`no dependencies match filters... skipping repo: ${repoName} `);
+    }
     return [];
   }
 
