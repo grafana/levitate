@@ -200,7 +200,7 @@ yargs
       // @ts-ignore
       const { repositories, cacheDir, filters, jsonlines } = getGobbleCliArgs(args);
       repositories.forEach(async (repository) => {
-        const gobbleImports = await gobble({ repository, cacheDir, filters });
+        const gobbleImports = await gobble({ repository, cacheDir, filters, jsonlines });
 
         if (jsonlines) {
           for (const gi of gobbleImports) {
