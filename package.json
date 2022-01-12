@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "dist/bin.js",
   "bin": {
@@ -21,7 +21,7 @@
     "dev:gobble": "run-s build fixtures:gobble",
     "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev-package ./fixtures/compare/bundle-old.ts --current-package ./fixtures/compare/bundle-new.ts",
     "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
-    "fixtures:gobble": "DEBUG=*:simple-git node ./dist/bin.js gobble --repositories 'https://github.com/rackerlabs/blueflood-grafana-plugin' --filters @grafana/ui @grafana/data @grafana/runtime"
+    "fixtures:gobble": "DEBUG=*:simple-git node ./dist/bin.js gobble --repositories 'https://github.com/grafana/clock-panel/' --filters @grafana/ui @grafana/data @grafana/runtime"
   },
   "keywords": [],
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
