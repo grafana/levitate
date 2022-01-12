@@ -7,8 +7,16 @@ import { getImportsInfo } from "./utils.compiler.imports";
 import { PluginImportInfo } from "./types";
 import { pathExists, updateRepository, cloneRepository } from "./utils";
 
-export async function gobble({ repository, filters, cacheDir, jsonlines }) {
-  const repoName = repository.split("/")[repository.split("/").length - 1];
+type Gobble = {
+  repository: string;
+  filters: string[];
+  cacheDir: string;
+  jsonlines: any;
+};
+
+export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobble) {
+  const santitisedRepoUrl = repository.replace(/\/$/, "");
+  const repoName = santitisedRepoUrl.split("/")[santitisedRepoUrl.split("/").length - 1];
   const baseDir = cacheDir ? cacheDir : path.resolve(process.cwd(), homedir(), ".gobble-cache");
   const repoDir = path.join(baseDir, repoName);
 
@@ -21,7 +29,7 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }) {
   if (isCloned) {
     await updateRepository(git, repoDir);
   } else {
-    await cloneRepository(git, repository, repoName);
+    await cloneRepository(git, santitisedRepoUrl, repoName);
   }
 
   const packageJson = require(path.join(repoDir, "package.json"));
@@ -52,7 +60,7 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }) {
       pluginVersion: packageJson.version,
       pluginType: pluginInfo.type,
       pluginName: pluginInfo.name,
-      repository,
+      repository: santitisedRepoUrl,
     }));
     results.push(...pluginImportInfo);
   }
