@@ -36,6 +36,10 @@ jobs:
         if: steps.version_check.outputs.changed == 'true'
         run: yarn
 
+      - name: Build package
+        if: steps.version_check.outputs.changed == 'true'
+        run: yarn build
+
       - name: Publish package to NPM
         if: steps.version_check.outputs.changed == 'true'
         run: npm publish --access public
