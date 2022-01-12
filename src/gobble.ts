@@ -32,7 +32,17 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobbl
     await cloneRepository(git, santitisedRepoUrl, repoName);
   }
 
-  const packageJson = require(path.join(repoDir, "package.json"));
+  const packageJsonPath = path.join(repoDir, "package.json");
+  const hasPackageJson = await pathExists(packageJsonPath);
+
+  if (!hasPackageJson) {
+    if (!jsonlines) {
+      console.warn(`no package.json file found... skipping repo: ${repoName} `);
+    }
+    return [];
+  }
+
+  const packageJson = require(packageJsonPath);
   const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
   const filtersHaveMatch = Object.keys(dependencies).some((dep) => filters.includes(dep));
 
