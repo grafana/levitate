@@ -1,3 +1,3 @@
 import getDebug from "debug";
 
-export const debug = getDebug("poc3");
+export const debug = getDebug("levitate");
