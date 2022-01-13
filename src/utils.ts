@@ -9,18 +9,22 @@ export function pathExists(path: string): Promise<boolean> {
   });
 }
 
-export async function updateRepository(git: SimpleGit, repoDir: string) {
+export async function updateRepository(git: SimpleGit, repoDir: string, jsonlines: boolean) {
   try {
     await git.cwd({ path: repoDir, root: true });
     return await git.pull();
   } catch (error) {
-    console.log(error);
+    if (!jsonlines) {
+      console.log(error);
+    }
   }
 }
-export async function cloneRepository(git: SimpleGit, repository: string, repoName: string) {
+export async function cloneRepository(git: SimpleGit, repository: string, repoName: string, jsonlines: boolean) {
   try {
     return await git.clone(repository, repoName);
   } catch (error) {
-    console.log(error);
+    if (!jsonlines) {
+      console.log(error);
+    }
   }
 }

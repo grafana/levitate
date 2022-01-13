@@ -27,9 +27,9 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobbl
   const git: SimpleGit = simpleGit({ baseDir });
 
   if (isCloned) {
-    await updateRepository(git, repoDir);
+    await updateRepository(git, repoDir, jsonlines);
   } else {
-    await cloneRepository(git, santitisedRepoUrl, repoName);
+    await cloneRepository(git, santitisedRepoUrl, repoName, jsonlines);
   }
 
   const packageJsonPath = path.join(repoDir, "package.json");
