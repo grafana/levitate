@@ -19,7 +19,7 @@
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
     "dev:gobble": "run-s build fixtures:gobble",
-    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev-package ./fixtures/compare/bundle-old.ts --current-package ./fixtures/compare/bundle-new.ts",
+    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev ./fixtures/compare/bundle-old.ts --current ./fixtures/compare/bundle-new.ts",
     "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
     "fixtures:gobble": "DEBUG=*:simple-git node ./dist/bin.js gobble --repositories 'https://github.com/grafana/clock-panel/' --filters @grafana/ui @grafana/data @grafana/runtime"
   },
