@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "tdd": "LEVITATE_SILENT=true yarn test -- --watch",
+    "tdd": "LEVITATE_SILENT=true yarn test -- -o --watch",
     "test": "yarn jest",
     "bundle": "ncc build ./src/bin.ts -o dist/ -C",
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop && chmod +x ./dist/bin.js",

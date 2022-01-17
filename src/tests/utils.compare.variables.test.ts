@@ -1,11 +1,7 @@
 import { testCompare, removeTmpDir } from "./test-utils";
 
 describe("Compare variables", () => {
-  afterAll(() => {
-    removeTmpDir();
-  });
-
-  test("changing a variable's value should trigger a change", () => {
+  test("changing a variable's value should trigger a change å", () => {
     const prev = `export const foo = "bar";`;
     const current = `export const foo = "zed";`;
     const comparison = testCompare(prev, current);

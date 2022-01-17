@@ -19,7 +19,12 @@ export function testCompare(prevContent: string, currentContent: string): Compar
   fs.writeFileSync(prevFilename, prevContent);
   fs.writeFileSync(currentFilename, currentContent);
 
-  return compareExports(prevFilename, currentFilename);
+  const comparison = compareExports(prevFilename, currentFilename);
+
+  fs.unlinkSync(prevFilename);
+  fs.unlinkSync(currentFilename);
+
+  return comparison;
 }
 
 export function generateTmpFilename() {
