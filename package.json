@@ -10,6 +10,8 @@
     "dist"
   ],
   "scripts": {
+    "tdd": "yarn test -- --watch",
+    "test": "yarn jest",
     "bundle": "ncc build ./src/bin.ts -o dist/ -C",
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop && chmod +x ./dist/bin.js",
     "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
@@ -41,12 +43,15 @@
     "yargs": "^17.2.1"
   },
   "devDependencies": {
+    "@types/jest": "^27.4.0",
     "@types/node": "^16.11.10",
     "@types/yargs": "^17.0.7",
     "@vercel/ncc": "^0.33.0",
+    "jest": "^27.4.7",
     "nodemon": "^2.0.15",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.0",
+    "ts-jest": "^27.1.3",
     "tsc-watch": "^4.5.0"
   },
   "nodemonConfig": {
