@@ -1,4 +1,4 @@
-import { testCompare, removeTmpDir } from "./test-utils";
+import { testCompare } from "./test-utils";
 
 describe("Compare functions", () => {
   test("changing a function's return value type should trigger a change", () => {

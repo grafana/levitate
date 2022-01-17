@@ -1,4 +1,4 @@
-import { testCompare, removeTmpDir } from "./test-utils";
+import { testCompare } from "./test-utils";
 
 describe("Compare variables", () => {
   test("changing a variable's value should trigger a change å", () => {
