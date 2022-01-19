@@ -1,7 +1,55 @@
 import { testCompare } from "./test-utils";
 
 describe("Compare functions", () => {
-  test("changing a function's return value type should trigger a change", () => {
+  test("NO CHANGES - not changing anything should not trigger anything", () => {
+    const prev = `
+      export function foo(a: string, b: string): string {};
+      export function foo2({ a, b }: { a: string, b: string }): string {};
+    `;
+    const current = `
+      export function foo(a: string, b: string): string {};
+      export function foo2({ a, b }: { a: string, b: string }): string {};
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(0);
+  });
+
+  test("REMOVE FUNCTION - removing a previously exported function should trigger a removal", () => {
+    const prev = `
+      export function foo(a: string, b: string): string {};
+      export function foo2(a: string): boolean {};
+    `;
+    const current = `
+      export function foo(a: string, b: string): string {};
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(1);
+  });
+
+  test("NEW FUNCTION - adding a new exported function should trigger an addition", () => {
+    const prev = `
+      export function foo(a: string, b: string): string {};
+      export function foo2(a: string): boolean {};
+    `;
+    const current = `
+      export function foo(a: string, b: string): string {};
+      export function foo2(a: string): boolean {};
+      export function foo3(): string {};
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(1);
+    expect(Object.keys(comparison.removals).length).toBe(0);
+  });
+
+  test("CHANGE RETURN VALUE - changing a function's return value type should trigger a breaking change", () => {
     const prev = `
       export function foo(): string {};
     `;
@@ -14,7 +62,7 @@ describe("Compare functions", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("changing a function's parameter should trigger a change", () => {
+  test("CHANGE ARGUMENT - changing a function's argument should trigger a breaking change", () => {
     const prev = `
       export function foo(a: string, b: string): string {};
       export function foo2(a: number, b: number): boolean {};
@@ -34,7 +82,7 @@ describe("Compare functions", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("removing a function parameter should trigger a change", () => {
+  test("REMOVE ARGUMENT - removing any argument of a function should trigger a breaking change", () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
@@ -48,39 +96,7 @@ describe("Compare functions", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("removing a function should trigger a removal", () => {
-    const prev = `
-      export function foo(a: string, b: string): string {};
-      export function foo2(a: string): boolean {};
-    `;
-    const current = `
-      export function foo(a: string, b: string): string {};
-    `;
-    const comparison = testCompare(prev, current);
-
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(1);
-  });
-
-  test("adding a new function should trigger an addition", () => {
-    const prev = `
-      export function foo(a: string, b: string): string {};
-      export function foo2(a: string): boolean {};
-    `;
-    const current = `
-      export function foo(a: string, b: string): string {};
-      export function foo2(a: string): boolean {};
-      export function foo3(): string {};
-    `;
-    const comparison = testCompare(prev, current);
-
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
-  });
-
-  test("adding a new required positional parameter should trigger a change", () => {
+  test("NEW ARGUMENT - adding a new positional argument to a function should trigger a breaking change", () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
@@ -94,28 +110,12 @@ describe("Compare functions", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("adding a new optional positional parameter should not trigger a change", () => {
+  test("NEW OPTIONAL ARGUMENT - adding a new optional positional argument to a function should not trigger a breaking change", () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
     const current = `
       export function foo(a: string, b: string, c?: number): string {};
-    `;
-    const comparison = testCompare(prev, current);
-
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
-  });
-
-  test("not changing anything should not trigger anything", () => {
-    const prev = `
-      export function foo(a: string, b: string): string {};
-      export function foo2({ a, b }: { a: string, b: string }): string {};
-    `;
-    const current = `
-      export function foo(a: string, b: string): string {};
-      export function foo2({ a, b }: { a: string, b: string }): string {};
     `;
     const comparison = testCompare(prev, current);
 
