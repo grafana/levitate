@@ -295,7 +295,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("NEW METHOD - adding a new class method should not trigger a change", () => {
+  test("NEW METHOD - adding a new class method should not trigger a breaking change", () => {
     const prev = `
       export declare class Foo {
         private one;
@@ -344,6 +344,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
+  // This is similar to adding a new method
   test("MAKING A METHOD NOT OPTIONAL - making a previously optional class method to be not optional should not trigger a breaking change", () => {
     const prev = `
       export declare class Foo<T = any> {
