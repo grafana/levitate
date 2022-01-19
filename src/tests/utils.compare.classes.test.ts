@@ -79,7 +79,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("NEW VARIABLE - adding a new optional class variable should not trigger a breaking change", () => {
+  test("NEW VARIABLE - adding a new class variable should not trigger a breaking change", () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -141,7 +141,8 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("MAKING A VARIABLE NOT OPTIONAL - making a previously optional class variable to be not optional should trigger a breaking change", () => {
+  // It is the same as adding a new variable
+  test("MAKING A VARIABLE NOT OPTIONAL - making a previously optional class variable to be not optional should not trigger a breaking change", () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -205,6 +206,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
+  // Like this subclasses would not be able to access a previously accessible member.
   test("CHANGING A PROTECTED MEMBER TO BE PRIVATE - making a previously protected class member to be private should trigger a breaking change", () => {
     const prev = `
       export declare class Foo {
