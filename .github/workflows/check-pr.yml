@@ -1,0 +1,22 @@
+name: Check PR
+
+on: pull_request
+
+jobs:
+  check:
+    name: Automated checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run tests
+        run: yarn test

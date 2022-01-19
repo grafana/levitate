@@ -1,20 +1,37 @@
 import ora from "ora";
+import { isSilent } from "./utils";
 
 const SPINNERS: Record<string, ora.Ora> = {};
 
 export function startSpinner(name: string) {
+  if (isSilent()) {
+    return;
+  }
+
   getSpinner(name).start();
 }
 
 export function setSpinner(name: string, msg: string) {
+  if (isSilent()) {
+    return;
+  }
+
   getSpinner(name).text = msg;
 }
 
 export function succeedSpinner(name: string, msg: string) {
+  if (isSilent()) {
+    return;
+  }
+
   getSpinner(name).succeed(msg);
 }
 
 export function failSpinner(name: string, msg: string) {
+  if (isSilent()) {
+    return;
+  }
+
   getSpinner(name).fail(msg);
 }
 

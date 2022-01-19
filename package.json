@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "dist/bin.js",
   "bin": {
@@ -10,6 +10,8 @@
     "dist"
   ],
   "scripts": {
+    "tdd": "LEVITATE_SILENT=true yarn test -- -o --watch",
+    "test": "LEVITATE_SILENT=true yarn jest",
     "bundle": "ncc build ./src/bin.ts -o dist/ -C",
     "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop && chmod +x ./dist/bin.js",
     "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
@@ -19,7 +21,7 @@
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
     "dev:gobble": "run-s build fixtures:gobble",
-    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev-package ./fixtures/compare/bundle-old.ts --current-package ./fixtures/compare/bundle-new.ts",
+    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/data@canary --current /Users/levente.balogh/grafana/grafana/packages/grafana-data/dist",
     "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
     "fixtures:gobble": "DEBUG=*:simple-git node ./dist/bin.js gobble --repositories 'https://github.com/grafana/clock-panel/' --filters @grafana/ui @grafana/data @grafana/runtime"
   },
@@ -41,12 +43,16 @@
     "yargs": "^17.2.1"
   },
   "devDependencies": {
+    "@types/jest": "^27.4.0",
     "@types/node": "^16.11.10",
     "@types/yargs": "^17.0.7",
     "@vercel/ncc": "^0.33.0",
+    "jest": "^27.4.7",
     "nodemon": "^2.0.15",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.1.3",
     "tsc-watch": "^4.5.0"
   },
   "nodemonConfig": {

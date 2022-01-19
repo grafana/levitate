@@ -13,7 +13,7 @@ import { gobble } from "./gobble";
 import { exit } from "process";
 
 yargs
-  .scriptName("poc3")
+  .scriptName("levitate")
   .usage("$0 <cmd> [args]")
 
   // Compare exports
