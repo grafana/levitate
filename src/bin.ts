@@ -49,18 +49,6 @@ yargs
         const comparison = compareExports(prevPathResolved, currentPathResolved);
         const isBreaking = areChangesBreaking(comparison);
 
-        // console.log(JSON.stringify(comparison, null, 4));
-        console.log("");
-        console.log("------------------------------------------------------------------");
-        const format = (o) =>
-          Object.keys(o)
-            .map((i) => `"${i}"`)
-            .join(", ");
-        console.log(`CHANGES: ${format(comparison.changes)}`);
-        console.log(`ADDITIONS: ${format(comparison.additions)}`);
-        console.log(`REMOVALS: ${format(comparison.removals)}`);
-        console.log("------------------------------------------------------------------");
-
         printComparison(comparison);
 
         if (isBreaking) {
