@@ -160,7 +160,7 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
     const currentMember = current.symbol.members.get(memberName);
 
     // Member is missing in the current declaration
-    // (anything implementing this interface will still work if remove a "required" member)
+    // (anything implementing this interface will still work if a "required" member is removed)
     if (!currentMember) {
       return false;
     }
