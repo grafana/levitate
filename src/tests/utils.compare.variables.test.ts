@@ -1,40 +1,37 @@
 import { testCompare } from "./test-utils";
 
 describe("Compare variables", () => {
-  test("changing a variable's value should trigger a change å", () => {
-    const prev = `export const foo = "bar";`;
-    const current = `export const foo = "zed";`;
-    const comparison = testCompare(prev, current);
-
-    // Only "changes" should be found
-    expect(Object.keys(comparison.changes)).toEqual(["foo"]);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
-  });
-
-  test("changing a variable's type should trigger a change", () => {
-    const prev = `export const foo: string;`;
-    const current = `export const foo: number;`;
-    const comparison = testCompare(prev, current);
-
-    // Only "changes" should be found
-    expect(Object.keys(comparison.changes)).toEqual(["foo"]);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
-  });
-
-  test("no changes should not indicate a change at all", () => {
+  test("NO CHANGES - no changes should not trigger anything", () => {
     const prev = `export const foo: string;`;
     const current = `export const foo: string;`;
     const comparison = testCompare(prev, current);
 
-    // Should not find anything
     expect(Object.keys(comparison.changes).length).toBe(0);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("renaming a variable should trigger a removal", () => {
+  test("CHANGE VARIABLE VALUE - changing the value of a variable should trigger a breaking change", () => {
+    const prev = `export const foo = "bar";`;
+    const current = `export const foo = "zed";`;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(["foo"]);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(0);
+  });
+
+  test("CHANGE VARIABLE TYPE - changing the type of a variable should trigger a breaking change", () => {
+    const prev = `export const foo: string;`;
+    const current = `export const foo: number;`;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(["foo"]);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(0);
+  });
+
+  test("RENAMING VARIABLE - renaming a variable should trigger a removal", () => {
     const prev = `
         export const foo: string;
       `;
@@ -46,7 +43,7 @@ describe("Compare variables", () => {
     expect(Object.keys(comparison.removals).length).toBe(1);
   });
 
-  test("adding a new variable should trigger an addition", () => {
+  test("NEW VARIABLE - adding a new variable should trigger an addition", () => {
     const prev = `
         export const foo: string;
       `;
