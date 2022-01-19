@@ -45,7 +45,7 @@ describe("Compare enums", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("renaming a value inside an e", () => {
+  test("renaming a value inside an enum should trigger a breaking change", () => {
     const prev = `
       export declare enum SampleEnum {
         Append = 'append',
