@@ -43,15 +43,15 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobbl
   }
 
   const packageJson = require(packageJsonPath);
-  const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
-  const filtersHaveMatch = Object.keys(dependencies).some((dep) => filters.includes(dep));
+  // const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+  // const filtersHaveMatch = Object.keys(dependencies).some((dep) => filters.includes(dep));
 
-  if (!filtersHaveMatch) {
-    if (!jsonlines) {
-      console.warn(`no dependencies match filters... skipping repo: ${repoName} `);
-    }
-    return [];
-  }
+  // if (!filtersHaveMatch) {
+  //   if (!jsonlines) {
+  //     console.warn(`no dependencies match filters... skipping repo: ${repoName} `);
+  //   }
+  //   return [];
+  // }
 
   const modules = await fg([`${repoDir}**/src/**/module.{js,ts}`], { absolute: true });
   const results: PluginImportInfo[] = [];
@@ -64,15 +64,15 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobbl
     }
     const pluginInfo = require(pluginJsonPath);
     const { imports } = getImportsInfo(modulePath, filters);
-    const pluginImportInfo = imports.map<PluginImportInfo>((pluginImport) => ({
-      ...pluginImport,
+    const pluginImportInfo = {
       pluginId: pluginInfo.id,
       pluginVersion: packageJson.version,
       pluginType: pluginInfo.type,
       pluginName: pluginInfo.name,
       repository: santitisedRepoUrl,
-    }));
-    results.push(...pluginImportInfo);
+      imports,
+    };
+    results.push(pluginImportInfo);
   }
   return results;
 }
