@@ -14,11 +14,11 @@ export function getListImportsCliArgs({ path, verbose, json, filters }): ListCLI
   return { path, isVerbose: verbose, isJson: json, filters };
 }
 
-export function getGobbleCliArgs({ repositories, cacheDir, filters, jsonlines }): GobbleCLIArgs {
+export function getGobbleCliArgs({ repositories, cacheDir, filters, jsonfile }): GobbleCLIArgs {
   // Missing properties
   if (!repositories) {
     throw new CliError("Please check how to use this command.");
   }
 
-  return { repositories, cacheDir, filters, jsonlines: Boolean(jsonlines) };
+  return { repositories, cacheDir, filters, jsonfile };
 }

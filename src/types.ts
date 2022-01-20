@@ -49,7 +49,7 @@ export type PluginImportInfo = {
   pluginType: string;
   repository: string;
   pluginName: string;
-  imports: ImportInfo[]
+  imports: ImportInfo[];
 };
 
 export type ImportsInfo = {
@@ -82,5 +82,5 @@ export type GobbleCLIArgs = {
   repositories: string[];
   filters: string[];
   cacheDir: string;
-  jsonlines: boolean;
+  jsonfile: string;
 };

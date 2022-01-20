@@ -2,6 +2,8 @@
 
 import * as yargs from "yargs";
 import chalk from "chalk";
+import fs from "fs";
+import path from "path";
 import { compareExports, areChangesBreaking } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import { printImports as printListOfImports, printExports } from "./utils.print";
@@ -190,28 +192,34 @@ yargs
         default: null,
         describe: "A directory to cache cloned repos",
       });
-      yargs.option("jsonlines", {
-        type: "boolean",
+      yargs.option("jsonfile", {
+        type: "string",
         default: false,
-        describe: "Specify this flag to output JSON Lines",
+        describe: "Specify a path for a JSON file",
       });
     },
     async function (args) {
       // @ts-ignore
-      const { repositories, cacheDir, filters, jsonlines } = getGobbleCliArgs(args);
-      repositories.forEach(async (repository) => {
+      const { repositories, cacheDir, filters, jsonlines, jsonfile } = getGobbleCliArgs(args);
+      const fileOutput = {};
+
+      for (const repository of repositories) {
         const gobbleImports = await gobble({ repository, cacheDir, filters, jsonlines });
 
-        if (jsonlines) {
-          for (const gi of gobbleImports) {
-            console.log(JSON.stringify(gi));
-          }
+        // Write to a JSON file
+        if (jsonfile) {
+          fileOutput[gobbleImports[0].repository] = gobbleImports;
         }
 
-        if (!jsonlines) {
+        // Logging to STDOUT
+        else {
           console.log(gobbleImports);
         }
-      });
+      }
+
+      if (jsonfile) {
+        fs.writeFileSync(path.normalize(jsonfile), JSON.stringify(fileOutput, null, 4));
+      }
     }
   )
   .help().argv;
