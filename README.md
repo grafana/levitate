@@ -1,5 +1,7 @@
 # 🔮 Levitate
 
+![npm version](https://www.npmjs.com/package/@grafana/levitate)
+
 A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).
 
 ## Install
