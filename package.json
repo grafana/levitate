@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "dist/bin.js",
   "bin": {
@@ -21,7 +21,7 @@
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
     "dev:gobble": "run-s build fixtures:gobble",
-    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/data@canary --current /Users/levente.balogh/grafana/grafana/packages/grafana-data/dist",
+    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/ui@canary --current ./fixtures/compare/bundle-new.ts",
     "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
     "fixtures:gobble": "DEBUG=*:simple-git node ./dist/bin.js gobble --repositories 'https://github.com/grafana/clock-panel/' --filters @grafana/ui @grafana/data @grafana/runtime"
   },
