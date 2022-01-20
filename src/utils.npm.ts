@@ -11,20 +11,36 @@ export const TYPE_DEFINITION_FILE_NAME = "index.d.ts";
 export const TMP_FOLDER = ".tmp";
 export const SPINNERS = [];
 
-// Resolves a package name / URL to a package / path to a local package (usually coming from the command line),
-// downloads the package if needed and returns an absolute path pointing to the `index.d.ts` file in the package folder.
-// Throws an error if either the package was not found or the `index.d.ts` file is not present.
+// The `packageName` is a string that can be any of the following:
+// - an NPM package identifier, e.g. "@grafana/ui@canary"
+// - a path to a local TypeScript file, e.g. "./app/main.ts"
+// - a path to a local package folder e.g. "./packages/my-buttons/dist"
+// - a valid URL that points to an NPM package
+//
+// The function takes care of downloading the package if needed and then returns a path to the locally persisted package folder,
+// or just returns the local path if no fetching was needed.
 export async function resolvePackage(packageName: string) {
   const localPath = path.resolve(process.cwd(), packageName);
 
   // Local path
   if (fs.existsSync(localPath)) {
-    if (fs.existsSync(getTypeDefinitionFilePath(localPath))) {
+    const stat = fs.lstatSync(localPath);
+
+    // It is pointing to a package directory with a `index.d.ts` file in it
+    if (stat.isDirectory() && fs.existsSync(getTypeDefinitionFilePath(localPath))) {
       return getTypeDefinitionFilePath(localPath);
-    } else {
+    }
+
+    // No `index.d.ts` file found in the package directory
+    else if (stat.isDirectory()) {
       const errorMsg = `Could not find type definition file at "${getTypeDefinitionFilePath(localPath)}"`;
       failSpinner(packageName, errorMsg);
       throw new Error(errorMsg);
+    }
+
+    // It is pointing to a single file
+    else {
+      return localPath;
     }
   }
 

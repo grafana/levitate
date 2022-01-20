@@ -31,7 +31,7 @@ yargs
         default: null,
         demandOption: true,
         describe:
-          "Previous package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory (Make sure it contains an `index.d.ts` type definition file.)",
+          "Previous package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory or a single file. (In case it is a directory make sure it contains an `index.d.ts` type definition file.)",
       });
 
       yargs.option("current", {
@@ -39,7 +39,7 @@ yargs
         default: null,
         demandOption: true,
         describe:
-          "Current package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory (Make sure it contains an `index.d.ts` type definition file.)",
+          "Current package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory or a single file. (In case it is a directory make sure it contains an `index.d.ts` type definition file.)",
       });
     },
     async function ({ prev, current }: { prev: string; current: string }) {
