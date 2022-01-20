@@ -1,8 +1,10 @@
 # 🔮 Levitate
 
+![npm version](https://img.shields.io/npm/v/@grafana/levitate)
+
 A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).
 
-## Install
+    ## Install
 
 ```bash
 yarn install
