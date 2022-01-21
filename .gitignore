@@ -3,3 +3,4 @@ yarn-error.log
 dist
 .vscode
 .tmp
+tmp
