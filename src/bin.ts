@@ -201,14 +201,14 @@ yargs
     async function (args) {
       // @ts-ignore
       const { repositories, cacheDir, filters, jsonlines, jsonfile } = getGobbleCliArgs(args);
-      const fileOutput = {};
+      const results = [];
 
       for (const repository of repositories) {
         const gobbleImports = await gobble({ repository, cacheDir, filters, jsonlines });
 
-        // Write to a JSON file
+        // Write JSON to a file
         if (jsonfile) {
-          fileOutput[gobbleImports[0].repository] = gobbleImports;
+          results.push(gobbleImports);
         }
 
         // Logging to STDOUT
@@ -218,7 +218,7 @@ yargs
       }
 
       if (jsonfile) {
-        fs.writeFileSync(path.normalize(jsonfile), JSON.stringify(fileOutput, null, 4));
+        fs.writeFileSync(path.normalize(jsonfile), JSON.stringify(results, null, 4));
       }
     }
   )
