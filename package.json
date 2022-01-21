@@ -2,7 +2,8 @@
   "name": "@grafana/levitate",
   "version": "0.2.1",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
-  "main": "dist/bin.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "levitate": "dist/bin.js"
   },
@@ -13,7 +14,7 @@
     "tdd": "LEVITATE_SILENT=true yarn test -- -o --watch",
     "test": "LEVITATE_SILENT=true yarn jest",
     "bundle": "ncc build ./src/bin.ts -o dist/ -C",
-    "build": "tsc ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop && chmod +x ./dist/bin.js",
+    "build": "tsc ./src/bin.ts ./src/index.ts --m commonjs --declaration --outDir ./dist --esModuleInterop && chmod +x ./dist/bin.js",
     "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev-compare": "nodemon --exec yarn run dev:compare",
     "dev-imports": "nodemon --exec yarn run dev:imports",
