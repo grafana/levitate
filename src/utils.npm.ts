@@ -1,11 +1,10 @@
-import * as path from "path";
 import * as fs from "fs";
-import execa from "execa";
-import { CliError } from "./utils.cli";
-import { startSpinner, setSpinner, failSpinner, succeedSpinner } from "./utils.spinner";
-import ora from "ora";
+import * as path from "path";
 import tar from "tar";
 import fetch from "node-fetch";
+import execa from "execa";
+import { pathExists } from "./utils.file";
+import { startSpinner, setSpinner, failSpinner, succeedSpinner } from "./utils.spinner";
 
 export const TYPE_DEFINITION_FILE_NAME = "index.d.ts";
 export const TMP_FOLDER = ".tmp";
@@ -23,11 +22,11 @@ export async function resolvePackage(packageName: string) {
   const localPath = path.resolve(process.cwd(), packageName);
 
   // Local path
-  if (fs.existsSync(localPath)) {
+  if (pathExists(localPath)) {
     const stat = fs.lstatSync(localPath);
 
     // It is pointing to a package directory with a `index.d.ts` file in it
-    if (stat.isDirectory() && fs.existsSync(getTypeDefinitionFilePath(localPath))) {
+    if (stat.isDirectory() && pathExists(getTypeDefinitionFilePath(localPath))) {
       return getTypeDefinitionFilePath(localPath);
     }
 
@@ -51,7 +50,7 @@ export async function resolvePackage(packageName: string) {
   const installedPackagePath = await downloadNpmPackageAsTarball(packageName);
   const typeDefinitionFilePath = getTypeDefinitionFilePath(installedPackagePath);
 
-  if (!fs.existsSync(typeDefinitionFilePath)) {
+  if (!pathExists(typeDefinitionFilePath)) {
     const errorMsg = `Could not find type definition file at "${getTypeDefinitionFilePath(localPath)}"`;
     failSpinner(packageName, errorMsg);
     throw new Error(errorMsg);
@@ -147,4 +146,30 @@ export async function downloadFile(url: string, path: string) {
     res.body.on("error", reject);
     fileStream.on("finish", resolve);
   });
+}
+
+export function getPackageJsonPath(packagePath: string): string {
+  return path.join(packagePath, "package.json");
+}
+
+export function hasPackageJson(packagePath: string): boolean {
+  return pathExists(getPackageJsonPath(packagePath));
+}
+
+export function getPackageJson(packagePath: string): any {
+  if (!hasPackageJson(packagePath)) {
+    return null;
+  }
+
+  return require(getPackageJsonPath(packagePath));
+}
+
+export function getNpmDependencies(packagePath: string): Record<string, string> {
+  const packageJson = getPackageJson(packagePath);
+
+  if (!packageJson) {
+    return {};
+  }
+
+  return { ...packageJson.dependencies, ...packageJson.devDependencies };
 }
