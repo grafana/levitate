@@ -21,7 +21,7 @@
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
     "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/ui@canary --current ./fixtures/compare/bundle-new.ts",
-    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
+    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data"
   },
   "keywords": [],
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
