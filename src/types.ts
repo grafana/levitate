@@ -43,14 +43,6 @@ export type ImportInfo = {
   occurances?: ImportInfo[];
 };
 
-export type PluginImportInfo = ImportInfo & {
-  pluginId: string;
-  pluginVersion: string;
-  pluginType: string;
-  repository: string;
-  pluginName: string;
-};
-
 export type ImportsInfo = {
   imports: ImportInfo[];
   program: ts.Program;
@@ -75,11 +67,4 @@ export type ListCLIArgs = {
   isVerbose: boolean;
   isJson: boolean;
   filters: string[];
-};
-
-export type GobbleCLIArgs = {
-  repositories: string[];
-  filters: string[];
-  cacheDir: string;
-  jsonlines: boolean;
 };

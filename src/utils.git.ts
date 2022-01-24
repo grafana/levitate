@@ -32,7 +32,7 @@ export function getRepoNameFromUrl(url: string): string {
 }
 
 export function getBaseCacheDir(cacheDir?: string) {
-  return cacheDir ? cacheDir : path.resolve(process.cwd(), homedir(), ".gobble-cache");
+  return cacheDir ? cacheDir : path.resolve(process.cwd(), homedir(), ".levitate-cache");
 }
 
 export function getRepoCacheDir(repoName: string, cacheDir?: string) {

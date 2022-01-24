@@ -6,10 +6,9 @@ import { compareExports, areChangesBreaking } from "./utils.compare";
 import { getImportsInfo, getGroupedImports } from "./utils.compiler.imports";
 import { printImports as printListOfImports, printExports } from "./utils.print";
 import { printComparison } from "./utils.print.comparison";
-import { getGobbleCliArgs, getListImportsCliArgs, CliError } from "./utils.cli";
+import { getListImportsCliArgs, CliError } from "./utils.cli";
 import { resolvePackage } from "./utils.npm";
 import { getExportInfo } from "./utils.compiler.exports";
-import { gobble } from "./gobble";
 import { exit } from "process";
 
 yargs
@@ -162,56 +161,4 @@ yargs
     function ({ path }: { path: string }) {
       printExports(getExportInfo(path));
     }
-  )
-
-  // Gobble imports
-  // ----------------------------
-  // Lists imports for given github repos
-  //
-  // Example:
-  //
-  .command(
-    "gobble",
-    "Lists imports used from a github repo",
-    (yargs) => {
-      yargs.option("repositories", {
-        type: "string",
-        array: true,
-        demandOption: true,
-        describe: "Git repos to gobble",
-      });
-      yargs.option("filters", {
-        type: "string",
-        array: true,
-        describe: "A white-space separated list of package names to return import information for.",
-      });
-      yargs.option("cacheDir", {
-        type: "string",
-        default: null,
-        describe: "A directory to cache cloned repos",
-      });
-      yargs.option("jsonlines", {
-        type: "boolean",
-        default: false,
-        describe: "Specify this flag to output JSON Lines",
-      });
-    },
-    async function (args) {
-      // @ts-ignore
-      const { repositories, cacheDir, filters, jsonlines } = getGobbleCliArgs(args);
-      repositories.forEach(async (repository) => {
-        const gobbleImports = await gobble({ repository, cacheDir, filters, jsonlines });
-
-        if (jsonlines) {
-          for (const gi of gobbleImports) {
-            console.log(JSON.stringify(gi));
-          }
-        }
-
-        if (!jsonlines) {
-          console.log(gobbleImports);
-        }
-      });
-    }
-  )
-  .help().argv;
+  );
