@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs";
 import rimraf from "rimraf";
 import { compareExports } from "../utils.compare";
+import { pathExists } from "../utils.file";
 import { Comparison } from "../types";
 
 export const TMP_DIR = path.join(__dirname, "..", "..", ".tmp");
@@ -12,7 +13,7 @@ export function testCompare(prevContent: string, currentContent: string): Compar
   const prevFilename = generateTmpFilename();
   const currentFilename = generateTmpFilename();
 
-  if (!fs.existsSync(TMP_DIR)) {
+  if (!pathExists(TMP_DIR)) {
     fs.mkdirSync(TMP_DIR);
   }
 

@@ -28,7 +28,3 @@ export async function cloneRepository(git: SimpleGit, repository: string, repoNa
     }
   }
 }
-
-export function isSilent() {
-  return process.env.LEVITATE_SILENT ? true : false;
-}
