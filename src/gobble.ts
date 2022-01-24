@@ -1,11 +1,17 @@
 import path from "path";
-import { homedir } from "os";
-import fs from "fs";
-import simpleGit, { SimpleGit } from "simple-git";
 import fg from "fast-glob";
 import { getImportsInfo } from "./utils.compiler.imports";
 import { PluginImportInfo } from "./types";
-import { pathExists, updateRepository, cloneRepository } from "./utils";
+import { pathExists } from "./utils.file";
+import { getNpmDependencies } from "./utils.npm";
+import {
+  getRepoNameFromUrl,
+  initBaseCacheDir,
+  cloneRepository,
+  getRepoCacheDir,
+  getSanitizedRepoUrl,
+} from "./utils.git";
+import { getPackageJson } from ".";
 
 type Gobble = {
   repository: string;
@@ -15,36 +21,14 @@ type Gobble = {
 };
 
 export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobble) {
-  const santitisedRepoUrl = repository.replace(/\/$/, "");
-  const repoName = santitisedRepoUrl.split("/")[santitisedRepoUrl.split("/").length - 1];
-  const baseDir = cacheDir ? cacheDir : path.resolve(process.cwd(), homedir(), ".gobble-cache");
-  const repoDir = path.join(baseDir, repoName);
+  const repoName = getRepoNameFromUrl(repository);
+  const repoCacheDir = getRepoCacheDir(repoName, cacheDir);
+  const packageJson = getPackageJson(repoCacheDir);
 
-  if (!fs.existsSync(baseDir)) {
-    fs.mkdirSync(baseDir);
-  }
-  const isCloned = fs.existsSync(path.join(repoDir, ".git"));
-  const git: SimpleGit = simpleGit({ baseDir });
+  initBaseCacheDir(cacheDir);
+  cloneRepository(repository, cacheDir);
 
-  if (isCloned) {
-    await updateRepository(git, repoDir, jsonlines);
-  } else {
-    await cloneRepository(git, santitisedRepoUrl, repoName, jsonlines);
-  }
-
-  const packageJsonPath = path.join(repoDir, "package.json");
-  const hasPackageJson = await pathExists(packageJsonPath);
-
-  if (!hasPackageJson) {
-    if (!jsonlines) {
-      console.warn(`no package.json file found... skipping repo: ${repoName} `);
-    }
-    return [];
-  }
-
-  const packageJson = require(packageJsonPath);
-  const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
-  const filtersHaveMatch = Object.keys(dependencies).some((dep) => filters.includes(dep));
+  const filtersHaveMatch = Object.keys(getNpmDependencies(repoCacheDir)).some((dep) => filters.includes(dep));
 
   if (!filtersHaveMatch) {
     if (!jsonlines) {
@@ -53,11 +37,11 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobbl
     return [];
   }
 
-  const modules = await fg([`${repoDir}**/src/**/module.{js,ts}`], { absolute: true });
+  const modules = await fg([`${repoCacheDir}**/src/**/module.{js,ts}`], { absolute: true });
   const results: PluginImportInfo[] = [];
   for (const modulePath of modules) {
     const pluginJsonPath = path.join(path.dirname(modulePath), "plugin.json");
-    const hasPluginJsonFile = await pathExists(pluginJsonPath);
+    const hasPluginJsonFile = pathExists(pluginJsonPath);
 
     if (!hasPluginJsonFile) {
       continue;
@@ -70,7 +54,7 @@ export async function gobble({ repository, filters, cacheDir, jsonlines }: Gobbl
       pluginVersion: packageJson.version,
       pluginType: pluginInfo.type,
       pluginName: pluginInfo.name,
-      repository: santitisedRepoUrl,
+      repository: getSanitizedRepoUrl(repository),
     }));
     results.push(...pluginImportInfo);
   }
