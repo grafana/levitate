@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Expose code and TypeScript types from the package [#32](https://github.com/grafana/levitate/pull/32)
+
 ## [0.2.1] - 2022-01-20
 
 ### Added
