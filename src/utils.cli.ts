@@ -1,6 +1,4 @@
-import fs from "fs";
-import path from "path";
-import { CompareCLIArgs, ListCLIArgs, GobbleCLIArgs } from "./types";
+import { ListCLIArgs } from "./types";
 
 export class CliError extends Error {}
 
@@ -12,13 +10,4 @@ export function getListImportsCliArgs({ path, verbose, json, filters }): ListCLI
   }
 
   return { path, isVerbose: verbose, isJson: json, filters };
-}
-
-export function getGobbleCliArgs({ repositories, cacheDir, filters, jsonlines }): GobbleCLIArgs {
-  // Missing properties
-  if (!repositories) {
-    throw new CliError("Please check how to use this command.");
-  }
-
-  return { repositories, cacheDir, filters, jsonlines: Boolean(jsonlines) };
 }

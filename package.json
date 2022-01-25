@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,13 +18,10 @@
     "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev-compare": "nodemon --exec yarn run dev:compare",
     "dev-imports": "nodemon --exec yarn run dev:imports",
-    "dev-gobble": "nodemon --exec yarn run dev:gobble",
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
-    "dev:gobble": "run-s build fixtures:gobble",
     "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/ui@canary --current ./fixtures/compare/bundle-new.ts",
-    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
-    "fixtures:gobble": "DEBUG=*:simple-git node ./dist/bin.js gobble --repositories 'https://github.com/grafana/clock-panel/' --filters @grafana/ui @grafana/data @grafana/runtime"
+    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data"
   },
   "keywords": [],
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
@@ -35,7 +32,7 @@
     "diff": "^5.0.0",
     "execa": "^5.1.1",
     "fast-glob": "^3.2.7",
-    "node-fetch": "^3.2.0",
+    "node-fetch": "^2.6.6",
     "ora": "5.4.1",
     "simple-git": "^2.48.0",
     "tar": "^6.1.11",

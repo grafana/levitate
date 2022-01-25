@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as ts from "typescript";
 import { ExportsInfo, Exports } from "./types";
 import { COMPILER_OPTIONS, createProgram } from "./utils.compiler";
+import { pathExists } from "./utils.file";
 
 // Returns all the exported members of a program identified by a root file (entry file)
 // @param rootFile - Has to be an absolute path
@@ -95,12 +96,12 @@ export function resolveModuleName(moduleName: string, sourceFile: ts.SourceFile)
   }
 
   // Suspect it is a type definition file
-  if (fs.existsSync(`${resolvedPath}.d.ts`)) {
+  if (pathExists(`${resolvedPath}.d.ts`)) {
     return `${resolvedPath}.d.ts`;
   }
 
   // Suspect it is pointing to an index.d.ts file
-  if (fs.existsSync(path.join(resolvedPath, "index.d.ts"))) {
+  if (pathExists(path.join(resolvedPath, "index.d.ts"))) {
     return path.join(resolvedPath, "index.d.ts");
   }
 
