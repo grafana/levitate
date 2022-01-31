@@ -43,6 +43,15 @@ yargs
     },
     async function ({ prev, current }: { prev: string; current: string }) {
       try {
+        // Missing CLI arguments
+        if (!prev || !current) {
+          console.log("");
+          console.error(chalk.bgRed.bold.white(" ERROR "));
+          console.error("Missing arguments. Please make sure to provide both the --prev and --current options.\n");
+          yargs.showHelp();
+          exit(1);
+        }
+
         const prevPathResolved = await resolvePackage(prev);
         const currentPathResolved = await resolvePackage(current);
         const comparison = compareExports(prevPathResolved, currentPathResolved);
@@ -56,14 +65,9 @@ yargs
       } catch (e) {
         console.log("");
         console.log(chalk.bgRed.bold.white(" ERROR "));
+        console.log(e);
 
-        if (e instanceof CliError) {
-          console.log(`ERROR: ${e.message}\n\n`);
-          yargs.showHelp();
-        } else {
-          console.log(e);
-          exit(1);
-        }
+        exit(1);
       }
     }
   )
@@ -161,4 +165,5 @@ yargs
     function ({ path }: { path: string }) {
       printExports(getExportInfo(path));
     }
-  );
+  )
+  .help().argv;

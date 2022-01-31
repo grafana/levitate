@@ -119,6 +119,11 @@ export function getInstalledNpmPackagePath(packageName: string) {
 export async function downloadNpmPackageAsTarball(packageName: string) {
   const tmpFolderName = await createTmpPackageFolder(packageName);
   const url = await getPackageTarBallUrl(packageName);
+
+  if (!url) {
+    throw new Error(`Could not resolve package "${packageName}". Are you sure it exists?`);
+  }
+
   const tarballPath = path.join(tmpFolderName, path.basename(url));
 
   setSpinner(packageName, `Downloading tarball for ${packageName}`);
