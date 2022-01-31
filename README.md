@@ -8,6 +8,8 @@
 
 A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).
 
+<<<<<<< HEAD
+
 ## Install
 
 ```bash
@@ -39,6 +41,10 @@ yarn bundle
 You can run directly from the source with `ts-node`. e.g:
 
 ` node --loader ts-node/esm --inspect ./src/bin.ts compare --prev @grafana/schema@9.0.7 --current @grafana/schema@latest`
+
+=======
+
+> > > > > > > 1097301 (docs: move dev scripts from readme to contributing)
 
 ## Usage
 
@@ -81,6 +87,10 @@ npx @grafana/levitate is-compatible \
     --path <PATH-TO-A-PACKAGE>/module.ts \
     -- target "@grafana/data@latest"
 ```
+
+## Contributing
+
+If you are interested in contributing to the Levitate project please read the [Contributing guide](https://github.com/grafana/levitate/blob/HEAD/CONTRIBUTING.md).
 
 [npm-url]: https://www.npmjs.com/package/@grafana/levitate
 [npm-badge]: https://img.shields.io/npm/v/@grafana/levitate.svg
