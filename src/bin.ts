@@ -46,8 +46,8 @@ yargs
         // Missing CLI arguments
         if (!prev || !current) {
           console.log("");
-          console.log(chalk.bgRed.bold.white(" ERROR "));
-          console.log("Missing arguments. Please make sure to provide both the --prev and --current options.\n");
+          console.error(chalk.bgRed.bold.white(" ERROR "));
+          console.error("Missing arguments. Please make sure to provide both the --prev and --current options.\n");
           yargs.showHelp();
           exit(1);
         }
