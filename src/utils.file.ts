@@ -6,7 +6,6 @@ export function pathExists(path: string): boolean {
     fs.accessSync(path, fs.constants.R_OK);
     return true;
   } catch (e) {
-    logError(e);
     return false;
   }
 }
