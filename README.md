@@ -1,6 +1,10 @@
 # 🔮 Levitate
 
-![npm version](https://img.shields.io/npm/v/@grafana/levitate)
+[![npm version][npm-badge]][npm-url]
+[![npm downloads][downloads-badge]][npm-url]
+[![CI][build-badge]][build-url]
+[![prettier][prettier-badge]][prettier-url]
+[![TypeScript][typescript-badge]][typescript-url]
 
 A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).
 
@@ -77,3 +81,13 @@ npx @grafana/levitate is-compatible \
     --path <PATH-TO-A-PACKAGE>/module.ts \
     -- target "@grafana/data@latest"
 ```
+
+[npm-url]: https://www.npmjs.com/package/@grafana/levitate
+[npm-badge]: https://img.shields.io/npm/v/@grafana/levitate.svg
+[downloads-badge]: https://img.shields.io/npm/dm/@grafana/levitate.svg?color=blue
+[build-badge]: https://github.com/grafana/levitate/actions/workflows/ci.yml/badge.svg
+[build-url]: https://github.com/grafana/levitate/actions/workflows/ci.yml
+[typescript-badge]: https://badges.frapsoft.com/typescript/code/typescript.svg?v=101
+[typescript-url]: https://github.com/microsoft/TypeScript
+[prettier-badge]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg
+[prettier-url]: https://github.com/prettier/prettier
