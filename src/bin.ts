@@ -161,4 +161,5 @@ yargs
     function ({ path }: { path: string }) {
       printExports(getExportInfo(path));
     }
-  );
+  )
+  .help().argv;
