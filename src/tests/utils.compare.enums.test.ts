@@ -1,7 +1,7 @@
-import { testCompare } from "./test-utils";
+import { testCompare } from './test-utils';
 
-describe("Compare enums", () => {
-  test("NO CHANGES - not changing anything should not trigger a breaking change", () => {
+describe('Compare enums', () => {
+  test('NO CHANGES - not changing anything should not trigger a breaking change', () => {
     const prev = `
       export declare enum SampleEnum {
         Append = 'append',
@@ -23,7 +23,7 @@ describe("Compare enums", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING ENUM - removing a previously exported enum should trigger a removal", () => {
+  test('REMOVING ENUM - removing a previously exported enum should trigger a removal', () => {
     const prev = `
       export declare enum SampleEnum {
         Append = 'append',
@@ -39,7 +39,7 @@ describe("Compare enums", () => {
     expect(Object.keys(comparison.removals).length).toBe(1);
   });
 
-  test("NEW VALUE - adding a new value to an enum should not trigger a breaking change", () => {
+  test('NEW VALUE - adding a new value to an enum should not trigger a breaking change', () => {
     const prev = `
       export declare enum SampleEnum {
         Append = 'append',
@@ -62,7 +62,7 @@ describe("Compare enums", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING VALUE - removing an existing value from an enum should trigger a breaking change", () => {
+  test('REMOVING VALUE - removing an existing value from an enum should trigger a breaking change', () => {
     const prev = `
       export declare enum SampleEnum {
         Append = 'append',
@@ -78,12 +78,12 @@ describe("Compare enums", () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes)).toEqual(["SampleEnum"]);
+    expect(Object.keys(comparison.changes)).toEqual(['SampleEnum']);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("RENAMING VALUE - renaming an existing value in an enum should trigger a breaking change", () => {
+  test('RENAMING VALUE - renaming an existing value in an enum should trigger a breaking change', () => {
     const prev = `
       export declare enum SampleEnum {
         Append = 'append',
@@ -110,7 +110,7 @@ describe("Compare enums", () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes)).toEqual(["SampleEnum", "AnotherEnum"]);
+    expect(Object.keys(comparison.changes)).toEqual(['SampleEnum', 'AnotherEnum']);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });

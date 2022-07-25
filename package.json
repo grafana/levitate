@@ -21,7 +21,9 @@
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
     "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/ui@canary --current @grafana/ui@latest",
-    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data"
+    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
+    "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx ./src",
+    "lint:fix": "yarn lint --fix && yarn prettier --write ./src"
   },
   "keywords": [],
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
@@ -40,10 +42,18 @@
     "yargs": "^17.3.1"
   },
   "devDependencies": {
+    "@grafana/eslint-config": "^4.0.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.10",
     "@types/yargs": "^17.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
     "@vercel/ncc": "^0.33.0",
+    "eslint": "^8.20.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsdoc": "^39.3.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^27.4.7",
     "nodemon": "^2.0.15",
     "npm-run-all": "^4.1.5",

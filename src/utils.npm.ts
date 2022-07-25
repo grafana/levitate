@@ -1,13 +1,13 @@
-import * as fs from "fs";
-import * as path from "path";
-import tar from "tar";
-import fetch from "node-fetch";
-import execa from "execa";
-import { pathExists } from "./utils.file";
-import { startSpinner, setSpinner, failSpinner, succeedSpinner } from "./utils.spinner";
+import * as fs from 'fs';
+import * as path from 'path';
+import tar from 'tar';
+import fetch from 'node-fetch';
+import execa from 'execa';
+import { pathExists } from './utils.file';
+import { startSpinner, setSpinner, failSpinner, succeedSpinner } from './utils.spinner';
 
-export const TYPE_DEFINITION_FILE_NAME = "index.d.ts";
-export const TMP_FOLDER = ".tmp";
+export const TYPE_DEFINITION_FILE_NAME = 'index.d.ts';
+export const TMP_FOLDER = '.tmp';
 export const SPINNERS = [];
 
 // The `packageName` is a string that can be any of the following:
@@ -68,8 +68,8 @@ export async function installNpmPackage(packageName: string) {
 
   try {
     process.chdir(tmpPackageFolder);
-    await execa("npm", ["init", "-y"], { execPath: tmpPackageFolder });
-    await execa("npm", ["install", packageName], { execPath: tmpPackageFolder });
+    await execa('npm', ['init', '-y'], { execPath: tmpPackageFolder });
+    await execa('npm', ['install', packageName], { execPath: tmpPackageFolder });
   } catch (error) {
     failSpinner(packageName, `Failed installing ${packageName}`);
   }
@@ -82,13 +82,13 @@ export async function uninstallPackage(packageName: string) {
 }
 
 export function getTmpFolderName(packageName: string) {
-  return path.resolve(path.join(__dirname, "..", TMP_FOLDER, packageName));
+  return path.resolve(path.join(__dirname, '..', TMP_FOLDER, packageName));
 }
 
 export async function removeTmpFolder(packageName: string) {
   const tmpPackageFolder = getTmpFolderName(packageName);
 
-  await execa("rm", ["-rf", tmpPackageFolder]);
+  await execa('rm', ['-rf', tmpPackageFolder]);
 }
 
 export async function createTmpPackageFolder(packageName: string) {
@@ -110,10 +110,10 @@ export function getInstalledNpmPackagePath(packageName: string) {
   const tmpFolderName = getTmpFolderName(packageName);
   const packageNameWithoutVersion = packageName.replace(
     /@[~^]?(latest|canary|[\dvx*]+(?:[-.](?:[\dx*]+|alpha|beta))*)/gi,
-    ""
+    ''
   );
 
-  return path.join(tmpFolderName, "node_modules", packageNameWithoutVersion);
+  return path.join(tmpFolderName, 'node_modules', packageNameWithoutVersion);
 }
 
 export async function downloadNpmPackageAsTarball(packageName: string) {
@@ -131,13 +131,13 @@ export async function downloadNpmPackageAsTarball(packageName: string) {
 
   tar.x({ C: tmpFolderName, file: tarballPath, sync: true });
 
-  return path.join(tmpFolderName, "package");
+  return path.join(tmpFolderName, 'package');
 }
 
 export async function getPackageTarBallUrl(packageName: string) {
   setSpinner(packageName, `Fetching package tarball for ${packageName}`);
 
-  const { stdout } = await execa("npm", ["view", packageName, "dist.tarball"]);
+  const { stdout } = await execa('npm', ['view', packageName, 'dist.tarball']);
 
   return stdout;
 }
@@ -148,13 +148,13 @@ export async function downloadFile(url: string, path: string) {
 
   await new Promise((resolve, reject) => {
     res.body.pipe(fileStream);
-    res.body.on("error", reject);
-    fileStream.on("finish", resolve);
+    res.body.on('error', reject);
+    fileStream.on('finish', resolve);
   });
 }
 
 export function getPackageJsonPath(packagePath: string): string {
-  return path.join(packagePath, "package.json");
+  return path.join(packagePath, 'package.json');
 }
 
 export function hasPackageJson(packagePath: string): boolean {

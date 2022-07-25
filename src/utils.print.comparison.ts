@@ -1,13 +1,13 @@
-import chalk from "chalk";
-import Table from "tty-table";
-import { Changes, Comparison, Exports } from "./types";
-import { debug } from "./utils.log";
-import { areChangesBreaking } from "./utils.compare";
-import { indentLines } from "./utils.print";
-import { getDiff } from "./utils.diff";
+import chalk from 'chalk';
+import Table from 'tty-table';
+import { Changes, Comparison, Exports } from './types';
+import { debug } from './utils.log';
+import { areChangesBreaking } from './utils.compare';
+import { indentLines } from './utils.print';
+import { getDiff } from './utils.diff';
 
 export function printComparison({ changes, additions, removals }: Comparison) {
-  debug("Printing results...");
+  debug('Printing results...');
   const isBreaking = areChangesBreaking({ changes, additions, removals });
 
   printAdditions(additions);
@@ -23,15 +23,15 @@ function printAdditions(additions: Exports) {
   printHeading(chalk.green(`ADDITIONS (${count})`));
 
   if (!count) {
-    console.log(chalk.gray("  No additions."));
+    console.log(chalk.gray('  No additions.'));
     return;
   }
 
   const table = Table(
     [
-      { value: "Property", width: 30, align: "left", headerAlign: "left" },
-      { value: "Location", width: 40, align: "left", headerAlign: "left" },
-      { value: "Declaration", width: 90, align: "left", headerAlign: "left" },
+      { value: 'Property', width: 30, align: 'left', headerAlign: 'left' },
+      { value: 'Location', width: 40, align: 'left', headerAlign: 'left' },
+      { value: 'Declaration', width: 90, align: 'left', headerAlign: 'left' },
     ],
     // @ts-ignore
     [
@@ -53,15 +53,15 @@ function printRemovals(removals: Exports) {
   printHeading(chalk.red(`REMOVALS (${count})`));
 
   if (!count) {
-    console.log(chalk.gray("  No removals."));
+    console.log(chalk.gray('  No removals.'));
     return;
   }
 
   const table = Table(
     [
-      { value: "Property", width: 30, align: "left", headerAlign: "left" },
-      { value: "Previous location", width: 40, align: "left", headerAlign: "left" },
-      { value: "Declaration", width: 90, align: "left", headerAlign: "left" },
+      { value: 'Property', width: 30, align: 'left', headerAlign: 'left' },
+      { value: 'Previous location', width: 40, align: 'left', headerAlign: 'left' },
+      { value: 'Declaration', width: 90, align: 'left', headerAlign: 'left' },
     ],
     // @ts-ignore
     [
@@ -83,15 +83,15 @@ function printChanges(changes: Changes) {
   printHeading(chalk.yellow(`CHANGES (${count})`));
 
   if (!count) {
-    console.log(chalk.gray("  No changes."));
+    console.log(chalk.gray('  No changes.'));
     return;
   }
 
   const table = Table(
     [
-      { value: "Property", width: 30, align: "left", headerAlign: "left" },
-      { value: "Location", width: 40, align: "left", headerAlign: "left" },
-      { value: "Diff", width: 90, align: "left", headerAlign: "left" },
+      { value: 'Property', width: 30, align: 'left', headerAlign: 'left' },
+      { value: 'Location', width: 40, align: 'left', headerAlign: 'left' },
+      { value: 'Diff', width: 90, align: 'left', headerAlign: 'left' },
     ],
     // @ts-ignore
     [
@@ -114,13 +114,13 @@ function printChanges(changes: Changes) {
 function printVerdict(isBreaking: boolean) {
   if (isBreaking) {
     printSpacing(2);
-    console.log(chalk.bold.red("  ✘ There were possible breaking changes, please check the differences.\n\n"));
+    console.log(chalk.bold.red('  ✘ There were possible breaking changes, please check the differences.\n\n'));
 
     return;
   }
 
   printSpacing(2);
-  console.log(chalk.bold.green("  ✔ No breaking changes introduced.\n\n"));
+  console.log(chalk.bold.green('  ✔ No breaking changes introduced.\n\n'));
 }
 
 // 🥃
@@ -139,9 +139,9 @@ function printHeading(text: string, description?: string) {
 function printSpacing(count?: number) {
   if (count > 0) {
     for (let i = 0; i < count; i++) {
-      console.log("");
+      console.log('');
     }
   } else {
-    console.log("");
+    console.log('');
   }
 }

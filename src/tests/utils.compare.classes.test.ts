@@ -1,7 +1,7 @@
-import { testCompare } from "./test-utils";
+import { testCompare } from './test-utils';
 
-describe("Compare classes", () => {
-  test("NO CHANGES - not changing anything should not trigger a change", () => {
+describe('Compare classes', () => {
+  test('NO CHANGES - not changing anything should not trigger a change', () => {
     const prev = `
       export declare class Foo<T = any> {
         private data;
@@ -37,7 +37,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING CLASS - removing a previously exported class should trigger a removal", () => {
+  test('REMOVING CLASS - removing a previously exported class should trigger a removal', () => {
     const prev = `
       export declare class Foo {
         private one;
@@ -53,7 +53,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(1);
   });
 
-  test("REMOVING A NOT EXPORTED CLASS - removing a previously not exported class should not trigger a removal", () => {
+  test('REMOVING A NOT EXPORTED CLASS - removing a previously not exported class should not trigger a removal', () => {
     const prev = `
       export declare class Foo {
         private one;
@@ -79,7 +79,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("NEW VARIABLE - adding a new class variable should not trigger a breaking change", () => {
+  test('NEW VARIABLE - adding a new class variable should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -100,7 +100,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("NEW OPTIONAL VARIABLE - adding a new optional class variable should not trigger a breaking change", () => {
+  test('NEW OPTIONAL VARIABLE - adding a new optional class variable should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -121,7 +121,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("MAKING A VARIABLE OPTIONAL - making a class variable optional should not trigger a breaking change", () => {
+  test('MAKING A VARIABLE OPTIONAL - making a class variable optional should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -142,7 +142,7 @@ describe("Compare classes", () => {
   });
 
   // It is the same as adding a new variable
-  test("MAKING A VARIABLE NOT OPTIONAL - making a previously optional class variable to be not optional should not trigger a breaking change", () => {
+  test('MAKING A VARIABLE NOT OPTIONAL - making a previously optional class variable to be not optional should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -162,7 +162,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGING A PUBLIC MEMBER TO BE PRIVATE - making a previously public class member to be private should trigger a breaking change", () => {
+  test('CHANGING A PUBLIC MEMBER TO BE PRIVATE - making a previously public class member to be private should trigger a breaking change', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -184,7 +184,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGING A PUBLIC MEMBER TO BE PROTECTED - making a previously public class member to be protected should trigger a breaking change", () => {
+  test('CHANGING A PUBLIC MEMBER TO BE PROTECTED - making a previously public class member to be protected should trigger a breaking change', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -207,7 +207,7 @@ describe("Compare classes", () => {
   });
 
   // Like this subclasses would not be able to access a previously accessible member.
-  test("CHANGING A PROTECTED MEMBER TO BE PRIVATE - making a previously protected class member to be private should trigger a breaking change", () => {
+  test('CHANGING A PROTECTED MEMBER TO BE PRIVATE - making a previously protected class member to be private should trigger a breaking change', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -229,7 +229,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGING A PRIVATE MEMBER TO BE PROTECTED - making a previously private class member to be protected should not trigger a breaking change", () => {
+  test('CHANGING A PRIVATE MEMBER TO BE PROTECTED - making a previously private class member to be protected should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -251,7 +251,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGING A PRIVATE MEMBER TO BE PUBLIC - making a previously private class member to be public should not trigger a breaking change", () => {
+  test('CHANGING A PRIVATE MEMBER TO BE PUBLIC - making a previously private class member to be public should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -273,7 +273,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGING A PROTECTED MEMBER TO BE PUBLIC - making a previously protected class member to be public should not trigger a breaking change", () => {
+  test('CHANGING A PROTECTED MEMBER TO BE PUBLIC - making a previously protected class member to be public should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -295,7 +295,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("NEW METHOD - adding a new class method should not trigger a breaking change", () => {
+  test('NEW METHOD - adding a new class method should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo {
         private one;
@@ -322,7 +322,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("MAKING A METHOD OPTIONAL - making method optional should not trigger a breaking change", () => {
+  test('MAKING A METHOD OPTIONAL - making method optional should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -345,7 +345,7 @@ describe("Compare classes", () => {
   });
 
   // This is similar to adding a new method
-  test("MAKING A METHOD NOT OPTIONAL - making a previously optional class method to be not optional should not trigger a breaking change", () => {
+  test('MAKING A METHOD NOT OPTIONAL - making a previously optional class method to be not optional should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
@@ -367,7 +367,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("NEW ARGUMENT FOR A CLASS METHOD - adding a new positional argument to any of the methods should trigger a breaking change", () => {
+  test('NEW ARGUMENT FOR A CLASS METHOD - adding a new positional argument to any of the methods should trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         newClassMethod(foo: string): boolean;
@@ -385,7 +385,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("NEW OPTIONAL ARGUMENT FOR A CLASS METHOD - adding a new optional positional argument to any of the methods should not trigger a breaking change", () => {
+  test('NEW OPTIONAL ARGUMENT FOR A CLASS METHOD - adding a new optional positional argument to any of the methods should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         newClassMethod(foo: string): boolean;
@@ -403,7 +403,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGING RETURN VALUE OF A CLASS METHOD - changing the return value of a method should trigger a breaking change", () => {
+  test('CHANGING RETURN VALUE OF A CLASS METHOD - changing the return value of a method should trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         getSomething(col: number): number;
@@ -421,7 +421,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGING ARGUMENT OF A CLASS METHOD - changing any existing argument of a method should trigger a breaking change", () => {
+  test('CHANGING ARGUMENT OF A CLASS METHOD - changing any existing argument of a method should trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;
@@ -446,7 +446,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("RENAMING METHOD - renaming a class method should trigger a breaking change", () => {
+  test('RENAMING METHOD - renaming a class method should trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;
@@ -466,7 +466,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING METHOD - removing a class method should trigger a breaking change", () => {
+  test('REMOVING METHOD - removing a class method should trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;
@@ -485,7 +485,7 @@ describe("Compare classes", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("changing the generic should trigger a change", () => {
+  test('changing the generic should trigger a change', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;

@@ -1,7 +1,7 @@
-import { testCompare } from "./test-utils";
+import { testCompare } from './test-utils';
 
-describe("Compare interfaces", () => {
-  test("NO CHANGES - not changing anything should not trigger a change", () => {
+describe('Compare interfaces', () => {
+  test('NO CHANGES - not changing anything should not trigger a change', () => {
     const prev = `
       export interface Foo {
         one: string;
@@ -23,7 +23,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING INTERFACE - removing a previously exported interface should trigger a removal", () => {
+  test('REMOVING INTERFACE - removing a previously exported interface should trigger a removal', () => {
     const prev = `
       export interface Foo {
         one: string;
@@ -39,7 +39,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(1);
   });
 
-  test("NEW OPTIONAL VARIABLE - adding a new optional interface variable should not trigger a change", () => {
+  test('NEW OPTIONAL VARIABLE - adding a new optional interface variable should not trigger a change', () => {
     const prev = `
       export interface Foo {
         one: string;
@@ -63,7 +63,7 @@ describe("Compare interfaces", () => {
   });
 
   // If there is a new variable introduced to the interface then any class already extending that interface can break
-  test("NEW VARIABLE - adding a new not optional interface variable should trigger a breaking change", () => {
+  test('NEW VARIABLE - adding a new not optional interface variable should trigger a breaking change', () => {
     const prev = `
       export interface Foo {
         one: string;
@@ -86,7 +86,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING A VARIABLE - removing a interface variable should not trigger a breaking change", () => {
+  test('REMOVING A VARIABLE - removing a interface variable should not trigger a breaking change', () => {
     const prev = `
       export interface Foo {
         one: string;
@@ -107,7 +107,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("MAKING VARIABLE OPTIONAL - making a variable optional should not breaking change", () => {
+  test('MAKING VARIABLE OPTIONAL - making a variable optional should not breaking change', () => {
     const prev = `
       export interface Foo {
         one: string;
@@ -129,7 +129,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("MAKING VARIABLE NOT OPTIONAL - making a previously optional variable to be not optional should trigger a breaking change", () => {
+  test('MAKING VARIABLE NOT OPTIONAL - making a previously optional variable to be not optional should trigger a breaking change', () => {
     const prev = `
       export interface Foo {
         one: string;
@@ -152,7 +152,7 @@ describe("Compare interfaces", () => {
   });
 
   // In case a class is already extending this interface then it can break
-  test("NEW METHOD - adding a new method to the interface should trigger a breaking change", () => {
+  test('NEW METHOD - adding a new method to the interface should trigger a breaking change', () => {
     const prev = `
       export interface Foo {
         data: string;
@@ -181,7 +181,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING METHOD - removing a method should not trigger a breaking change", () => {
+  test('REMOVING METHOD - removing a method should not trigger a breaking change', () => {
     const prev = `
       export interface Foo {
         data: string;
@@ -206,7 +206,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("MAKING METHOD OPTIONAL - making a method optional should not trigger a breaking change", () => {
+  test('MAKING METHOD OPTIONAL - making a method optional should not trigger a breaking change', () => {
     const prev = `
       export interface Foo {
         data: string;
@@ -234,7 +234,7 @@ describe("Compare interfaces", () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("MAKING METHOD NOT OPTIONAL - making a previously optional method to be not optional should trigger a breaking change", () => {
+  test('MAKING METHOD NOT OPTIONAL - making a previously optional method to be not optional should trigger a breaking change', () => {
     const prev = `
       export interface Foo {
         data: string;

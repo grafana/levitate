@@ -1,11 +1,11 @@
-import path from "path";
-import fs from "fs";
-import rimraf from "rimraf";
-import { compareExports } from "../utils.compare";
-import { pathExists } from "../utils.file";
-import { Comparison } from "../types";
+import path from 'path';
+import fs from 'fs';
+import rimraf from 'rimraf';
+import { compareExports } from '../utils.compare';
+import { pathExists } from '../utils.file';
+import { Comparison } from '../types';
 
-export const TMP_DIR = path.join(__dirname, "..", "..", ".tmp");
+export const TMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 
 // As `compareExports()` only works on existing files, we have created this
 // utility to persist the contents in temporary files

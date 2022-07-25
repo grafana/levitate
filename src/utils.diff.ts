@@ -1,34 +1,34 @@
-import * as diff from "diff";
-import chalk from "chalk";
+import * as diff from 'diff';
+import chalk from 'chalk';
 
 function getDiffLegend() {
-  return "\n" + chalk.green("+ Added") + " " + chalk.red("- Removed") + "\n" + "\n";
+  return '\n' + chalk.green('+ Added') + ' ' + chalk.red('- Removed') + '\n' + '\n';
 }
 
 export function getDiff(prev, current) {
-  const patch = diff.createPatch("string", prev, current);
+  const patch = diff.createPatch('string', prev, current);
   const lines = patch
-    .split("\n")
+    .split('\n')
     .slice(4)
     .map(getDiffForLine)
     .filter((line) => line !== null);
 
-  return getDiffLegend() + lines.join("\n") + "\n";
+  return getDiffLegend() + lines.join('\n') + '\n';
 }
 
 function getDiffForLine(line) {
   switch (line[0]) {
     // Added lines
-    case "+":
+    case '+':
       return chalk.green(line);
     // Removed lines
-    case "-":
+    case '-':
       return chalk.red(line);
-    case " ":
+    case ' ':
       return line;
-    case "@":
+    case '@':
       return null;
-    case "\\":
+    case '\\':
       return null;
   }
 }

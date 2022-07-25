@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from 'fs';
 
 export function pathExists(path: string): Promise<boolean> {
   return new Promise((resolve) => {

@@ -1,6 +1,6 @@
-import getDebug from "debug";
+import getDebug from 'debug';
 
-export const debug = getDebug("levitate");
+export const debug = getDebug('levitate');
 
 export const logError = (...args) => {
   if (!isSilent()) {
