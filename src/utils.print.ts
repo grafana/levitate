@@ -1,6 +1,6 @@
-import chalk from "chalk";
-import { ExportsInfo, ImportInfo } from "./types";
-import { debug } from "./utils.log";
+import chalk from 'chalk';
+import { ExportsInfo, ImportInfo } from './types';
+import { debug } from './utils.log';
 
 export function printImports({
   imports,
@@ -28,23 +28,23 @@ export function printImports({
 
     // Loop through all the packages
     Object.keys(importsByPackageName).forEach((packageName) => {
-      console.log("");
-      console.log(chalk.bold(packageName) + " " + chalk.gray(`(${importsByPackageName[packageName].length} imports)`));
-      console.log("===============================");
+      console.log('');
+      console.log(chalk.bold(packageName) + ' ' + chalk.gray(`(${importsByPackageName[packageName].length} imports)`));
+      console.log('===============================');
 
       // Loop through all the imports from a certain package
       importsByPackageName[packageName]
         .sort((a, b) => b.count - a.count)
         .forEach((i) => {
-          const name = i.isDefaultImport ? "default" : i.propertyName;
+          const name = i.isDefaultImport ? 'default' : i.propertyName;
 
           console.log(`\t ${chalk.green.bold(name)} ${chalk.gray(`(${i.count} occurances)`)}`);
 
           if (isVerbose) {
             i.occurances.forEach((ii) => {
-              console.log(`\t\t ${chalk.bold.gray("Filename")}: ${chalk.gray(ii.fileName)}`);
-              console.log(`\t\t ${chalk.gray.bold("Import statement")}: ${chalk.gray(ii.importStatementAsText)}`);
-              console.log("");
+              console.log(`\t\t ${chalk.bold.gray('Filename')}: ${chalk.gray(ii.fileName)}`);
+              console.log(`\t\t ${chalk.gray.bold('Import statement')}: ${chalk.gray(ii.importStatementAsText)}`);
+              console.log('');
             });
           }
         });
@@ -53,24 +53,24 @@ export function printImports({
 }
 
 export function printExports(exports: ExportsInfo) {
-  debug("Printing results...");
+  debug('Printing results...');
 
-  console.log("");
-  console.log("List of exported members:");
-  console.log("===================================");
+  console.log('');
+  console.log('List of exported members:');
+  console.log('===================================');
   console.log(Object.keys(exports.exports).forEach((name) => console.log(`\t - ${name}`)));
-  console.log("===================================");
+  console.log('===================================');
 }
 
 export function indentLines(str: string, tabsCount: number) {
-  return str.split("\n").reduce((acc, line) => `${acc}${indentLine(line, tabsCount)}\n`, "");
+  return str.split('\n').reduce((acc, line) => `${acc}${indentLine(line, tabsCount)}\n`, '');
 }
 
 export function indentLine(str: string, count: number) {
-  let tabs = "";
+  let tabs = '';
 
   for (let i = 0; i < count; i++) {
-    tabs += "\t";
+    tabs += '\t';
   }
 
   return `${tabs}${str}`;

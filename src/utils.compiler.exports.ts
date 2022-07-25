@@ -1,9 +1,9 @@
-import * as path from "path";
-import * as fs from "fs";
-import * as ts from "typescript";
-import { ExportsInfo, Exports } from "./types";
-import { COMPILER_OPTIONS, createProgram } from "./utils.compiler";
-import { pathExists } from "./utils.file";
+import * as path from 'path';
+import * as fs from 'fs';
+import * as ts from 'typescript';
+import { ExportsInfo, Exports } from './types';
+import { COMPILER_OPTIONS, createProgram } from './utils.compiler';
+import { pathExists } from './utils.file';
 
 // Returns all the exported members of a program identified by a root file (entry file)
 // @param rootFile - Has to be an absolute path
@@ -50,7 +50,7 @@ export function getExportedSymbolsForFile(sourceFile: ts.SourceFile, program: ts
       //   1) we need to install all 3rd party dependencies as well, which would take longer (this is working, just being slow)
       //   2) we need to be able to resolve external module names (e.g. "rxjs") to a source file name, this is not implemented yet
       // In order to make these work the `resolveModuleName()` function needs to be updated.
-      if (exportName === "__export") {
+      if (exportName === '__export') {
         // Loop through all the wildcard exports
         exportValue.declarations.forEach((declaration) => {
           const exportDeclaration = declaration as ts.ExportDeclaration;
@@ -81,7 +81,7 @@ export function getExportedSymbolsForFile(sourceFile: ts.SourceFile, program: ts
 }
 
 export function getExportPackageName(node: ts.ExportDeclaration) {
-  return node.moduleSpecifier.getText().replace(/'/g, "").replace(/"/g, "");
+  return node.moduleSpecifier.getText().replace(/'/g, '').replace(/"/g, '');
 }
 
 // TODO: there must be an easier way to do this using the compiler
@@ -101,8 +101,8 @@ export function resolveModuleName(moduleName: string, sourceFile: ts.SourceFile)
   }
 
   // Suspect it is pointing to an index.d.ts file
-  if (pathExists(path.join(resolvedPath, "index.d.ts"))) {
-    return path.join(resolvedPath, "index.d.ts");
+  if (pathExists(path.join(resolvedPath, 'index.d.ts'))) {
+    return path.join(resolvedPath, 'index.d.ts');
   }
 
   return undefined;

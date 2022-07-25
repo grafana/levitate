@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import * as ts from 'typescript';
 
 export const COMPILER_OPTIONS = {
   target: ts.ScriptTarget.ES5,

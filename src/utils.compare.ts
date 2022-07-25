@@ -1,15 +1,15 @@
-import * as ts from "typescript";
-import { SymbolMeta, Comparison } from "./types";
-import { debug } from "./utils.log";
-import { getExportInfo } from "./utils.compiler.exports";
-import { startSpinner, setSpinner, succeedSpinner } from "./utils.spinner";
+import * as ts from 'typescript';
+import { SymbolMeta, Comparison } from './types';
+import { debug } from './utils.log';
+import { getExportInfo } from './utils.compiler.exports';
+import { startSpinner, setSpinner, succeedSpinner } from './utils.spinner';
 
 export function compareExports(prevRootFile: string, currentRootFile: string): Comparison {
-  setSpinner("compare", "Detecting changes between versions");
-  startSpinner("compare");
+  setSpinner('compare', 'Detecting changes between versions');
+  startSpinner('compare');
 
-  debug("Old filename: %o", prevRootFile);
-  debug("New filename: %o", currentRootFile);
+  debug('Old filename: %o', prevRootFile);
+  debug('New filename: %o', currentRootFile);
 
   const prev = getExportInfo(prevRootFile);
   const current = getExportInfo(currentRootFile);
@@ -17,8 +17,8 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
   const removals = {};
   const changes = {};
 
-  debug("Previous file: %o exports", Object.keys(prev.exports).length);
-  debug("Current file: %o exports", Object.keys(current.exports).length);
+  debug('Previous file: %o exports', Object.keys(prev.exports).length);
+  debug('Current file: %o exports', Object.keys(current.exports).length);
 
   // Look for changes introduced by the current version
   for (const [currentExportName, currentExportSymbol] of Object.entries(current.exports)) {
@@ -60,7 +60,7 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
     }
   }
 
-  succeedSpinner("compare", "Successfully compared versions");
+  succeedSpinner('compare', 'Successfully compared versions');
 
   return { changes, additions, removals };
 }

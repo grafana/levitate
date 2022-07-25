@@ -1,11 +1,8 @@
-import * as ts from "typescript";
-import { ImportInfo, ImportsInfo } from "./types";
-import { createProgram } from "./utils.compiler";
+import * as ts from 'typescript';
+import { ImportInfo, ImportsInfo } from './types';
+import { createProgram } from './utils.compiler';
 
-export function getImportsInfo(
-  rootFile: string,
-  filters?: string[]
-): ImportsInfo {
+export function getImportsInfo(rootFile: string, filters?: string[]): ImportsInfo {
   const program = createProgram(rootFile);
   const programImports = getImportsForProgram(program, filters);
 
@@ -15,10 +12,7 @@ export function getImportsInfo(
   };
 }
 
-export function getImportsForProgram(
-  program: ts.Program,
-  filters?: string[]
-): ImportInfo[] {
+export function getImportsForProgram(program: ts.Program, filters?: string[]): ImportInfo[] {
   let imports = [];
 
   for (const sourceFile of program.getSourceFiles()) {
@@ -47,10 +41,7 @@ export function getImportsForFile(
   }
 
   function visit(node: ts.Node) {
-    if (
-      ts.isImportDeclaration(node) &&
-      doesMatchFilters(getImportPackageName(node))
-    ) {
+    if (ts.isImportDeclaration(node) && doesMatchFilters(getImportPackageName(node))) {
       imports = [...imports, ...getImportsForNode(node, sourceFile.fileName)];
     }
 
@@ -62,10 +53,7 @@ export function getImportsForFile(
 }
 
 // A single import declaration can contain both named and default imports
-export function getImportsForNode(
-  node: ts.ImportDeclaration,
-  fileName: string
-): ImportInfo[] {
+export function getImportsForNode(node: ts.ImportDeclaration, fileName: string): ImportInfo[] {
   const imports = [];
   const packageName = getImportPackageName(node);
   const namedImports = getNamedImportsForNode(node);
@@ -113,7 +101,7 @@ export function isNodeADefaultImport(node: ts.ImportDeclaration): boolean {
 }
 
 export function getImportPackageName(node: ts.ImportDeclaration) {
-  return node.moduleSpecifier.getText().replace(/'/g, "").replace(/"/g, "");
+  return node.moduleSpecifier.getText().replace(/'/g, '').replace(/"/g, '');
 }
 
 // Returns a grouped list of imports
@@ -126,9 +114,7 @@ export function getGroupedImports(imports: ImportInfo[]): ImportInfo[] {
         return gi.isDefaultImport === true && gi.packageName === i.packageName;
       }
 
-      return (
-        gi.propertyName === i.propertyName && gi.packageName === i.packageName
-      );
+      return gi.propertyName === i.propertyName && gi.packageName === i.packageName;
     });
 
   // Looping through all the imports

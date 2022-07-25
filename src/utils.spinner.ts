@@ -1,5 +1,5 @@
-import ora from "ora";
-import { isSilent } from "./utils.log";
+import ora from 'ora';
+import { isSilent } from './utils.log';
 
 const SPINNERS: Record<string, ora.Ora> = {};
 
