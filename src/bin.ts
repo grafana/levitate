@@ -26,21 +26,21 @@ yargs
     'compare',
     'Compares the exports of packages.',
     (yargs) => {
-      yargs.option('prev', {
-        type: 'string',
-        default: null,
-        demandOption: true,
-        describe:
-          'Previous package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory or a single file. (In case it is a directory make sure it contains an `index.d.ts` type definition file.)',
-      });
-
-      yargs.option('current', {
-        type: 'string',
-        default: null,
-        demandOption: true,
-        describe:
-          'Current package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory or a single file. (In case it is a directory make sure it contains an `index.d.ts` type definition file.)',
-      });
+      return yargs
+        .option('prev', {
+          type: 'string',
+          default: null,
+          demandOption: true,
+          describe:
+            'Previous package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory or a single file. (In case it is a directory make sure it contains an `index.d.ts` type definition file.)',
+        })
+        .option('current', {
+          type: 'string',
+          default: null,
+          demandOption: true,
+          describe:
+            'Current package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory or a single file. (In case it is a directory make sure it contains an `index.d.ts` type definition file.)',
+        });
     },
     async function ({ prev, current }: { prev: string; current: string }) {
       try {
@@ -156,15 +156,16 @@ yargs
     'list-exports',
     'Lists exported members of a TypeScript module.',
     (yargs) => {
-      yargs.option('path', {
+      return yargs.option('path', {
         type: 'string',
         default: null,
         demandOption: true,
         describe: 'Path to a root module file.',
       });
     },
-    function ({ path }: { path: string }) {
-      printExports(getExportInfo(path));
+    async function ({ path }: { path: string }) {
+      const pathResolved = await resolvePackage(path);
+      printExports(getExportInfo(pathResolved));
     }
   )
   .help().argv;
