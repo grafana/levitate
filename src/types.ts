@@ -68,3 +68,22 @@ export type ListCLIArgs = {
   isJson: boolean;
   filters: string[];
 };
+
+export type NpmListDependency = {
+  version: string;
+  resolved: string;
+};
+
+export type NpmList = {
+  name: string;
+  version: string;
+  dependencies?: Record<string, NpmListDependency>;
+};
+
+export type IncompatibilityInfo = {
+  name: string;
+  codeIdentifier: ts.Identifier;
+  sourceFile: ts.SourceFile;
+  change?: Change;
+  removal?: ts.Symbol;
+};

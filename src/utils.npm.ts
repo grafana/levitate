@@ -5,6 +5,8 @@ import fetch from 'node-fetch';
 import execa from 'execa';
 import { pathExists } from './utils.file';
 import { startSpinner, setSpinner, failSpinner, succeedSpinner } from './utils.spinner';
+import { dirname } from 'path';
+import { NpmList, NpmListDependency } from '.';
 
 export const TYPE_DEFINITION_FILE_NAME = 'index.d.ts';
 export const TMP_FOLDER = '.tmp';
@@ -177,4 +179,46 @@ export function getNpmDependencies(packagePath: string): Record<string, string> 
   }
 
   return { ...packageJson.dependencies, ...packageJson.devDependencies };
+}
+/*
+ * Returns the information of an npm package as a JSON object
+ * or undefined if the package does not exist.
+ */
+export async function getNpmPackageDetails(
+  packageName: string,
+  version = 'latest'
+): Promise<{
+  name: string;
+  versions: string[];
+  version: string;
+  _id: string;
+} | void> {
+  const result = await execa('npm', ['view', `${packageName}@${version}`, '--json']);
+  try {
+    const details = JSON.parse(result.stdout);
+    return details;
+  } catch (e) {
+    return;
+  }
+}
+
+/**
+ * Returns the version of an installed dependency on the passed path
+ * or undefined if the dependency is not installed.
+ * It uses npm list to list a project's dependencies
+ */
+export async function getNpmPackageVersionFromProjectPath(path: string, pkgName: string): Promise<string | void> {
+  const result = await execa('npm', ['list', '--json', '--depth', '0'], { cwd: dirname(path) });
+  try {
+    const pkgInfo = JSON.parse(result.stdout) as NpmList;
+    if (pkgInfo.dependencies) {
+      for (const pkg of Object.keys(pkgInfo.dependencies)) {
+        if (pkg === pkgName) {
+          return pkgInfo.dependencies[pkg].version ?? undefined;
+        }
+      }
+    }
+  } catch (e) {
+    return;
+  }
 }

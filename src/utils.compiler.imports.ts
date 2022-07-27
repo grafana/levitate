@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import ts from 'typescript';
 import { ImportInfo, ImportsInfo } from './types';
 import { createProgram } from './utils.compiler';
 
