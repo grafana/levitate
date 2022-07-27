@@ -87,3 +87,8 @@ export type IncompatibilityInfo = {
   change?: Change;
   removal?: ts.Symbol;
 };
+
+export type PackageWithVersion = {
+  name: string;
+  version: string;
+};

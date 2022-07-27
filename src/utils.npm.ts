@@ -214,6 +214,7 @@ export async function getNpmPackageVersionFromProjectPath(path: string, pkgName:
     if (pkgInfo.dependencies) {
       for (const pkg of Object.keys(pkgInfo.dependencies)) {
         if (pkg === pkgName) {
+          console.log(`✔ Found ${pkgName} version ${pkgInfo.dependencies[pkg].version} locally`);
           return pkgInfo.dependencies[pkg].version ?? undefined;
         }
       }

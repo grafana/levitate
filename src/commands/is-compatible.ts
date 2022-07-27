@@ -6,24 +6,28 @@ import {
   createProgram,
   getNpmPackageVersionFromProjectPath,
   IncompatibilityInfo,
+  PackageWithVersion,
   resolvePackage,
 } from '..';
 import { printIncompatibilities } from '../utils.print.comparison';
 import { getAllIdentifiers } from '../utils/typescript';
 
-const packagesToCheck = ['@grafana/data', '@grafana/ui'];
-
-export async function compareUsage(projectPath: string, version: string): Promise<void> {
+export async function isCompatible(projectPath: string, packagesToCheck: PackageWithVersion[]): Promise<void> {
   const projectProgram = createProgram(projectPath);
   for (const pkg of packagesToCheck) {
+    console.log(
+      `◎ Checking compatibility between ${chalk.blue(projectPath)} and ${chalk.blue(pkg.name)}@${chalk.yellow(
+        pkg.version
+      )}...`
+    );
     // check if this package is used in the project if not skip
-    const installedPackageVersion = await getNpmPackageVersionFromProjectPath(projectPath, pkg);
+    const installedPackageVersion = await getNpmPackageVersionFromProjectPath(projectPath, pkg.name);
     if (!installedPackageVersion) {
-      console.log("Skipping package '" + pkg + "' because it is not used in the project.");
+      console.log("> Skipping package '" + chalk.blue(pkg) + "' because it is not used in the project.");
       continue;
     }
-    const pkgFrom = `${pkg}@${installedPackageVersion}`;
-    const pkgTo = `${pkg}@${version}`;
+    const pkgFrom = `${pkg.name}@${installedPackageVersion}`;
+    const pkgTo = `${pkg.name}@${pkg.version}`;
     const incompatibilities = await compareUsageWithPackage(projectProgram, pkgFrom, pkgTo);
 
     console.log(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));

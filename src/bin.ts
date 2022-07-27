@@ -12,8 +12,8 @@ import { getExportInfo } from './utils.compiler.exports';
 import { exit } from 'process';
 import { access } from 'fs/promises';
 import { constants } from 'fs';
-import { resolveGrafanaVersion } from './utils';
-import { compareUsage } from './commands/compare-usage';
+import { isCompatible } from './commands/is-compatible';
+import { resolveTargetPackages } from './utils/packages';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs
@@ -78,22 +78,22 @@ yargs
   )
 
   .command(
-    'compare-usage',
-    'Compares the usage of imports and the API of a specific Grafana version',
+    'is-compatible',
+    'Checks for incompatibilities between the passed path and modules. It uses the modules versions extracted from npm list to compare.',
     (yargs) => {
       return yargs
         .option('target', {
           type: 'string',
-          default: 'latest',
           demandOption: true,
           describe:
-            'Target Grafana version. You can use a specific version number (e.g. 9.0.4), "canary" or "latest". You can find a list of Grafana releases here https://grafana.com/docs/grafana/latest/release-notes/.',
+            'The target packages with versions to check compatibility. Comma separated. e.g.: @grafana/data@latest,@grafana/ui@9.0.3',
         })
         .option('path', {
           type: 'string',
           default: './src/module.ts',
           demandOption: false,
-          describe: 'Path to your module.ts file. Default is "./src/module.ts".',
+          describe:
+            'Path to your module file to check. If this module imports other modules, they\'ll be checked too. Default is "./src/module.ts".',
         });
     },
     async function ({ target, path }: { target: string; path: string }) {
@@ -101,12 +101,11 @@ yargs
         // validate the path is accesible and readable
         await access(path, constants.R_OK);
 
-        // validate the grafana version exists
-        const targetVersion = await resolveGrafanaVersion(target);
-        if (!targetVersion || targetVersion === '') {
-          throw new Error(`Could not resolve the target Grafana version: ${target}`);
+        const packages = await resolveTargetPackages(target);
+        if (packages.length === 0) {
+          throw new Error('Target list of packages is empty or invalid');
         }
-        compareUsage(path, targetVersion);
+        isCompatible(path, packages);
       } catch (e) {
         console.error(chalk.bgRed.bold.white(' ERROR '));
         if (e.code === 'ENOENT') {
