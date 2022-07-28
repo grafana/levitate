@@ -162,7 +162,7 @@ export function printIncompatibilities(incompatibilities: IncompatibilityInfo[])
     [
       { value: 'Name', width: 30, align: 'left', headerAlign: 'left' },
       { value: 'Location', width: 40, align: 'left', headerAlign: 'left' },
-      { value: 'Detail', width: 90, align: 'left', headerAlign: 'left' },
+      { value: 'Detail', align: 'left', headerAlign: 'left' },
     ],
     //@ts-expect-error
     [
@@ -185,10 +185,10 @@ function getIncompatibilityDetail(incompatibility: IncompatibilityInfo) {
   if (incompatibility.change) {
     const prevDeclaration = incompatibility.change.prev.declarations[0].getText();
     const currentDeclaration = incompatibility.change.current.declarations[0].getText();
-    return getDiff(prevDeclaration, currentDeclaration);
+    return chalk.yellow('API Signature changed\n') + getDiff(prevDeclaration, currentDeclaration);
   }
 
   if (incompatibility.removal) {
-    return chalk.gray(incompatibility.removal.declarations[0].getText());
+    return chalk.red('API Removed\n');
   }
 }

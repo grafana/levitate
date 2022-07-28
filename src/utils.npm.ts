@@ -208,9 +208,17 @@ export async function getNpmPackageDetails(
  * It uses npm list to list a project's dependencies
  */
 export async function getNpmPackageVersionFromProjectPath(path: string, pkgName: string): Promise<string | void> {
-  const result = await execa('npm', ['list', '--json', '--depth', '0'], { cwd: dirname(path) });
+  let listJson = '';
   try {
-    const pkgInfo = JSON.parse(result.stdout) as NpmList;
+    const result = await execa('npm', ['list', '--json', '--depth', '0'], { cwd: dirname(path) });
+    listJson = result.stdout;
+  } catch (e) {
+    //sometimes npm list fails with a parsing a parsing error
+    //but still returns valid json in the stdout.
+    listJson = e.stdout;
+  }
+  try {
+    const pkgInfo = JSON.parse(listJson) as NpmList;
     if (pkgInfo.dependencies) {
       for (const pkg of Object.keys(pkgInfo.dependencies)) {
         if (pkg === pkgName) {

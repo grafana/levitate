@@ -23,9 +23,17 @@ export async function isCompatible(projectPath: string, packagesToCheck: Package
     // check if this package is used in the project if not skip
     const installedPackageVersion = await getNpmPackageVersionFromProjectPath(projectPath, pkg.name);
     if (!installedPackageVersion) {
-      console.log("> Skipping package '" + chalk.blue(pkg) + "' because it is not used in the project.");
+      console.log(
+        chalk.grey(`> Skipping package ${pkg.name}  because it is not used in the project or not installed locally.`)
+      );
+      console.log(
+        chalk.grey(
+          '  did you forget to run ' + chalk.yellow('yarn install') + ' or ' + chalk.yellow('npm install') + '?'
+        )
+      );
       continue;
     }
+
     const pkgFrom = `${pkg.name}@${installedPackageVersion}`;
     const pkgTo = `${pkg.name}@${pkg.version}`;
     const incompatibilities = await compareUsageWithPackage(projectProgram, pkgFrom, pkgTo);
