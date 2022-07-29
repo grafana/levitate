@@ -34,6 +34,7 @@ export async function resolveTargetPackages(target: string): Promise<PackageWith
       throw new Error(`Could not find package ${pkg.name}@${pkg.version} in the npm registry`);
     }
   }
+
   return packages;
 }
 
@@ -43,7 +44,7 @@ export async function resolveTargetPackages(target: string): Promise<PackageWith
  *
  * If a package or its version does not exist it returns undefined.
  */
-export async function resolvePackageVersion(pkg: string, version = 'latest'): Promise<string | void> {
+async function resolvePackageVersion(pkg: string, version = 'latest'): Promise<string | void> {
   const details = await getNpmPackageDetails(pkg, version);
   if (details && details.version !== '') {
     return details.version;
