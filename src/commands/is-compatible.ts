@@ -70,7 +70,7 @@ async function compareUsageWithPackage(
   return incompatibilities;
 }
 
-function compareSourceFileWithChanges(sourceFile: ts.SourceFile, comparison: Comparison): IncompatibilityInfo[] {
+export function compareSourceFileWithChanges(sourceFile: ts.SourceFile, comparison: Comparison): IncompatibilityInfo[] {
   const possibleIncompatibilities: IncompatibilityInfo[] = [];
   const identifiers = getAllIdentifiers(sourceFile);
   const identifiersMap: Record<string, ts.Identifier> = {};
