@@ -10,7 +10,14 @@ describe('Packages', () => {
         version: version,
       };
     });
-    const packages = ['@grafana/data@9.0.1', '@types/node', '@types/node@8.0.0'].join(',');
+    const packages = [
+      '@grafana/data@9.0.1',
+      '@types/node',
+      '@types/node@8.0.0',
+      '@testme',
+      ' testme@1.0 ',
+      ' withspaces   ',
+    ];
     const expected = [
       {
         name: '@grafana/data',
@@ -24,7 +31,21 @@ describe('Packages', () => {
         name: '@types/node',
         version: '8.0.0',
       },
+      {
+        name: '@testme',
+        version: 'latest',
+      },
+      {
+        name: 'testme',
+        version: '1.0',
+      },
+      {
+        name: 'withspaces',
+        version: 'latest',
+      },
     ];
-    expect(await resolveTargetPackages(packages)).toEqual(expected);
+    expect(await resolveTargetPackages(packages.join(','))).toEqual(expected);
+    // with spaces between packages
+    expect(await resolveTargetPackages(packages.join(' , '))).toEqual(expected);
   });
 });
