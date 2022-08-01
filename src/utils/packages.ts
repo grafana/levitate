@@ -11,10 +11,11 @@ export async function resolveTargetPackages(target: string): Promise<PackageWith
   const items = target.trim().split(',');
   for (const item of items) {
     let pkg: PackageWithVersion;
-    if (item === '') {
+    const trimmedItem = item.replace(/\s/g, '');
+    if (trimmedItem === '') {
       continue;
     }
-    const match = packageWithVersionRe.exec(item);
+    const match = packageWithVersionRe.exec(trimmedItem);
     if (match) {
       pkg = {
         name: match[1].trim(),
