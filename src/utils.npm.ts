@@ -213,7 +213,7 @@ export async function getNpmPackageVersionFromProjectPath(path: string, pkgName:
     const result = await execa('npm', ['list', '--json', '--depth', '0'], { cwd: dirname(path) });
     listJson = result.stdout;
   } catch (e) {
-    //sometimes npm list fails with a parsing a parsing error
+    //sometimes npm list fails with a parsing error
     //but still returns valid json in the stdout.
     listJson = e.stdout;
   }
