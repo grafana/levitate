@@ -7,13 +7,12 @@ import { getImportsInfo, getGroupedImports } from './utils.compiler.imports';
 import { printImports as printListOfImports, printExports } from './utils.print';
 import { printComparison } from './utils.print.comparison';
 import { getListImportsCliArgs, CliError } from './utils.cli';
-import { resolvePackage } from './utils.npm';
+import { resolvePackage, resolveTargetPackages } from './utils.npm';
 import { getExportInfo } from './utils.compiler.exports';
 import { exit } from 'process';
 import { access } from 'fs/promises';
 import { constants } from 'fs';
 import { isCompatible } from './commands/is-compatible';
-import { resolveTargetPackages } from './utils/packages';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs

@@ -1,15 +1,21 @@
-import { getNpmPackageDetails } from '..';
-import { resolveTargetPackages } from './packages';
+import execa from 'execa';
+import { getNpmPackageDetails, resolveTargetPackages } from './utils.npm';
 
-jest.mock('../');
+jest.mock('execa');
+
+(execa as unknown as jest.Mock).mockImplementation(async (...args) => {
+  const parsed = args[1][1].split('@');
+  const version = parsed[parsed.length - 1];
+  return {
+    stdout: JSON.stringify({
+      version,
+    }),
+    stderr: '',
+  };
+});
 
 describe('Packages', () => {
   it('parses an array of packages with version and returns the serialized information', async () => {
-    (getNpmPackageDetails as jest.Mock).mockImplementation(async (_pkg: string, version: string) => {
-      return {
-        version: version,
-      };
-    });
     const packages = [
       '@grafana/data@9.0.1',
       '@types/node',
