@@ -61,18 +61,17 @@ describe('Utils/NPM', () => {
   });
 
   describe('resolveTargetPackages', () => {
-    (execa as unknown as jest.Mock).mockImplementation(async (...args) => {
-      const parsed = args[1][1].split('@');
-      const version = parsed[parsed.length - 1];
-      return {
-        stdout: JSON.stringify({
-          version,
-        }),
-        stderr: '',
-      };
-    });
-
     it('parses an array of packages with version and returns the serialized information', async () => {
+      (execa as unknown as jest.Mock).mockImplementation(async (...args) => {
+        const parsed = args[1][1].split('@');
+        const version = parsed[parsed.length - 1];
+        return {
+          stdout: JSON.stringify({
+            version,
+          }),
+          stderr: '',
+        };
+      });
       const packages = [
         '@grafana/data@9.0.1',
         '@types/node',
@@ -110,6 +109,11 @@ describe('Utils/NPM', () => {
       expect(await resolveTargetPackages(packages.join(','))).toEqual(expected);
       // with spaces between packages
       expect(await resolveTargetPackages(packages.join(' , '))).toEqual(expected);
+    });
+
+    it('only returns the packages that can parse', async () => {
+      (execa as unknown as jest.Mock).mockRejectedValue('Not found');
+      await expect(resolveTargetPackages('this will fail')).rejects.toThrow('Could not find package');
     });
   });
 });

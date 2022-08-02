@@ -279,8 +279,10 @@ export async function resolveTargetPackages(target: string): Promise<PackageWith
  * If a package or its version does not exist it returns undefined.
  */
 async function resolvePackageVersion(pkg: string, version = 'latest'): Promise<string | void> {
-  const details = await getNpmPackageDetails(pkg, version);
-  if (details && details.version !== '') {
-    return details.version;
-  }
+  try {
+    const details = await getNpmPackageDetails(pkg, version);
+    if (details && details.version !== '') {
+      return details.version;
+    }
+  } catch {}
 }
