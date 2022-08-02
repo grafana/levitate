@@ -1,0 +1,16 @@
+# action.yml
+name: 'Levitate is-compatible'
+description: 'Check compatibility of the current plugin with grafana latests plugins API.'
+inputs:
+  who-to-greet: # id of input
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.who-to-greet }}
