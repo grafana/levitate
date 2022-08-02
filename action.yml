@@ -1,0 +1,15 @@
+# action.yml
+name: 'Levitate is-compatible'
+description: 'Check compatibility of the current plugin with grafana latests plugins API.'
+inputs:
+  path: # id of input
+    description: 'Path to your module.'
+    required: true
+outputs:
+  time: # id of output
+    description: 'Time of the run.'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.path }}

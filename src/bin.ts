@@ -7,9 +7,12 @@ import { getImportsInfo, getGroupedImports } from './utils.compiler.imports';
 import { printImports as printListOfImports, printExports } from './utils.print';
 import { printComparison } from './utils.print.comparison';
 import { getListImportsCliArgs, CliError } from './utils.cli';
-import { resolvePackage } from './utils.npm';
+import { resolvePackage, resolveTargetPackages } from './utils.npm';
 import { getExportInfo } from './utils.compiler.exports';
 import { exit } from 'process';
+import { access } from 'fs/promises';
+import { constants } from 'fs';
+import { isCompatible } from './command.is-compatible';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs
@@ -73,6 +76,46 @@ yargs
     }
   )
 
+  .command(
+    'is-compatible',
+    'Checks for incompatibilities between the passed path and modules. It uses the modules versions extracted from npm list to compare.',
+    (yargs) => {
+      return yargs
+        .option('target', {
+          type: 'string',
+          demandOption: true,
+          describe:
+            'The target packages with versions to check compatibility. Comma separated. e.g.: @grafana/data@latest,@grafana/ui@9.0.3',
+        })
+        .option('path', {
+          type: 'string',
+          demandOption: true,
+          describe:
+            'Path to your module file to check. If this module imports other modules, they\'ll be checked too.".',
+        });
+    },
+    async function ({ target, path }: { target: string; path: string }) {
+      try {
+        // validate the path is accesible and readable
+        await access(path, constants.R_OK);
+
+        const packages = await resolveTargetPackages(target);
+        if (packages.length === 0) {
+          throw new Error('Target list of packages is empty or invalid');
+        }
+        isCompatible(path, packages);
+      } catch (e) {
+        console.error(chalk.bgRed.bold.white(' ERROR '));
+        if (e.code === 'ENOENT') {
+          console.error('path:', path);
+          console.error('File not found. Please make sure to provide a valid path to your module file.\n');
+        } else {
+          console.error(e.message);
+        }
+      }
+    }
+  )
+
   // List imports
   // ----------------------------
   // Lists imports for a certain module / file / package.
@@ -109,19 +152,6 @@ yargs
         array: true,
         describe: 'A white-space separated list of package names to return import information for.',
       });
-
-      //   yargs.option("repo-urls", {
-      //     type: "string",
-      //     default: null,
-      //     array: true,
-      //     describe: "A white-space separated list of git repository urls.",
-      //   });
-
-      //   yargs.option("cache-dir", {
-      //     type: "string",
-      //     default: `${__dirname}/../.cache`,
-      //     describe: "A directory to use for persisting cloned git repositories.",
-      //   });
     },
     function (args) {
       try {
