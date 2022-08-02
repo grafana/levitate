@@ -90,10 +90,9 @@ yargs
         })
         .option('path', {
           type: 'string',
-          default: './src/module.ts',
-          demandOption: false,
+          demandOption: true,
           describe:
-            'Path to your module file to check. If this module imports other modules, they\'ll be checked too. Default is "./src/module.ts".',
+            'Path to your module file to check. If this module imports other modules, they\'ll be checked too.".',
         });
     },
     async function ({ target, path }: { target: string; path: string }) {
@@ -110,7 +109,7 @@ yargs
         console.error(chalk.bgRed.bold.white(' ERROR '));
         if (e.code === 'ENOENT') {
           console.error('path:', path);
-          console.error('File not found. Please make sure to provide a valid path to your module.ts file.\n');
+          console.error('File not found. Please make sure to provide a valid path to your module file.\n');
         } else {
           console.error(e.message);
         }

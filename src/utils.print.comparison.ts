@@ -165,17 +165,15 @@ export function printIncompatibilities(incompatibilities: IncompatibilityInfo[])
       { value: 'Detail', align: 'left', headerAlign: 'left' },
     ],
     //@ts-expect-error
-    [
-      ...incompatibilities.map((item) => {
-        return [
-          chalk.green.bold(item.name),
-          chalk.white(item.sourceFile.fileName) +
-            ':' +
-            chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1),
-          getIncompatibilityDetail(item),
-        ];
-      }),
-    ]
+    incompatibilities.map((item) => {
+      return [
+        chalk.green.bold(item.name),
+        chalk.white(item.sourceFile.fileName) +
+          ':' +
+          chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1),
+        getIncompatibilityDetail(item),
+      ];
+    })
   );
 
   console.log(table.render());
