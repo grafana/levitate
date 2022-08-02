@@ -283,5 +283,4 @@ async function resolvePackageVersion(pkg: string, version = 'latest'): Promise<s
   if (details && details.version !== '') {
     return details.version;
   }
-  return;
 }
