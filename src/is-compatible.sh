@@ -1,9 +1,5 @@
 #!/bin/sh -l
 
-echo "The path $1"
-npm --version
-node --version
-npx -v
-ls -la
+npx @grafana/levitate compare --prev @grafana/ui@8.2.5 --current @grafana/ui@latest
 time=$(date)
 echo "::set-output name=time::$time"
