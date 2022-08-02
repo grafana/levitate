@@ -60,7 +60,7 @@ and another version of the same package (e.g. @grafana/data@9.0.5).
 ```bash
 # Check if the current module.ts usage of @grafana/data is
 # compatible with the latest version of it
-npx @grafana/levitate isCompatible \
+npx @grafana/levitate is-compatible \
     --path <PATH-TO-A-PACKAGE>/module.ts \
     -- target "@grafana/data@latest"
 ```
