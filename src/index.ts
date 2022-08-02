@@ -6,3 +6,4 @@ export * from './utils.compiler';
 export * from './utils.diff';
 export * from './utils.file';
 export * from './utils.npm';
+export * from './utils/compare.source';
