@@ -12,13 +12,6 @@ export async function getIncompatibilitiesBetweenPackages(
   const fromPathResolved = await resolvePackage(pkgFrom);
   const toPathResolved = await resolvePackage(pkgTo);
   const comparison = compareExports(fromPathResolved, toPathResolved);
-  const toFind: Record<string, ts.Symbol> = {};
-  for (const breaking of Object.keys(comparison.removals)) {
-    toFind[breaking] = comparison.removals[breaking];
-  }
-  for (const change of Object.keys(comparison.changes)) {
-    toFind[change] = comparison.changes[change].current;
-  }
   const incompatibilities: IncompatibilityInfo[] = [];
   for (const sourceFile of program.getSourceFiles()) {
     if (!sourceFile.isDeclarationFile) {
