@@ -12,7 +12,7 @@ import { getExportInfo } from './utils.compiler.exports';
 import { exit } from 'process';
 import { access } from 'fs/promises';
 import { constants } from 'fs';
-import { isCompatible } from './commands/is-compatible';
+import { isCompatible } from './command.is-compatible';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs

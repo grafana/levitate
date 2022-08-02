@@ -1,8 +1,10 @@
 import ts from 'typescript';
-import { compareExports, Comparison, IncompatibilityInfo, resolvePackage } from '..';
-import { getAllIdentifiers } from './typescript';
+import { Comparison, IncompatibilityInfo } from './types';
+import { compareExports } from './utils.compare';
+import { resolvePackage } from './utils.npm';
+import { getAllIdentifiers } from './utils/typescript';
 
-export async function compareUsageWithPackage(
+export async function getIncompatibilitiesBetweenPackages(
   program: ts.Program,
   pkgFrom: string,
   pkgTo: string
@@ -20,14 +22,17 @@ export async function compareUsageWithPackage(
   const incompatibilities: IncompatibilityInfo[] = [];
   for (const sourceFile of program.getSourceFiles()) {
     if (!sourceFile.isDeclarationFile) {
-      incompatibilities.push(...compareSourceFileWithChanges(sourceFile, comparison));
+      incompatibilities.push(...getIncompatibilitiesFromComparison(sourceFile, comparison));
     }
   }
 
   return incompatibilities;
 }
 
-export function compareSourceFileWithChanges(sourceFile: ts.SourceFile, comparison: Comparison): IncompatibilityInfo[] {
+export function getIncompatibilitiesFromComparison(
+  sourceFile: ts.SourceFile,
+  comparison: Comparison
+): IncompatibilityInfo[] {
   const possibleIncompatibilities: IncompatibilityInfo[] = [];
   const identifiers = getAllIdentifiers(sourceFile);
   const identifiersMap: Record<string, ts.Identifier> = {};

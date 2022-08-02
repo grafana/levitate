@@ -1,6 +1,6 @@
 import { generateTmpFileWithContent, testCompare } from '../tests/test-utils';
 import { createProgram } from '../utils.compiler';
-import { compareSourceFileWithChanges } from '../utils/compare.source';
+import { getIncompatibilitiesFromComparison } from '../utils.compare.source';
 
 const prevAPIWithoutChange = `
       export declare type Foo = (value: number) => string;
@@ -44,7 +44,7 @@ describe('is compatible command', () => {
     `);
     const program = createProgram(file);
     const sourceFile = program.getSourceFile(file);
-    const result = compareSourceFileWithChanges(sourceFile, comparison);
+    const result = getIncompatibilitiesFromComparison(sourceFile, comparison);
     expect(result).toHaveLength(3);
     //Foo had changed
     expect(result[0]).toMatchObject({ name: 'Foo', sourceFile });

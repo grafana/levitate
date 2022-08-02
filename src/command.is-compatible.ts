@@ -1,7 +1,9 @@
 import chalk from 'chalk';
-import { createProgram, getNpmPackageVersionFromProjectPath, PackageWithVersion } from '..';
-import { printIncompatibilities } from '../utils.print.comparison';
-import { compareUsageWithPackage } from '../utils/compare.source';
+import { PackageWithVersion } from './types';
+import { getIncompatibilitiesBetweenPackages } from './utils.compare.source';
+import { createProgram } from './utils.compiler';
+import { getNpmPackageVersionFromProjectPath } from './utils.npm';
+import { printIncompatibilities } from './utils.print.comparison';
 
 export async function isCompatible(projectPath: string, packagesToCheck: PackageWithVersion[]): Promise<void> {
   const projectProgram = createProgram(projectPath);
@@ -27,7 +29,7 @@ export async function isCompatible(projectPath: string, packagesToCheck: Package
 
     const pkgFrom = `${pkg.name}@${installedPackageVersion}`;
     const pkgTo = `${pkg.name}@${pkg.version}`;
-    const incompatibilities = await compareUsageWithPackage(projectProgram, pkgFrom, pkgTo);
+    const incompatibilities = await getIncompatibilitiesBetweenPackages(projectProgram, pkgFrom, pkgTo);
 
     console.log(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
     printIncompatibilities(incompatibilities);
