@@ -2,15 +2,14 @@
 name: 'Levitate is-compatible'
 description: 'Check compatibility of the current plugin with grafana latests plugins API.'
 inputs:
-  who-to-greet: # id of input
-    description: 'Who to greet'
+  path: # id of input
+    description: 'Path to your module.'
     required: true
-    default: 'World'
 outputs:
   time: # id of output
-    description: 'The time we greeted you'
+    description: 'Time of the run.'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.who-to-greet }}
+    - ${{ inputs.path }}
