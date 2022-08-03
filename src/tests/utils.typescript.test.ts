@@ -15,7 +15,6 @@ describe('Typescript utils', () => {
           return 1;
         }
     `);
-    console.log(filePath);
     const program = createProgram(filePath);
     const sourceFile = program.getSourceFile(filePath);
     const identifiers = getAllIdentifiers(sourceFile);
