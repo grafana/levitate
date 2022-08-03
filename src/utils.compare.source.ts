@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { Comparison, IncompatibilityInfo } from './types';
 import { compareExports } from './utils.compare';
 import { resolvePackage } from './utils.npm';
-import { getAllIdentifiers } from './utils/typescript';
+import { getAllIdentifiers } from './utils.typescript';
 
 export async function getIncompatibilitiesBetweenPackages(
   program: ts.Program,
