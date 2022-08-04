@@ -51,3 +51,16 @@ npx @grafana/levitate list-imports \
 npx @grafana/levitate list-exports \
     --path <PATH-TO-A-PACKAGE>/index.d.ts
 ```
+
+**Check compatibility between a module and a package**
+
+To check the compatibility of code using an specific version of a pacakge (e.g.: @grafana/data@9.0.0)
+and another version of the same package (e.g. @grafana/data@9.0.5).
+
+```bash
+# Check if the current module.ts usage of @grafana/data is
+# compatible with the latest version of it
+npx @grafana/levitate is-compatible \
+    --path <PATH-TO-A-PACKAGE>/module.ts \
+    -- target "@grafana/data@latest"
+```
