@@ -138,36 +138,33 @@ yargs
     'list-imports',
     'Lists imports used by a TypeScript module.',
     (yargs) => {
-      yargs.option('path', {
-        type: 'string',
-        default: null,
-        demandOption: true,
-        describe: 'Path to a root module file.',
-      });
-
-      yargs.option('verbose', {
-        type: 'boolean',
-        default: false,
-        demandOption: false,
-        describe: 'Displays all occurances of an import if used.',
-      });
-
-      yargs.option('json', {
-        type: 'boolean',
-        default: false,
-        demandOption: false,
-        describe: 'Prints a verbose list including occurances as a valid JSON string representation.',
-      });
-
-      yargs.option('filters', {
-        type: 'string',
-        array: true,
-        describe: 'A white-space separated list of package names to return import information for.',
-      });
+      return yargs
+        .option('path', {
+          type: 'string',
+          default: null,
+          demandOption: true,
+          describe: 'Path to a root module file.',
+        })
+        .option('verbose', {
+          type: 'boolean',
+          default: false,
+          demandOption: false,
+          describe: 'Displays all occurances of an import if used.',
+        })
+        .option('json', {
+          type: 'boolean',
+          default: false,
+          demandOption: false,
+          describe: 'Prints a verbose list including occurances as a valid JSON string representation.',
+        })
+        .option('filters', {
+          type: 'string',
+          array: true,
+          describe: 'A white-space separated list of package names to return import information for.',
+        });
     },
     function (args) {
       try {
-        // @ts-ignore
         const { path, isVerbose, isJson, filters } = getListImportsCliArgs(args);
         const importsInfo = getImportsInfo(path, filters);
         const groupedImports = getGroupedImports(importsInfo.imports);
@@ -210,4 +207,5 @@ yargs
       printExports(getExportInfo(pathResolved));
     }
   )
-  .help().argv;
+  .help()
+  .showHelp('log').argv;
