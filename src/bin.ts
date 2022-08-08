@@ -103,7 +103,18 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
-        isCompatible(path, packages);
+        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true });
+        if (isPathCompatible) {
+          console.log('\n');
+          console.log(chalk.green(`${path} is compatible with ${target}`));
+        } else {
+          console.log(chalk.red(`${path} is not fully compatible with ${target}`));
+          console.log('Please read over the compatibility report above and update possible issues.');
+          console.log(
+            '\nIf you think the compatibility issues are not a problem (e.g. only type changes), it is adviced to update the target list of packages to their latest version in your project.'
+          );
+          exit(1);
+        }
       } catch (e) {
         console.error(chalk.bgRed.bold.white(' ERROR '));
         if (e.code === 'ENOENT') {
@@ -112,6 +123,7 @@ yargs
         } else {
           console.error(e.message);
         }
+        exit(1);
       }
     }
   )
@@ -126,36 +138,33 @@ yargs
     'list-imports',
     'Lists imports used by a TypeScript module.',
     (yargs) => {
-      yargs.option('path', {
-        type: 'string',
-        default: null,
-        demandOption: true,
-        describe: 'Path to a root module file.',
-      });
-
-      yargs.option('verbose', {
-        type: 'boolean',
-        default: false,
-        demandOption: false,
-        describe: 'Displays all occurances of an import if used.',
-      });
-
-      yargs.option('json', {
-        type: 'boolean',
-        default: false,
-        demandOption: false,
-        describe: 'Prints a verbose list including occurances as a valid JSON string representation.',
-      });
-
-      yargs.option('filters', {
-        type: 'string',
-        array: true,
-        describe: 'A white-space separated list of package names to return import information for.',
-      });
+      return yargs
+        .option('path', {
+          type: 'string',
+          default: null,
+          demandOption: true,
+          describe: 'Path to a root module file.',
+        })
+        .option('verbose', {
+          type: 'boolean',
+          default: false,
+          demandOption: false,
+          describe: 'Displays all occurances of an import if used.',
+        })
+        .option('json', {
+          type: 'boolean',
+          default: false,
+          demandOption: false,
+          describe: 'Prints a verbose list including occurances as a valid JSON string representation.',
+        })
+        .option('filters', {
+          type: 'string',
+          array: true,
+          describe: 'A white-space separated list of package names to return import information for.',
+        });
     },
     function (args) {
       try {
-        // @ts-ignore
         const { path, isVerbose, isJson, filters } = getListImportsCliArgs(args);
         const importsInfo = getImportsInfo(path, filters);
         const groupedImports = getGroupedImports(importsInfo.imports);
@@ -198,4 +207,9 @@ yargs
       printExports(getExportInfo(pathResolved));
     }
   )
+  .command('$0', 'default command', (argv) => {
+    console.error(chalk.red('Unknown command:', chalk.blue(argv.argv['_'][0])));
+    console.log('Try running levitate with --help to see available commands.');
+    exit(1);
+  })
   .help().argv;

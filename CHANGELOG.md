@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-08-08
+
+- Improve CLI exit code [#118](https://github.com/grafana/levitate/pull/118)
+- Upgrade yargs [#118](https://github.com/grafana/levitate/pull/118)
+- Improve help messages on CLI [#118](https://github.com/grafana/levitate/pull/118)
+
 ## [0.4.0] - 2022-08-04
 
 - Add `is-compatible` command [#108](https://github.com/grafana/levitate/pull/108)
