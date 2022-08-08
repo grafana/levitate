@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0] - 2022-08-04
+
+- Add `is-compatible` command [#108](https://github.com/grafana/levitate/pull/108)
+- Upgrade dependencies [#103](https://github.com/grafana/levitate/pull/103)
+- Fixes the `list-exports` command not working with node packages [#99](https://github.com/grafana/levitate/pull/99)
+
 ## [0.3.0] - 2022-01-24
 
 ### Added
