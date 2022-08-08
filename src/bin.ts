@@ -103,7 +103,18 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
-        isCompatible(path, packages);
+        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true });
+        if (isPathCompatible) {
+          console.log('\n');
+          console.log(chalk.green(`${path} is compatible with ${target}`));
+        } else {
+          console.log(chalk.red(`${path} is not fully compatible with ${target}`));
+          console.log('Please read over the compatibility report above and update possible issues.');
+          console.log(
+            '\nIf you think the compatibility issues are not a problem (e.g. only type changes), it is adviced to update the target list of packages to their latest version in your project.'
+          );
+          exit(1);
+        }
       } catch (e) {
         console.error(chalk.bgRed.bold.white(' ERROR '));
         if (e.code === 'ENOENT') {
@@ -112,6 +123,7 @@ yargs
         } else {
           console.error(e.message);
         }
+        exit(1);
       }
     }
   )

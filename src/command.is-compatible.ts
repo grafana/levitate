@@ -5,8 +5,15 @@ import { createProgram } from './utils.compiler';
 import { getNpmPackageVersionFromProjectPath } from './utils.npm';
 import { printIncompatibilities } from './utils.print.comparison';
 
-export async function isCompatible(projectPath: string, packagesToCheck: PackageWithVersion[]): Promise<void> {
+export async function isCompatible(
+  projectPath: string,
+  packagesToCheck: PackageWithVersion[],
+  options: {
+    printIncompatibilities: boolean;
+  }
+): Promise<boolean> {
   const projectProgram = createProgram(projectPath);
+  let isPathCompatible = true;
   for (const pkg of packagesToCheck) {
     console.log(
       `◎ Checking compatibility between ${chalk.blue(projectPath)} and ${chalk.blue(pkg.name)}@${chalk.yellow(
@@ -31,9 +38,12 @@ export async function isCompatible(projectPath: string, packagesToCheck: Package
     const pkgTo = `${pkg.name}@${pkg.version}`;
     const incompatibilities = await getIncompatibilitiesBetweenPackages(projectProgram, pkgFrom, pkgTo);
 
-    console.log(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
-    printIncompatibilities(incompatibilities);
-    console.log('---\n');
+    if (incompatibilities.length > 0 && options.printIncompatibilities) {
+      isPathCompatible = false;
+      console.log(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
+      printIncompatibilities(incompatibilities);
+      console.log('---\n');
+    }
   }
-  return;
+  return isPathCompatible;
 }
