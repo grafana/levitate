@@ -207,5 +207,8 @@ yargs
       printExports(getExportInfo(pathResolved));
     }
   )
-  .help()
-  .showHelp('log').argv;
+  .command('$0', 'default command', (argv) => {
+    console.error(chalk.red('Unknown command:', chalk.blue(argv.argv['_'][0])));
+    console.log('Try running levitate with --help to see available commands.');
+  })
+  .help().argv;
