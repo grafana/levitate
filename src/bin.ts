@@ -210,5 +210,6 @@ yargs
   .command('$0', 'default command', (argv) => {
     console.error(chalk.red('Unknown command:', chalk.blue(argv.argv['_'][0])));
     console.log('Try running levitate with --help to see available commands.');
+    exit(1);
   })
   .help().argv;
