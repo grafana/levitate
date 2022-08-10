@@ -105,6 +105,17 @@ export async function createTmpPackageFolder(packageName: string) {
 }
 
 export function getTypeDefinitionFilePath(folder: string) {
+  const packageJson = getPackageJson(folder);
+
+  // if available use the package.json property that references a type definition file
+  if (packageJson) {
+    const typeProp = ['types', 'typings'].find((prop) => packageJson[prop] !== undefined);
+    if (typeProp) {
+      const typeDefinitionFilePath = packageJson[typeProp];
+      return path.join(folder, typeDefinitionFilePath);
+    }
+  }
+
   return path.join(folder, TYPE_DEFINITION_FILE_NAME);
 }
 
