@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,6 +45,7 @@
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.10",
     "@types/yargs": "^17.0.7",
+    "@typescript-eslint/parser": "^5.30.7",
     "@typescript-eslint/eslint-plugin": "^5.30.7",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",

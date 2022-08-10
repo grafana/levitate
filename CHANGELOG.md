@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.2] - 2022-08-10
+
+- Resolve type declaration file from package.json property [#122](https://github.com/grafana/levitate/pull/122)
+
 ## [0.4.1] - 2022-08-08
 
 - Improve CLI exit code [#118](https://github.com/grafana/levitate/pull/118)
