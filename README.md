@@ -30,7 +30,7 @@ yarn bundle
 - Use `DEBUG=*` to display debugging messages
 - Use `LEVITATE_CACHE=1` to re-use downloaded npm packages.
 
-### Run with ts-node for faster iteration
+#### Run with ts-node for faster iteration
 
 You can run directly from the source with `ts-node`. e.g:
 
