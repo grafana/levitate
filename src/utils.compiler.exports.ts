@@ -100,7 +100,7 @@ export function resolveModuleName(moduleName: string, sourceFile: ts.SourceFile)
   }
 
   // It already has an extension, let's use that
-  if (extension) {
+  if (extension && pathExists(resolvedPath)) {
     return resolvedPath;
   }
 
