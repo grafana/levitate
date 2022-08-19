@@ -11,7 +11,7 @@ import { NpmList, PackageWithVersion } from '.';
 export const TYPE_DEFINITION_FILE_NAME = 'index.d.ts';
 export const TMP_FOLDER = '.tmp';
 export const SPINNERS = [];
-
+const shouldCacheExternal = !!process.env.LEVITATE_CACHE || false;
 // The `packageName` is a string that can be any of the following:
 // - an NPM package identifier, e.g. "@grafana/ui@canary"
 // - a path to a local TypeScript file, e.g. "./app/main.ts"
@@ -90,7 +90,10 @@ export function getTmpFolderName(packageName: string) {
 export async function removeTmpFolder(packageName: string) {
   const tmpPackageFolder = getTmpFolderName(packageName);
 
-  await execa('rm', ['-rf', tmpPackageFolder]);
+  // remove existing tmp files unless we are caching
+  if (!shouldCacheExternal) {
+    await execa('rm', ['-rf', tmpPackageFolder]);
+  }
 }
 
 export async function createTmpPackageFolder(packageName: string) {
@@ -138,11 +141,15 @@ export async function downloadNpmPackageAsTarball(packageName: string) {
   }
 
   const tarballPath = path.join(tmpFolderName, path.basename(url));
+  const shouldDownload = !pathExists(tarballPath) || !(shouldCacheExternal && pathExists(tarballPath));
 
-  setSpinner(packageName, `Downloading tarball for ${packageName}`);
-  await downloadFile(url, tarballPath);
-
-  tar.x({ C: tmpFolderName, file: tarballPath, sync: true });
+  if (shouldDownload) {
+    setSpinner(packageName, `Downloading tarball for ${packageName}`);
+    await downloadFile(url, tarballPath);
+    tar.x({ C: tmpFolderName, file: tarballPath, sync: true });
+  } else {
+    console.log('\nUsing download cache. Flag passed: LEVITATE_CACHE=true');
+  }
 
   return path.join(tmpFolderName, 'package');
 }

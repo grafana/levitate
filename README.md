@@ -23,6 +23,19 @@ yarn build
 yarn bundle
 ```
 
+### Development tips
+
+#### Environment variables
+
+- Use `DEBUG=*` to display debugging messages
+- Use `LEVITATE_CACHE=1` to re-use downloaded npm packages.
+
+#### Run with ts-node for faster iteration
+
+You can run directly from the source with `ts-node`. e.g:
+
+` node --loader ts-node/esm --inspect ./src/bin.ts compare --prev @grafana/schema@9.0.7 --current @grafana/schema@latest`
+
 ## Usage
 
 **Compare exports of different package versions**

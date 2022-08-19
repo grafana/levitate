@@ -26,7 +26,6 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
     if (!rootFileNames.includes(sourceFile.fileName)) {
       continue;
     }
-
     const fileExports = getExportedSymbolsForFile(sourceFile, program);
 
     programExports = { ...programExports, ...fileExports };
@@ -90,11 +89,6 @@ export function resolveModuleName(moduleName: string, sourceFile: ts.SourceFile)
   const resolvedPath = path.join(path.dirname(sourceFile.fileName), moduleName);
   const extension = path.extname(resolvedPath);
 
-  // It already has an extension, let's use that
-  if (extension) {
-    return resolvedPath;
-  }
-
   // Suspect it is a type definition file
   if (pathExists(`${resolvedPath}.d.ts`)) {
     return `${resolvedPath}.d.ts`;
@@ -103,6 +97,11 @@ export function resolveModuleName(moduleName: string, sourceFile: ts.SourceFile)
   // Suspect it is pointing to an index.d.ts file
   if (pathExists(path.join(resolvedPath, 'index.d.ts'))) {
     return path.join(resolvedPath, 'index.d.ts');
+  }
+
+  // It already has an extension, let's use that
+  if (extension && pathExists(resolvedPath)) {
+    return resolvedPath;
   }
 
   return undefined;
