@@ -13,6 +13,7 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
 
   const prev = getExportInfo(prevRootFile);
   const current = getExportInfo(currentRootFile);
+
   const additions = {};
   const removals = {};
   const changes = {};
@@ -128,6 +129,20 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
     // Changed parameter at the old position
     if (currentDeclaration.parameters[i].getText() !== prevDeclaration.parameters[i].getText()) {
       return true;
+    }
+
+    debugger;
+
+    // deeper compare parameter types
+    const currentParamType = currentDeclaration.parameters[i].type;
+    const prevParamType = prevDeclaration.parameters[i].type;
+    if (ts.isTypeReferenceNode(currentParamType) && ts.isTypeReferenceNode(prevParamType)) {
+      const currentParamSymbol = current.program.getTypeChecker().getSymbolAtLocation(currentParamType.typeName);
+      const prevParamSymbol = prev.program.getTypeChecker().getSymbolAtLocation(prevParamType.typeName);
+
+      if (currentParamSymbol.declarations[0].getText() !== prevParamSymbol.declarations[0].getText()) {
+        return true;
+      }
     }
   }
 
