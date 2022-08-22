@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.3] - 2022-08-22
+
+- Fixes an issue where re-exported types from files with a dot in the the filename were not read [131](https://github.com/grafana/levitate/pull/131)
+
 ## [0.4.2] - 2022-08-10
 
 - Resolve type declaration file from package.json property [#122](https://github.com/grafana/levitate/pull/122)
