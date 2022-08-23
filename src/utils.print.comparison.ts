@@ -4,16 +4,16 @@ import { Changes, Comparison, Exports } from './types';
 import { debug } from './utils.log';
 import { areChangesBreaking } from './utils.compare';
 import { getDiff } from './utils.diff';
-import { IncompatibilityInfo } from '.';
+import { getSymbolDiff, IncompatibilityInfo } from '.';
 import ts from 'typescript';
 
-export function printComparison({ changes, additions, removals }: Comparison) {
+export function printComparison({ changes, additions, removals, prevProgram, currentProgram }: Comparison) {
   debug('Printing results...');
-  const isBreaking = areChangesBreaking({ changes, additions, removals });
+  const isBreaking = areChangesBreaking({ changes, additions, removals, prevProgram, currentProgram });
 
   printAdditions(additions);
   printRemovals(removals);
-  printChanges(changes);
+  printChanges(changes, prevProgram, currentProgram);
   printVerdict(isBreaking);
 }
 
@@ -77,7 +77,7 @@ function printRemovals(removals: Exports) {
   console.log(table.render());
 }
 
-function printChanges(changes: Changes) {
+function printChanges(changes: Changes, prevProgram: ts.Program, currentProgram: ts.Program) {
   const count = Object.keys(changes).length;
 
   printSpacing(2);
@@ -97,13 +97,23 @@ function printChanges(changes: Changes) {
     // @ts-ignore
     [
       ...Object.keys(changes).map((name) => {
-        const prevDeclaration = changes[name].prev.declarations[0].getText();
-        const currentDeclaration = changes[name].current.declarations[0].getText();
+        const diff = getSymbolDiff({
+          prev: {
+            key: name,
+            symbol: changes[name].prev,
+            program: prevProgram,
+          },
+          current: {
+            key: name,
+            symbol: changes[name].current,
+            program: currentProgram,
+          },
+        });
 
         return [
           chalk.yellow.bold(name),
           chalk.white(changes[name].current.declarations[0].getSourceFile().fileName),
-          getDiff(prevDeclaration, currentDeclaration),
+          diff,
         ];
       }),
     ]
