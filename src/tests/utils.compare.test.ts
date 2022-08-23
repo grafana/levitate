@@ -1,15 +1,28 @@
-import path from 'path';
 import { compareExports } from '..';
 import { generateTmpFileWithContent } from './test-utils';
 
-const fixturesFolder = path.join(__dirname, '..', '..', 'fixtures', 'compare');
-
 describe('Utils compare tests', () => {
   it('should recognize changes in props for components', () => {
-    const oldBundle = path.join(fixturesFolder, 'bundle-old-props.tsx');
-    const newBundle = path.join(fixturesFolder, 'bundle-new-props.tsx');
+    const old = generateTmpFileWithContent(
+      `
+      type TestProps = {
+        foo: string;
+        bar: string[];
+      };
+      export function TestComponent({ foo, bar }: TestProps) {}
+      `
+    );
+    const newFile = generateTmpFileWithContent(
+      `
+      type TestProps = {
+        foo: string;
+        bar: number[]; // notice the change here
+      };
+      export function TestComponent({ foo, bar }: TestProps) {}
+      `
+    );
 
-    const comparison = compareExports(oldBundle, newBundle);
-    // console.log(comparison);
+    const comparison = compareExports(old, newFile);
+    expect(Object.keys(comparison.changes).length).toBe(1);
   });
 });
