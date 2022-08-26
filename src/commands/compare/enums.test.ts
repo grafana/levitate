@@ -1,4 +1,4 @@
-import { testCompare } from './test-utils';
+import { testCompare } from './utils';
 
 describe('Compare enums', () => {
   test('NO CHANGES - not changing anything should not trigger a breaking change', () => {

@@ -1,6 +1,7 @@
-import { generateTmpFileWithContent, testCompare } from '../tests/test-utils';
-import { getIncompatibilitiesFromComparison } from '../comparison/source';
-import { createProgram } from '../utils/typescript';
+import { getIncompatibilitiesFromComparison } from '../../comparison/source';
+import { generateTmpFileWithContent } from '../../tests/test-utils';
+import { createProgram } from '../../utils/typescript';
+import { testCompare } from '../compare/utils';
 
 const prevAPIWithoutChange = `
       export declare type Foo = (value: number) => string;

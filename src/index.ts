@@ -1,5 +1,6 @@
 export * from './types';
-export * from './commands/compare';
+export * from './commands/compare/compare';
+export * from './commands/is-compatible/is-compatible';
 export * from './compiler/imports';
 export * from './compiler/imports';
 export * from './utils/typescript';

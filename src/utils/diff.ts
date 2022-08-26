@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import diff from 'diff';
-import { getFunctionParametersDiff, isFunction } from '../commands/compare';
+import { getFunctionParametersDiff, isFunction } from '../commands/compare/compare';
 import { ChangeType, SymbolMeta } from '../types';
 
 function getDiffLegend() {

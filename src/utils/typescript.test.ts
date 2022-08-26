@@ -1,6 +1,6 @@
 import { createProgram } from '..';
+import { generateTmpFileWithContent } from '../tests/test-utils';
 import { getAllIdentifiers } from '../utils/typescript';
-import { generateTmpFileWithContent } from './test-utils';
 
 describe('Typescript utils', () => {
   it('should return all the identifiers from a typescript node', () => {

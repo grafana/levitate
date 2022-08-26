@@ -1,4 +1,4 @@
-import { testCompare } from './test-utils';
+import { testCompare } from './utils';
 
 describe('Compare classes', () => {
   test('NO CHANGES - not changing anything should not trigger a change', () => {
@@ -10,7 +10,7 @@ describe('Compare classes', () => {
         private foo?: string;
 
         constructor(data: number);
-        
+
         get dataFrame(): number;
         get length(): number;
         getSomething(col: number): string | undefined;
@@ -24,7 +24,7 @@ describe('Compare classes', () => {
         private foo?: string;
 
         constructor(data: number);
-        
+
         get dataFrame(): number;
         get length(): number;
         getSomething(col: number): string | undefined;
@@ -88,7 +88,7 @@ describe('Compare classes', () => {
     const current = `
       export declare class Foo<T = any> {
         private one;
-        
+
         // NEW
         private bar: number;
       }
@@ -109,7 +109,7 @@ describe('Compare classes', () => {
     const current = `
       export declare class Foo<T = any> {
         private one;
-        
+
         // NEW
         private bar?: number;
       }
@@ -326,7 +326,7 @@ describe('Compare classes', () => {
     const prev = `
       export declare class Foo<T = any> {
         private one;
-        
+
         getItems(): string;
       }
       `;
@@ -434,7 +434,7 @@ describe('Compare classes', () => {
         // CHANGED
         methodA(colName: number): number;
         methodB(col: Boolean): string;
-        
+
         // NO CHANGE
         methodC(col: string): string;
       }

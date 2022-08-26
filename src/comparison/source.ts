@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { compareExports } from '../commands/compare';
+import { compareExports } from '../commands/compare/compare';
 import { Comparison, IncompatibilityInfo } from '../types';
 import { resolvePackage } from '../utils/npm';
 import { getAllIdentifiers } from '../utils/typescript';

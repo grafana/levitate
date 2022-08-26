@@ -1,6 +1,6 @@
 import { SourceFile } from 'typescript';
-import { resolveModuleName } from '../compiler/exports';
 import { pathExists } from '../utils/file';
+import { resolveModuleName } from './exports';
 
 jest.mock('../utils/file');
 const pathExistsMock = pathExists as jest.Mock;

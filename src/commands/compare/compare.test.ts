@@ -1,5 +1,5 @@
-import { compareExports } from '..';
-import { generateTmpFileWithContent } from './test-utils';
+import { generateTmpFileWithContent } from '../../tests/test-utils';
+import { compareExports } from './compare';
 
 describe('Utils compare tests', () => {
   it('should recognize changes in props for components', () => {
