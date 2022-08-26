@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.4] - 2022-08-25
+
+- Detect changes in function parameters direct dependencies. Note: this won't work with more parameter types. [137](https://github.com/grafana/levitate/pull/137)
+
 ## [0.4.3] - 2022-08-22
 
 - Fixes an issue where re-exported types from files with a dot in the the filename were not read [131](https://github.com/grafana/levitate/pull/131)

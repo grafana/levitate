@@ -1,8 +1,10 @@
-import * as ts from 'typescript';
-import { SymbolMeta, Comparison } from './types';
+import ts from 'typescript';
+import { SymbolMeta, Comparison, Change } from './types';
 import { debug } from './utils.log';
 import { getExportInfo } from './utils.compiler.exports';
 import { startSpinner, setSpinner, succeedSpinner } from './utils.spinner';
+import { getSymbolFromParameter } from './utils.typescript';
+import { ChangeType } from '.';
 
 export function compareExports(prevRootFile: string, currentRootFile: string): Comparison {
   setSpinner('compare', 'Detecting changes between versions');
@@ -13,6 +15,7 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
 
   const prev = getExportInfo(prevRootFile);
   const current = getExportInfo(currentRootFile);
+
   const additions = {};
   const removals = {};
   const changes = {};
@@ -62,7 +65,7 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
 
   succeedSpinner('compare', 'Successfully compared versions');
 
-  return { changes, additions, removals };
+  return { changes, additions, removals, prevProgram: prev.program, currentProgram: current.program };
 }
 
 export function areChangesBreaking({ changes, removals }: Comparison) {
@@ -113,33 +116,78 @@ export function hasChanged(prev: SymbolMeta, current: SymbolMeta) {
   return false;
 }
 
-export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
+export function getFunctionParametersDiff({
+  prev,
+  current,
+}: {
+  prev: SymbolMeta;
+  current: SymbolMeta;
+}): Change | undefined {
   const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
-
   // Check previous function parameters
   // (all previous parameters must be present at their previous position)
   for (let i = 0; i < prevDeclaration.parameters.length; i++) {
+    const prevParamType = prevDeclaration.parameters[i].type;
+    const prevParamSymbol = getSymbolFromParameter(prevDeclaration.parameters[i], prev.program);
+
     // No parameter at the same position
     if (!currentDeclaration.parameters[i]) {
-      return true;
+      return {
+        prev: prevParamSymbol,
+        current: null,
+        type: ChangeType.PARAMETER_MISSING,
+      };
     }
 
     // Changed parameter at the old position
     if (currentDeclaration.parameters[i].getText() !== prevDeclaration.parameters[i].getText()) {
-      return true;
+      const currentParamType = currentDeclaration.parameters[i]?.type || undefined;
+      const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+      return {
+        prev: prevParamSymbol,
+        current: currentParamSymbol,
+        type: ChangeType.PARAMETER_NAME,
+      };
+    }
+
+    const currentParamType = currentDeclaration.parameters[i]?.type || undefined;
+    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+    if (ts.isTypeReferenceNode(currentParamType) && ts.isTypeReferenceNode(prevParamType)) {
+      if (currentParamSymbol.declarations[0].getText() !== prevParamSymbol.declarations[0].getText()) {
+        return {
+          prev: prevParamSymbol,
+          current: currentParamSymbol,
+          type: ChangeType.PARAMETER_TYPE,
+        };
+      }
     }
   }
 
   // Check current function parameters
   // (all current parameters must be optional)
   for (let i = 0; i < currentDeclaration.parameters.length; i++) {
+    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
     if (
       !prevDeclaration.parameters[i] &&
       !current.program.getTypeChecker().isOptionalParameter(currentDeclaration.parameters[i])
     ) {
-      return true;
+      return {
+        prev: null,
+        current: currentParamSymbol,
+        type: ChangeType.PARAMETER_ADDITION,
+      };
     }
+  }
+}
+
+export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
+  const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
+  const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
+
+  const parameterChanges = getFunctionParametersDiff({ prev, current });
+  if (parameterChanges) {
+    return true;
   }
 
   // Check return type signatures -> they must be the same

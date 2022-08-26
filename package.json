@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,9 +28,10 @@
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
   "license": "Apache-2.0",
   "dependencies": {
+    "@types/diff": "^5.0.2",
     "chalk": "^4.1.2",
     "debug": "^4.3.2",
-    "diff": "^5.0.0",
+    "diff": "^5.1.0",
     "execa": "^5.1.1",
     "fast-glob": "^3.2.7",
     "node-fetch": "^2.6.6",

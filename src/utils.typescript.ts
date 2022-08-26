@@ -13,3 +13,17 @@ export function getAllIdentifiers(node: ts.Node | ts.SourceFile): ts.Identifier[
   });
   return identifiers;
 }
+
+export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: ts.Program): ts.Symbol | undefined {
+  if (Object.hasOwnProperty.call(node, 'type') && ts.isTypeReferenceNode(node.type)) {
+    return program.getTypeChecker().getSymbolAtLocation(node.type.typeName);
+  }
+
+  if (Object.hasOwnProperty.call(node, 'symbol')) {
+    // seems to be an untyped ts property
+    // @ts-expect-error
+    return node.symbol as ts.Symbol;
+  }
+
+  return undefined;
+}

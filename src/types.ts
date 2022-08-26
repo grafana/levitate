@@ -8,9 +8,18 @@ export type SymbolMeta = {
 
 export type Exports = Record<string, ts.Symbol>;
 
+export enum ChangeType {
+  PARAMETER_TYPE = 'parameter-type',
+  PARAMETER_MISSING = 'parameter-missing',
+  PARAMETER_NAME = 'parameter-name',
+  PARAMETER_ADDITION = 'parameter-addition',
+}
+
 export type Change = {
   prev: ts.Symbol;
   current: ts.Symbol;
+  type?: ChangeType;
+  subChanges?: Change[];
 };
 
 export type Changes = Record<string, Change>;
@@ -52,6 +61,8 @@ export type Comparison = {
   changes: Changes;
   additions: Exports;
   removals: Exports;
+  prevProgram: ts.Program;
+  currentProgram: ts.Program;
 };
 
 export type CompareCLIArgs = {
