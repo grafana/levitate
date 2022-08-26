@@ -1,5 +1,5 @@
 import { createProgram } from '..';
-import { getAllIdentifiers } from '../utils.typescript';
+import { getAllIdentifiers } from '../utils/typescript';
 import { generateTmpFileWithContent } from './test-utils';
 
 describe('Typescript utils', () => {

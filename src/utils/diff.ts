@@ -1,6 +1,7 @@
-import * as diff from 'diff';
 import chalk from 'chalk';
-import { ChangeType, getFunctionParametersDiff, isFunction, SymbolMeta } from '.';
+import diff from 'diff';
+import { getFunctionParametersDiff, isFunction } from '../commands/compare';
+import { ChangeType, SymbolMeta } from '../types';
 
 function getDiffLegend() {
   return '\n' + chalk.green('+ Added') + ' ' + chalk.red('- Removed') + '\n' + '\n';
@@ -8,6 +9,8 @@ function getDiffLegend() {
 
 export function getDiff(prev: string, current: string) {
   const patch = diff.createPatch('string', prev, current);
+
+  // @TODO type this and add tests
   const lines = patch
     .split('\n')
     .slice(4)
@@ -45,7 +48,7 @@ export function getSymbolDiff({ prev, current }: { prev: SymbolMeta; current: Sy
   return getDiff(prevDeclaration, currentDeclaration);
 }
 
-function getDiffForLine(line) {
+function getDiffForLine(line: any) {
   switch (line[0]) {
     // Added lines
     case '+':

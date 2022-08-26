@@ -1,4 +1,4 @@
-import { ListCLIArgs } from './types';
+import { ListCLIArgs } from '../types';
 
 export class CliError extends Error {}
 

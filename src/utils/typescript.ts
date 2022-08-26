@@ -1,5 +1,13 @@
 import ts from 'typescript';
 
+export const COMPILER_OPTIONS = {
+  target: ts.ScriptTarget.ES5,
+  module: ts.ModuleKind.CommonJS,
+  jsx: ts.JsxEmit.React,
+  allowJs: true,
+  esModuleInterop: true,
+};
+
 /**
  * Given a source file or node it returns all identifiers in the source file or node.
  */
@@ -26,4 +34,12 @@ export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: t
   }
 
   return undefined;
+}
+
+export function createProgram(fileName: string): ts.Program {
+  const program = ts.createProgram([fileName], COMPILER_OPTIONS);
+
+  program.getTypeChecker();
+
+  return program;
 }

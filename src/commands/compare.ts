@@ -1,10 +1,9 @@
 import ts from 'typescript';
-import { SymbolMeta, Comparison, Change } from './types';
-import { debug } from './utils.log';
-import { getExportInfo } from './utils.compiler.exports';
-import { startSpinner, setSpinner, succeedSpinner } from './utils.spinner';
-import { getSymbolFromParameter } from './utils.typescript';
-import { ChangeType } from '.';
+import { getExportInfo } from '../compiler/exports';
+import { debug } from '../utils/log';
+import { setSpinner, startSpinner, succeedSpinner } from '../utils/spinner';
+import { getSymbolFromParameter } from '../utils/typescript';
+import { Change, ChangeType, Comparison, SymbolMeta } from '../types';
 
 export function compareExports(prevRootFile: string, currentRootFile: string): Comparison {
   setSpinner('compare', 'Detecting changes between versions');
@@ -142,7 +141,6 @@ export function getFunctionParametersDiff({
 
     // Changed parameter at the old position
     if (currentDeclaration.parameters[i].getText() !== prevDeclaration.parameters[i].getText()) {
-      const currentParamType = currentDeclaration.parameters[i]?.type || undefined;
       const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
       return {
         prev: prevParamSymbol,

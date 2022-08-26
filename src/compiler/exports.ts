@@ -1,9 +1,8 @@
 import * as path from 'path';
-import * as fs from 'fs';
-import * as ts from 'typescript';
-import { ExportsInfo, Exports } from './types';
-import { COMPILER_OPTIONS, createProgram } from './utils.compiler';
-import { pathExists } from './utils.file';
+import ts from 'typescript';
+import { Exports, ExportsInfo } from '../types';
+import { pathExists } from '../utils/file';
+import { createProgram } from '../utils/typescript';
 
 // Returns all the exported members of a program identified by a root file (entry file)
 // @param rootFile - Has to be an absolute path

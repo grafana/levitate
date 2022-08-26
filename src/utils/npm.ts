@@ -1,12 +1,11 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import tar from 'tar';
-import fetch from 'node-fetch';
 import execa from 'execa';
-import { pathExists } from './utils.file';
-import { startSpinner, setSpinner, failSpinner, succeedSpinner } from './utils.spinner';
-import { dirname } from 'path';
-import { NpmList, PackageWithVersion } from '.';
+import fs from 'fs';
+import fetch from 'node-fetch';
+import path, { dirname } from 'path';
+import tar from 'tar';
+import { NpmList, PackageWithVersion } from '../types';
+import { pathExists } from './file';
+import { failSpinner, setSpinner, startSpinner, succeedSpinner } from './spinner';
 
 export const TYPE_DEFINITION_FILE_NAME = 'index.d.ts';
 export const TMP_FOLDER = '.tmp';

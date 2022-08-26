@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import rimraf from 'rimraf';
-import { compareExports } from '../utils.compare';
-import { pathExists } from '../utils.file';
+import { compareExports } from '../commands/compare';
+import { pathExists } from '../utils/file';
 import { Comparison } from '../types';
 
 export const TMP_DIR = path.join(__dirname, '..', '..', '.tmp');

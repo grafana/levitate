@@ -2,7 +2,7 @@ import getDebug from 'debug';
 
 export const debug = getDebug('levitate');
 
-export const logError = (...args) => {
+export const logError = (...args: any[]) => {
   if (!isSilent()) {
     console.error(...args);
   }

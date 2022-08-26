@@ -1,8 +1,8 @@
 import ts from 'typescript';
-import { Comparison, IncompatibilityInfo } from './types';
-import { compareExports } from './utils.compare';
-import { resolvePackage } from './utils.npm';
-import { getAllIdentifiers } from './utils.typescript';
+import { compareExports } from '../commands/compare';
+import { Comparison, IncompatibilityInfo } from '../types';
+import { resolvePackage } from '../utils/npm';
+import { getAllIdentifiers } from '../utils/typescript';
 
 export async function getIncompatibilitiesBetweenPackages(
   program: ts.Program,

@@ -6,7 +6,7 @@ import {
   getNpmDependencies,
   hasPackageJson,
   resolveTargetPackages,
-} from '../utils.npm';
+} from '../utils/npm';
 jest.mock('execa');
 
 // Using the projects package.json for testing
