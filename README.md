@@ -1,40 +1,12 @@
 # 🔮 Levitate
 
-![npm version](https://img.shields.io/npm/v/@grafana/levitate)
+[![npm version][npm-badge]][npm-url]
+[![npm downloads][downloads-badge]][npm-url]
+[![CI][build-badge]][build-url]
+[![prettier][prettier-badge]][prettier-url]
+[![TypeScript][typescript-badge]][typescript-url]
 
 A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).
-
-## Install
-
-```bash
-yarn install
-```
-
-## Develop
-
-```bash
-# Watch and rebuild the app on every file change
-yarn dev
-
-# Build the app
-yarn build
-
-# Build and bundle the app into a single executable JS file
-yarn bundle
-```
-
-### Development tips
-
-#### Environment variables
-
-- Use `DEBUG=*` to display debugging messages
-- Use `LEVITATE_CACHE=1` to re-use downloaded npm packages.
-
-#### Run with ts-node for faster iteration
-
-You can run directly from the source with `ts-node`. e.g:
-
-` node --loader ts-node/esm --inspect ./src/bin.ts compare --prev @grafana/schema@9.0.7 --current @grafana/schema@latest`
 
 ## Usage
 
@@ -67,8 +39,8 @@ npx @grafana/levitate list-exports \
 
 **Check compatibility between a module and a package**
 
-To check the compatibility of code using an specific version of a pacakge (e.g.: @grafana/data@9.0.0)
-and another version of the same package (e.g. @grafana/data@9.0.5).
+To check the compatibility of code using a specific version of a package (e.g.: @grafana/data@9.0.0)
+against another version of the same package (e.g. @grafana/data@9.0.5).
 
 ```bash
 # Check if the current module.ts usage of @grafana/data is
@@ -77,3 +49,17 @@ npx @grafana/levitate is-compatible \
     --path <PATH-TO-A-PACKAGE>/module.ts \
     -- target "@grafana/data@latest"
 ```
+
+## Contributing
+
+If you are interested in contributing to the Levitate project please read the [Contributing guide](https://github.com/grafana/levitate/blob/HEAD/CONTRIBUTING.md).
+
+[npm-url]: https://www.npmjs.com/package/@grafana/levitate
+[npm-badge]: https://img.shields.io/npm/v/@grafana/levitate.svg
+[downloads-badge]: https://img.shields.io/npm/dm/@grafana/levitate.svg?color=blue
+[build-badge]: https://github.com/grafana/levitate/actions/workflows/ci.yml/badge.svg
+[build-url]: https://github.com/grafana/levitate/actions/workflows/ci.yml
+[typescript-badge]: https://badges.frapsoft.com/typescript/code/typescript.svg?v=101
+[typescript-url]: https://github.com/microsoft/TypeScript
+[prettier-badge]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg
+[prettier-url]: https://github.com/prettier/prettier
