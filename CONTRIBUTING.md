@@ -89,7 +89,18 @@ And you should be ready to go!
 
 ### Commands
 
-Levitate consists of two commands *compare* and *list-imports*. Developing against these commands can be done individually by running `yarn dev-compare` or `yarn dev-imports`. These scripts will build the project, execute the command against the fixtures, then watch for changes before rerunning build and command execution.
+Levitate consists of two commands _compare_ and _list-imports_. Developing against these commands can be done individually by running `yarn dev-compare` or `yarn dev-imports`. These scripts will build the project, execute the command against the fixtures, then watch for changes before rerunning build and command execution.
+
+### Environment variables
+
+- Use `DEBUG=*` to display debugging messages
+- Use `LEVITATE_CACHE=1` to re-use downloaded npm packages.
+
+### Run with ts-node for faster iteration
+
+You can run directly from the source with `ts-node`. e.g:
+
+` node --loader ts-node/esm --inspect ./src/bin.ts compare --prev @grafana/schema@9.0.7 --current @grafana/schema@latest`
 
 ## Contribute Documentation
 

@@ -8,44 +8,6 @@
 
 A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).
 
-<<<<<<< HEAD
-
-## Install
-
-```bash
-yarn install
-```
-
-## Develop
-
-```bash
-# Watch and rebuild the app on every file change
-yarn dev
-
-# Build the app
-yarn build
-
-# Build and bundle the app into a single executable JS file
-yarn bundle
-```
-
-### Development tips
-
-#### Environment variables
-
-- Use `DEBUG=*` to display debugging messages
-- Use `LEVITATE_CACHE=1` to re-use downloaded npm packages.
-
-#### Run with ts-node for faster iteration
-
-You can run directly from the source with `ts-node`. e.g:
-
-` node --loader ts-node/esm --inspect ./src/bin.ts compare --prev @grafana/schema@9.0.7 --current @grafana/schema@latest`
-
-=======
-
-> > > > > > > 1097301 (docs: move dev scripts from readme to contributing)
-
 ## Usage
 
 **Compare exports of different package versions**
@@ -77,8 +39,8 @@ npx @grafana/levitate list-exports \
 
 **Check compatibility between a module and a package**
 
-To check the compatibility of code using an specific version of a pacakge (e.g.: @grafana/data@9.0.0)
-and another version of the same package (e.g. @grafana/data@9.0.5).
+To check the compatibility of code using a specific version of a package (e.g.: @grafana/data@9.0.0)
+against another version of the same package (e.g. @grafana/data@9.0.5).
 
 ```bash
 # Check if the current module.ts usage of @grafana/data is
