@@ -2,17 +2,18 @@
 
 import * as yargs from 'yargs';
 import chalk from 'chalk';
-import { compareExports, areChangesBreaking } from './utils.compare';
-import { getImportsInfo, getGroupedImports } from './utils.compiler.imports';
-import { printImports as printListOfImports, printExports } from './utils.print';
-import { printComparison } from './utils.print.comparison';
-import { getListImportsCliArgs, CliError } from './utils.cli';
-import { resolvePackage, resolveTargetPackages } from './utils.npm';
-import { getExportInfo } from './utils.compiler.exports';
+import { getImportsInfo, getGroupedImports } from './compiler/imports';
+import { getListImportsCliArgs, CliError } from './utils/cli';
+import { resolvePackage, resolveTargetPackages } from './utils/npm';
+import { getExportInfo } from './compiler/exports';
 import { exit } from 'process';
 import { access } from 'fs/promises';
 import { constants } from 'fs';
-import { isCompatible } from './command.is-compatible';
+import { printImports } from './print/imports';
+import { printExports } from './print/exports';
+import { areChangesBreaking, compareExports } from './commands/compare/compare';
+import { printComparison } from './print/comparison';
+import { isCompatible } from './commands/is-compatible/is-compatible';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs
@@ -169,7 +170,7 @@ yargs
         const importsInfo = getImportsInfo(path, filters);
         const groupedImports = getGroupedImports(importsInfo.imports);
 
-        printListOfImports({
+        printImports({
           imports: groupedImports,
           isVerbose,
           isJson,
