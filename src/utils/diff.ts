@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import diff from 'diff';
+import * as diff from 'diff';
 import { getFunctionParametersDiff, isFunction } from '../commands/compare/compare';
 import { ChangeType, SymbolMeta } from '../types';
 
