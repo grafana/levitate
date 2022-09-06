@@ -6,5 +6,5 @@
     "declaration": true,
     "outDir": "dist"
   },
-  "exclude": ["./dist", "fixtures"]
+  "exclude": ["./dist", "./fixtures"]
 }
