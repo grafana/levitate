@@ -3,7 +3,7 @@ import { getExportInfo } from './exports';
 
 describe('Compile exports test', () => {
   describe('getExportInfo', () => {
-    it.only('should return the export info', () => {
+    it('should return the export info', () => {
       const file = path.resolve(__dirname, '../../fixtures', 'exports', 'package1', 'index.ts');
       const result = getExportInfo(file);
       const exportedNames = Object.keys(result.exports);
