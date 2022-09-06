@@ -7,7 +7,7 @@ describe('Compile exports test', () => {
       const file = path.resolve(__dirname, '../../fixtures', 'exports', 'package1', 'index.ts');
       const result = getExportInfo(file);
       const exportedNames = Object.keys(result.exports);
-      expect(exportedNames).toEqual(['inlined', 'data', 'test', 'test2', 'Test3']);
+      expect(exportedNames).toEqual(['inlined', 'data2', 'data', 'default', 'test', 'test2', 'Test3', 'mainInstance']);
     });
   });
 });
