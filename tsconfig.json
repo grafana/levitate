@@ -3,7 +3,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "declaration": true
+    "declaration": true,
+    "outDir": "dist"
   },
-  "exclude": ["./dist"]
+  "exclude": ["./dist", "./fixtures"],
+  "files": ["./src/bin.ts"]
 }
