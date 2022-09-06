@@ -103,5 +103,10 @@ export function resolveModuleName(moduleName: string, sourceFile: ts.SourceFile)
     return resolvedPath;
   }
 
+  // Suspect it is pointing to an .ts file
+  if (pathExists(`${resolvedPath}.ts`)) {
+    return `${resolvedPath}.ts`;
+  }
+
   return undefined;
 }
