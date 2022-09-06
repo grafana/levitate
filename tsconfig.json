@@ -6,5 +6,6 @@
     "declaration": true,
     "outDir": "dist"
   },
-  "exclude": ["./dist", "./fixtures"]
+  "exclude": ["./dist", "./fixtures"],
+  "files": ["./src/bin.ts"]
 }
