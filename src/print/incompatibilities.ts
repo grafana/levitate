@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import Table from 'tty-table';
 import ts from 'typescript';
 import { IncompatibilityInfo } from '../types';
-import { getDiff, getSymbolDiff } from '../utils/diff';
+import { getSymbolDiff } from '../utils/diff';
 import { printHeading, printSpacing } from './utils';
 
 export function printIncompatibilities(incompatibilities: IncompatibilityInfo[]) {
