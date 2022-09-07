@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import Table from 'tty-table';
 import ts from 'typescript';
 import { IncompatibilityInfo } from '../types';
-import { getDiff } from '../utils/diff';
+import { getDiff, getSymbolDiff } from '../utils/diff';
 import { printHeading, printSpacing } from './utils';
 
 export function printIncompatibilities(incompatibilities: IncompatibilityInfo[]) {
@@ -39,9 +39,20 @@ export function printIncompatibilities(incompatibilities: IncompatibilityInfo[])
 
 function getIncompatibilityDetail(incompatibility: IncompatibilityInfo) {
   if (incompatibility.change) {
-    const prevDeclaration = incompatibility.change.prev.declarations[0].getText();
-    const currentDeclaration = incompatibility.change.current.declarations[0].getText();
-    return chalk.yellow('API Signature changed\n') + getDiff(prevDeclaration, currentDeclaration);
+    const diff = getSymbolDiff({
+      prev: {
+        key: incompatibility.change.prev.getName(),
+        symbol: incompatibility.change.prev,
+        program: incompatibility.change.prevProgram,
+      },
+      current: {
+        key: incompatibility.change.current.getName(),
+        symbol: incompatibility.change.current,
+        program: incompatibility.change.currentProgram,
+      },
+    });
+
+    return chalk.yellow('API Signature changed\n') + diff;
   }
 
   if (incompatibility.removal) {
