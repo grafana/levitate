@@ -36,6 +36,11 @@ jobs:
       - name: Run tests
         run: yarn test
 
+      - name: Setup Git
+        run: |
+          git config user.name 'Grot'
+          git config user.email 'release@grafana.com'
+
       - name: bump version
         run: npm version ${{ github.event.inputs.version }}
 
