@@ -17,7 +17,7 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
 
   const additions = {};
   const removals = {};
-  const changes = {};
+  const changes: Record<string, Change> = {};
 
   debug('Previous file: %o exports', Object.keys(prev.exports).length);
   debug('Current file: %o exports', Object.keys(current.exports).length);
@@ -49,6 +49,8 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
         changes[currentExportName] = {
           prev: prev.exports[currentExportName],
           current: currentExportSymbol,
+          prevProgram: prev.program,
+          currentProgram: current.program,
         };
       }
     }
@@ -134,7 +136,9 @@ export function getFunctionParametersDiff({
     if (!currentDeclaration.parameters[i]) {
       return {
         prev: prevParamSymbol,
+        prevProgram: prev.program,
         current: null,
+        currentProgram: current.program,
         type: ChangeType.PARAMETER_MISSING,
       };
     }
@@ -144,7 +148,9 @@ export function getFunctionParametersDiff({
       const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
       return {
         prev: prevParamSymbol,
+        prevProgram: prev.program,
         current: currentParamSymbol,
+        currentProgram: current.program,
         type: ChangeType.PARAMETER_NAME,
       };
     }
@@ -155,7 +161,9 @@ export function getFunctionParametersDiff({
       if (currentParamSymbol.declarations[0].getText() !== prevParamSymbol.declarations[0].getText()) {
         return {
           prev: prevParamSymbol,
+          prevProgram: prev.program,
           current: currentParamSymbol,
+          currentProgram: current.program,
           type: ChangeType.PARAMETER_TYPE,
         };
       }
@@ -172,7 +180,9 @@ export function getFunctionParametersDiff({
     ) {
       return {
         prev: null,
+        prevProgram: prev.program,
         current: currentParamSymbol,
+        currentProgram: current.program,
         type: ChangeType.PARAMETER_ADDITION,
       };
     }

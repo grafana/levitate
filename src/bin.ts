@@ -107,7 +107,7 @@ yargs
         const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true });
         if (isPathCompatible) {
           console.log('\n');
-          console.log(chalk.green(`${path} is compatible with ${target}`));
+          console.log(chalk.green(`${path} appears to be compatible with ${target}`));
         } else {
           console.log(chalk.red(`${path} is not fully compatible with ${target}`));
           console.log('Please read over the compatibility report above and update possible issues.');

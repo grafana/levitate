@@ -23,7 +23,7 @@ export function getAllIdentifiers(node: ts.Node | ts.SourceFile): ts.Identifier[
 }
 
 export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: ts.Program): ts.Symbol | undefined {
-  if (Object.hasOwnProperty.call(node, 'type') && ts.isTypeReferenceNode(node.type)) {
+  if (program && Object.hasOwnProperty.call(node, 'type') && ts.isTypeReferenceNode(node.type)) {
     return program.getTypeChecker().getSymbolAtLocation(node.type.typeName);
   }
 

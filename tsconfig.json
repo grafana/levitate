@@ -1,10 +1,12 @@
 {
+  "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "noUnusedLocals": true
   },
   "exclude": ["./dist", "./fixtures"],
   "files": ["./src/bin.ts"]

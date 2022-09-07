@@ -18,6 +18,8 @@ export enum ChangeType {
 export type Change = {
   prev: ts.Symbol;
   current: ts.Symbol;
+  prevProgram: ts.Program;
+  currentProgram: ts.Program;
   type?: ChangeType;
   subChanges?: Change[];
 };
