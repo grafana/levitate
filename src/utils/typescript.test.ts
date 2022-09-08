@@ -1,4 +1,4 @@
-import { createProgram } from '..';
+import { createTsProgram } from '..';
 import { generateTmpFileWithContent } from '../tests/test-utils';
 import { getAllIdentifiers } from '../utils/typescript';
 
@@ -15,7 +15,7 @@ describe('Typescript utils', () => {
           return 1;
         }
     `);
-    const program = createProgram(filePath);
+    const program = createTsProgram(filePath);
     const sourceFile = program.getSourceFile(filePath);
     const identifiers = getAllIdentifiers(sourceFile);
     expect(identifiers.length).toBe(10);
