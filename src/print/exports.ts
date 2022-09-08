@@ -1,8 +1,8 @@
 import { ExportsInfo } from '../types';
-import { debug } from '../utils/log';
+import { logDebug } from '../utils/log';
 
 export function printExports(exports: ExportsInfo) {
-  debug('Printing results...');
+  logDebug('Printing results...');
 
   console.log('');
   console.log('List of exported members:');

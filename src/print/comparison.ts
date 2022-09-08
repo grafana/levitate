@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { Comparison, Exports } from '../types';
-import { debug } from '../utils/log';
+import { logDebug } from '../utils/log';
 import { printChanges } from './changes';
 import { printRemovals } from './removals';
 import { printHeading, printSpacing } from './utils';
@@ -9,7 +9,7 @@ import Table from 'tty-table';
 import { areChangesBreaking } from '../commands/compare/compare';
 
 export function printComparison({ changes, additions, removals, prevProgram, currentProgram }: Comparison) {
-  debug('Printing results...');
+  logDebug('Printing results...');
   const isBreaking = areChangesBreaking({ changes, additions, removals, prevProgram, currentProgram });
 
   printAdditions(additions);

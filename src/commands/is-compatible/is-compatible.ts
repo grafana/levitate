@@ -3,7 +3,7 @@ import { printIncompatibilities } from '../../print/incompatibilities';
 import { PackageWithVersion } from '../../types';
 import { getIncompatibilitiesBetweenPackages } from '../../comparison/source';
 import { getNpmPackageVersionFromProjectPath } from '../../utils/npm';
-import { createProgram } from '../../utils/typescript';
+import { createTsProgram } from '../../utils/typescript';
 
 export async function isCompatible(
   projectPath: string,
@@ -12,7 +12,7 @@ export async function isCompatible(
     printIncompatibilities: boolean;
   }
 ): Promise<boolean> {
-  const projectProgram = createProgram(projectPath);
+  const projectProgram = createTsProgram(projectPath);
   let isPathCompatible = true;
   for (const pkg of packagesToCheck) {
     console.log(

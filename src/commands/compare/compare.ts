@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { Change, ChangeType, Comparison, SymbolMeta } from '../../types';
 import { setSpinner, startSpinner, succeedSpinner } from '../../utils/spinner';
-import { debug } from '../../utils/log';
+import { logDebug } from '../../utils/log';
 import { getExportInfo } from '../../compiler/exports';
 import { getSymbolFromParameter } from '../../utils/typescript';
 
@@ -9,8 +9,8 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
   setSpinner('compare', 'Detecting changes between versions');
   startSpinner('compare');
 
-  debug('Old filename: %o', prevRootFile);
-  debug('New filename: %o', currentRootFile);
+  logDebug('Old filename: %o', prevRootFile);
+  logDebug('New filename: %o', currentRootFile);
 
   const prev = getExportInfo(prevRootFile);
   const current = getExportInfo(currentRootFile);
@@ -19,8 +19,8 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
   const removals = {};
   const changes: Record<string, Change> = {};
 
-  debug('Previous file: %o exports', Object.keys(prev.exports).length);
-  debug('Current file: %o exports', Object.keys(current.exports).length);
+  logDebug('Previous file: %o exports', Object.keys(prev.exports).length);
+  logDebug('Current file: %o exports', Object.keys(current.exports).length);
 
   // Look for changes introduced by the current version
   for (const [currentExportName, currentExportSymbol] of Object.entries(current.exports)) {
@@ -77,37 +77,37 @@ export function areChangesBreaking({ changes, removals }: Comparison) {
 // (Tip: use https://ts-ast-viewer.com for discovering certain types more easily)
 export function hasChanged(prev: SymbolMeta, current: SymbolMeta) {
   if (isFunction(current.symbol) && isFunction(prev.symbol)) {
-    debug(`Checking changes for "${current.key}" (Function)`);
+    logDebug(`Checking changes for "${current.key}" (Function)`);
     return hasFunctionChanged(prev, current);
   }
 
   if (isMethod(current.symbol) && isMethod(prev.symbol)) {
-    debug(`Checking changes for "${current.key}" (Method)`);
+    logDebug(`Checking changes for "${current.key}" (Method)`);
     return hasFunctionChanged(prev, current);
   }
 
   if (isClass(current.symbol) && isClass(prev.symbol)) {
-    debug(`Checking changes for "${current.key}" (Class)`);
+    logDebug(`Checking changes for "${current.key}" (Class)`);
     return hasClassChanged(prev, current);
   }
 
   if (isVariable(current.symbol) && isVariable(prev.symbol)) {
-    debug(`Checking changes for "${current.key}" (Variable)`);
+    logDebug(`Checking changes for "${current.key}" (Variable)`);
     return hasVariableChanged(prev, current);
   }
 
   if (isInterface(current.symbol) && isInterface(prev.symbol)) {
-    debug(`Checking changes for "${current.key}" (Interface)`);
+    logDebug(`Checking changes for "${current.key}" (Interface)`);
     return hasInterfaceChanged(prev, current);
   }
 
   if (isEnum(current.symbol) && isEnum(prev.symbol)) {
-    debug(`Checking changes for "${current.key}" (Enum)`);
+    logDebug(`Checking changes for "${current.key}" (Enum)`);
     return hasEnumChanged(prev, current);
   }
 
   if (isType(current.symbol) && isType(prev.symbol)) {
-    debug(`Checking changes for "${current.key}" (Type)`);
+    logDebug(`Checking changes for "${current.key}" (Type)`);
     return hasTypeChanged(prev, current);
   }
 

@@ -1,9 +1,9 @@
 import ts from 'typescript';
 import { ImportInfo, ImportsInfo } from '../types';
-import { createProgram } from '../utils/typescript';
+import { createTsProgram } from '../utils/typescript';
 
 export function getImportsInfo(rootFile: string, filters?: string[]): ImportsInfo {
-  const program = createProgram(rootFile);
+  const program = createTsProgram(rootFile);
   const programImports = getImportsForProgram(program, filters);
 
   return {
