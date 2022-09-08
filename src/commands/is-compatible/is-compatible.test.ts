@@ -1,6 +1,6 @@
 import { getIncompatibilitiesFromComparison } from '../../comparison/source';
 import { generateTmpFileWithContent } from '../../tests/test-utils';
-import { createProgram } from '../../utils/typescript';
+import { createTsProgram } from '../../utils/typescript';
 import { testCompare } from '../compare/utils';
 
 const prevAPIWithoutChange = `
@@ -43,7 +43,7 @@ describe('is compatible command', () => {
           two: 1234,
         }
     `);
-    const program = createProgram(file);
+    const program = createTsProgram(file);
     const sourceFile = program.getSourceFile(file);
     const result = getIncompatibilitiesFromComparison(sourceFile, comparison);
     expect(result).toHaveLength(3);
