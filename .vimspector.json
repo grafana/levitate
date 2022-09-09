@@ -10,12 +10,13 @@
         }
       },
       "configuration": {
+        "type": "node",
         "request": "attach",
         "protocol": "auto",
-        "console": "integratedTerminal"
+        "console": "internalConsole"
       }
     },
-    "JestDebugger": {
+    "JestDebugCurrent": {
       "adapter": "vscode-node",
       "breakpoints": {
         "exception": {
@@ -29,7 +30,25 @@
         "type": "node",
         "console": "integratedTerminal",
         "program": "${workspaceRoot}/node_modules/.bin/jest",
-        "args": ["${file}"],
+        "args": ["--runInBand", "${file}"],
+        "cwd": "${workspaceRoot}"
+      }
+    },
+    "JestDebugAll": {
+      "adapter": "vscode-node",
+      "breakpoints": {
+        "exception": {
+          "all": "N",
+          "uncaught": "Y"
+        }
+      },
+      "configuration": {
+        "request": "launch",
+        "name": "Jest debugger",
+        "type": "node",
+        "console": "integratedTerminal",
+        "program": "${workspaceRoot}/node_modules/.bin/jest",
+        "args": ["--runInBand", "--watch"],
         "cwd": "${workspaceRoot}"
       }
     }
