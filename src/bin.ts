@@ -93,9 +93,14 @@ yargs
           demandOption: true,
           describe:
             'Path to your module file to check. If this module imports other modules, they\'ll be checked too.".',
+        })
+        .option('force', {
+          type: 'boolean',
+          default: false,
+          describe: 'Force the check even if the target package is not installed.',
         });
     },
-    async function ({ target, path }: { target: string; path: string }) {
+    async function ({ target, path, force }: { target: string; path: string; force: boolean }) {
       try {
         // validate the path is accesible and readable
         await access(path, constants.R_OK);
@@ -104,7 +109,7 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
-        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true });
+        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true, force });
         if (isPathCompatible) {
           console.log('\n');
           console.log(chalk.green(`${path} appears to be compatible with ${target}`));
