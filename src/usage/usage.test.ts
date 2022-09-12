@@ -1,5 +1,6 @@
 import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
+import { IdentifierWithCounter } from '../types';
 import { createTsProgram } from '../utils/typescript';
 import { getUsageOfPackageExports } from './usage';
 
@@ -40,10 +41,9 @@ describe('Usage', () => {
     const projectProgram = createTsProgram(projectFile);
 
     const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
-    for (const [_key, value] of usages) {
-      const usagesNames = Object.keys(value);
-      expect(usagesNames).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
-    }
+    const value = usages.values().next().value;
+    const usagesNames = Object.keys(value);
+    expect(usagesNames).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
   });
 
   it('should differentiate from usages of other modules with similar names', () => {
@@ -63,16 +63,14 @@ describe('Usage', () => {
     const projectProgram = createTsProgram(projectFile);
 
     const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
-    for (const [_key, value] of usages) {
-      const usagesNames = Object.keys(value);
-      expect(usagesNames).toEqual(['Bar', 'Baz', 'Qux']);
-    }
+    const value = usages.values().next().value;
+    const usagesNames = Object.keys(value);
+    expect(usagesNames).toEqual(['Bar', 'Baz', 'Qux']);
 
     const usages2 = getUsageOfPackageExports(projectProgram, otherModuleExports, 'other-module');
-    for (const [_key, value] of usages2) {
-      const usagesNames2 = Object.keys(value);
-      expect(usagesNames2).toEqual(['Foo']);
-    }
+    const value2 = usages2.values().next().value;
+    const usagesNames2 = Object.keys(value2);
+    expect(usagesNames2).toEqual(['Foo']);
   });
 
   it('Should only report usages from the passed package name', () => {
@@ -94,9 +92,45 @@ describe('Usage', () => {
     const projectProgram = createTsProgram(projectFile);
 
     const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
-    for (const [_key, value] of usages) {
-      const usagesNames = Object.keys(value);
-      expect(usagesNames).toEqual(['Bar']);
+    const value = usages.values().next().value;
+    const usagesNames = Object.keys(value);
+    expect(usagesNames).toEqual(['Bar']);
+  });
+
+  it('Should correctly count how many times an API is used', () => {
+    const projectSrc = `
+    import { Bar, Baz, Qux } from 'testing-module';
+    import { Foo } from 'other-module';
+
+    Qux();
+    Qux();
+    Foo();
+    Foo();
+    Bar();
+    Bar();
+    Bar();
+    Baz();
+    Qux();
+    Qux();
+    `;
+
+    //notice that importing the API itself counts as usage
+    const counters = {
+      Bar: 4, // 3 usages, 1 import
+      Qux: 5, // 4 usages, 1 import
+      Baz: 2, // 1 usage, 1 import
+      // Foo: 0 // 0 usages because it is not imported from testing-module
+    };
+    const projectFile = generateTmpFileWithContent(projectSrc);
+
+    const testingModuleExports = getExportInfo(testingModuleFile);
+
+    const projectProgram = createTsProgram(projectFile);
+
+    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
+    const value = usages.values().next().value as Record<string, IdentifierWithCounter>;
+    for (const key in counters) {
+      expect(value[key].count).toEqual(counters[key]);
     }
   });
 });

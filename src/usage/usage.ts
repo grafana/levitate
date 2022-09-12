@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { getImportsForFile } from '../compiler/imports';
-import { ExportsInfo } from '../types';
+import { ExportsInfo, IdentifierWithCounter } from '../types';
 import { logDebug } from '../utils/log';
 import { getAllIdentifiers } from '../utils/typescript';
 
@@ -12,7 +12,7 @@ export function getUsageOfPackageExports(
   project: ts.Program,
   pkgExports: ExportsInfo,
   fullPkgName: string
-): Map<ts.SourceFile, Record<string, ts.Identifier>> {
+): Map<ts.SourceFile, Record<string, IdentifierWithCounter>> {
   // remove the last pat ofh the package name if exists (e.g. @latest)
   const importName = fullPkgName.replace(/(?<=.)(@.*$)/, '');
   const usageMap = new Map<ts.SourceFile, Record<string, ts.Identifier>>();
@@ -32,15 +32,18 @@ function getUsageOfSourceFile(
   sourceFile: ts.SourceFile,
   pkgExports: ExportsInfo,
   importName: string
-): Record<string, ts.Identifier> {
+): Record<string, IdentifierWithCounter> {
   const sourceFileImports = getImportsForFile(sourceFile, [importName]);
   const importsPropertyNames = sourceFileImports.map((imp) => imp.propertyName);
   const identifiers = getAllIdentifiers(sourceFile);
-  const usage: Record<string, ts.Identifier> = {};
+  const usage: Record<string, IdentifierWithCounter> = {};
   for (const identifier of identifiers) {
     const identifierName = identifier.getText();
     if (pkgExports.exports[identifierName] && importsPropertyNames.includes(identifierName)) {
-      usage[identifierName] = identifier;
+      if (!usage[identifierName]) {
+        usage[identifierName] = identifier;
+      }
+      usage[identifierName].count = (usage[identifierName].count || 0) + 1;
     }
   }
   return usage;

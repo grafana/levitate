@@ -105,3 +105,7 @@ export type PackageWithVersion = {
   name: string;
   version: string;
 };
+
+export interface IdentifierWithCounter extends ts.Identifier {
+  count?: number;
+}
