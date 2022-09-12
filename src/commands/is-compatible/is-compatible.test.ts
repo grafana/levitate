@@ -1,5 +1,7 @@
 import { getIncompatibilitiesFromComparison } from '../../comparison/source';
+import { getExportInfo } from '../../compiler/exports';
 import { generateTmpFileWithContent } from '../../tests/test-utils';
+import { getUsageOfPackageExports } from '../../usage/usage';
 import { createTsProgram } from '../../utils/typescript';
 import { testCompare } from '../compare/utils';
 
@@ -34,8 +36,8 @@ const targetAPIWithChange = `
     `;
 describe('is compatible command', () => {
   it('compareSourceFileWithChanges returns found problems', () => {
-    const comparison = testCompare(prevAPIWithoutChange, targetAPIWithChange);
     const file = generateTmpFileWithContent(`
+        import { Foo, Bar, Qux } from 'test-module';
         const x = Foo(1234);
         const y = Qux(1234);
         const z: Bar = {
@@ -43,9 +45,16 @@ describe('is compatible command', () => {
           two: 1234,
         }
     `);
-    const program = createTsProgram(file);
-    const sourceFile = program.getSourceFile(file);
-    const result = getIncompatibilitiesFromComparison(sourceFile, comparison);
+    const projectProgram = createTsProgram(file);
+    const sourceFile = projectProgram.getSourceFile(file);
+    const comparison = testCompare(prevAPIWithoutChange, targetAPIWithChange);
+    const usagePerSourceFile = getUsageOfPackageExports(
+      projectProgram,
+      getExportInfo(generateTmpFileWithContent(prevAPIWithoutChange)),
+      'test-module'
+    );
+    const usages = usagePerSourceFile.values().next().value;
+    const result = getIncompatibilitiesFromComparison({ sourceFile, comparison, usages: usages });
     expect(result).toHaveLength(3);
     //Foo had changed
     expect(result[0]).toMatchObject({ name: 'Foo', sourceFile });
