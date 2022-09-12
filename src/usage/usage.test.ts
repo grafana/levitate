@@ -1,7 +1,7 @@
 import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
 import { createTsProgram } from '../utils/typescript';
-import { getUsageOf } from './usage';
+import { getUsageOfPackageExports } from './usage';
 
 describe('Usage', () => {
   const methodsExportsTestingModule = `
@@ -39,7 +39,7 @@ describe('Usage', () => {
 
     const projectProgram = createTsProgram(projectFile);
 
-    const usages = getUsageOf(projectProgram, testingModuleExports, 'testing-module');
+    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
     for (const [_key, value] of usages) {
       const usagesNames = Object.keys(value);
       expect(usagesNames).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
@@ -62,13 +62,13 @@ describe('Usage', () => {
 
     const projectProgram = createTsProgram(projectFile);
 
-    const usages = getUsageOf(projectProgram, testingModuleExports, 'testing-module');
+    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
     for (const [_key, value] of usages) {
       const usagesNames = Object.keys(value);
       expect(usagesNames).toEqual(['Bar', 'Baz', 'Qux']);
     }
 
-    const usages2 = getUsageOf(projectProgram, otherModuleExports, 'other-module');
+    const usages2 = getUsageOfPackageExports(projectProgram, otherModuleExports, 'other-module');
     for (const [_key, value] of usages2) {
       const usagesNames2 = Object.keys(value);
       expect(usagesNames2).toEqual(['Foo']);
@@ -93,7 +93,7 @@ describe('Usage', () => {
 
     const projectProgram = createTsProgram(projectFile);
 
-    const usages = getUsageOf(projectProgram, testingModuleExports, 'testing-module');
+    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
     for (const [_key, value] of usages) {
       const usagesNames = Object.keys(value);
       expect(usagesNames).toEqual(['Bar']);

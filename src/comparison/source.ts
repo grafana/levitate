@@ -1,12 +1,14 @@
 import ts from 'typescript';
 import { compareExports } from '../commands/compare/compare';
+import { getExportInfo } from '../compiler/exports';
 import { Comparison, IncompatibilityInfo } from '../types';
+import { getUsageOfPackageExports } from '../usage/usage';
 import { logDebug } from '../utils/log';
 import { resolvePackage } from '../utils/npm';
 import { getAllIdentifiers } from '../utils/typescript';
 
 export async function getIncompatibilitiesBetweenPackages(
-  program: ts.Program,
+  projectProgram: ts.Program,
   pkgFrom: string,
   pkgTo: string
 ): Promise<IncompatibilityInfo[]> {
@@ -14,10 +16,32 @@ export async function getIncompatibilitiesBetweenPackages(
   const toPathResolved = await resolvePackage(pkgTo);
   logDebug("Comparing '" + fromPathResolved + "' to '" + toPathResolved + "'");
   const comparison = compareExports(fromPathResolved, toPathResolved);
+  const usagePerSourceFile = getUsageOfPackageExports(projectProgram, getExportInfo(fromPathResolved), pkgFrom);
   const incompatibilities: IncompatibilityInfo[] = [];
-  for (const sourceFile of program.getSourceFiles()) {
-    if (!sourceFile.isDeclarationFile) {
-      incompatibilities.push(...getIncompatibilitiesFromComparison(sourceFile, comparison));
+
+  for (const [sourceFile, usages] of usagePerSourceFile) {
+    for (const change of Object.keys(comparison.changes)) {
+      if (usages[change]) {
+        const identifier = usages[change];
+        incompatibilities.push({
+          name: identifier.getText(),
+          codeIdentifier: identifier,
+          sourceFile: sourceFile,
+          change: comparison.changes[change],
+        });
+      }
+    }
+
+    for (const removal of Object.keys(comparison.removals)) {
+      if (usages[removal]) {
+        const identifier = usages[removal];
+        incompatibilities.push({
+          name: identifier.getText(),
+          codeIdentifier: identifier,
+          sourceFile: sourceFile,
+          removal: comparison.removals[removal],
+        });
+      }
     }
   }
 

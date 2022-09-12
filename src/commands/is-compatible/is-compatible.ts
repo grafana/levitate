@@ -5,7 +5,6 @@ import { getIncompatibilitiesBetweenPackages } from '../../comparison/source';
 import { getNpmPackageVersionFromProjectPath } from '../../utils/npm';
 import { createTsProgram } from '../../utils/typescript';
 
-
 export async function isCompatible(
   projectPath: string,
   packagesToCheck: PackageWithVersion[],

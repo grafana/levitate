@@ -123,7 +123,9 @@ yargs
         }
       } catch (e) {
         console.error(chalk.bgRed.bold.white(' ERROR '));
-        if (e.code === 'ENOENT') {
+        if (process.env.DEBUG) {
+          console.error(e);
+        } else if (e.code === 'ENOENT') {
           console.error('path:', path);
           console.error('File not found. Please make sure to provide a valid path to your module file.\n');
         } else {

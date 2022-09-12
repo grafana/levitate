@@ -8,7 +8,7 @@ import { getAllIdentifiers } from '../utils/typescript';
  * Given a project Program and a list of exports, returns a list of
  * symbols that are used in the project.
  */
-export function getUsageOf(
+export function getUsageOfPackageExports(
   project: ts.Program,
   pkgExports: ExportsInfo,
   fullPkgName: string
