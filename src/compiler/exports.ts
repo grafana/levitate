@@ -1,11 +1,11 @@
 import ts from 'typescript';
 import { Exports, ExportsInfo } from '../types';
-import { createProgram } from '../utils/typescript';
+import { createTsProgram } from '../utils/typescript';
 
 // Returns all the exported members of a program identified by a root file (entry file)
 // @param rootFile - Has to be an absolute path
 export function getExportInfo(rootFile: string): ExportsInfo {
-  const program = createProgram(rootFile);
+  const program = createTsProgram(rootFile);
   const programExports = getExportedSymbolsForProgram(program);
 
   return {

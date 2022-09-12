@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import { compareExports } from '../commands/compare/compare';
 import { Comparison, IncompatibilityInfo } from '../types';
+import { logDebug } from '../utils/log';
 import { resolvePackage } from '../utils/npm';
 import { getAllIdentifiers } from '../utils/typescript';
 
@@ -11,6 +12,7 @@ export async function getIncompatibilitiesBetweenPackages(
 ): Promise<IncompatibilityInfo[]> {
   const fromPathResolved = await resolvePackage(pkgFrom);
   const toPathResolved = await resolvePackage(pkgTo);
+  logDebug("Comparing '" + fromPathResolved + "' to '" + toPathResolved + "'");
   const comparison = compareExports(fromPathResolved, toPathResolved);
   const incompatibilities: IncompatibilityInfo[] = [];
   for (const sourceFile of program.getSourceFiles()) {

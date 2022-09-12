@@ -1,0 +1,37 @@
+{
+  "$schema": "https://puremourning.github.io/vimspector/schema/vimspector.schema.json",
+  "configurations": {
+    "AttchToDebugger": {
+      "adapter": "vscode-node",
+      "breakpoints": {
+        "exception": {
+          "all": "N",
+          "uncaught": "Y"
+        }
+      },
+      "configuration": {
+        "request": "attach",
+        "protocol": "auto",
+        "console": "integratedTerminal"
+      }
+    },
+    "JestDebugger": {
+      "adapter": "vscode-node",
+      "breakpoints": {
+        "exception": {
+          "all": "N",
+          "uncaught": "Y"
+        }
+      },
+      "configuration": {
+        "request": "launch",
+        "name": "Jest debugger",
+        "type": "node",
+        "console": "integratedTerminal",
+        "program": "${workspaceRoot}/node_modules/.bin/jest",
+        "args": ["${file}"],
+        "cwd": "${workspaceRoot}"
+      }
+    }
+  }
+}

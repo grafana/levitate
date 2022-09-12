@@ -3,12 +3,13 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import path, { dirname } from 'path';
 import tar from 'tar';
+import os from 'os';
 import { NpmList, PackageWithVersion } from '../types';
 import { pathExists } from './file';
 import { failSpinner, setSpinner, startSpinner, succeedSpinner } from './spinner';
+import { logDebug } from './log';
 
 export const TYPE_DEFINITION_FILE_NAME = 'index.d.ts';
-export const TMP_FOLDER = '.tmp';
 export const SPINNERS = [];
 const shouldCacheExternal = !!process.env.LEVITATE_CACHE || false;
 // The `packageName` is a string that can be any of the following:
@@ -83,7 +84,7 @@ export async function uninstallPackage(packageName: string) {
 }
 
 export function getTmpFolderName(packageName: string) {
-  return path.resolve(path.join(__dirname, '..', TMP_FOLDER, packageName));
+  return path.resolve(path.join(os.tmpdir(), packageName));
 }
 
 export async function removeTmpFolder(packageName: string) {
@@ -98,6 +99,7 @@ export async function removeTmpFolder(packageName: string) {
 export async function createTmpPackageFolder(packageName: string) {
   const tmpPackageFolder = getTmpFolderName(packageName);
 
+  logDebug(`Creating tmp folder at ${tmpPackageFolder} for ${packageName}`);
   setSpinner(packageName, `Creating temporary folder for "${packageName}"`);
   await removeTmpFolder(packageName);
 
