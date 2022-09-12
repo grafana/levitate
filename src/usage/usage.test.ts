@@ -40,8 +40,10 @@ describe('Usage', () => {
     const projectProgram = createTsProgram(projectFile);
 
     const usages = getUsageOf(projectProgram, testingModuleExports, 'testing-module');
-    const usagesNames = Object.keys(usages);
-    expect(usagesNames).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
+    for (const [_key, value] of usages) {
+      const usagesNames = Object.keys(value);
+      expect(usagesNames).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
+    }
   });
 
   it('should differentiate from usages of other modules with similar names', () => {
@@ -61,12 +63,16 @@ describe('Usage', () => {
     const projectProgram = createTsProgram(projectFile);
 
     const usages = getUsageOf(projectProgram, testingModuleExports, 'testing-module');
-    const usagesNames = Object.keys(usages);
-    expect(usagesNames).toEqual(['Bar', 'Baz', 'Qux']);
+    for (const [_key, value] of usages) {
+      const usagesNames = Object.keys(value);
+      expect(usagesNames).toEqual(['Bar', 'Baz', 'Qux']);
+    }
 
     const usages2 = getUsageOf(projectProgram, otherModuleExports, 'other-module');
-    const usagesNames2 = Object.keys(usages2);
-    expect(usagesNames2).toEqual(['Foo']);
+    for (const [_key, value] of usages2) {
+      const usagesNames2 = Object.keys(value);
+      expect(usagesNames2).toEqual(['Foo']);
+    }
   });
 
   it('Should only report usages from the passed package name', () => {
@@ -88,7 +94,9 @@ describe('Usage', () => {
     const projectProgram = createTsProgram(projectFile);
 
     const usages = getUsageOf(projectProgram, testingModuleExports, 'testing-module');
-    const usagesNames = Object.keys(usages);
-    expect(usagesNames).toEqual(['Bar']);
+    for (const [_key, value] of usages) {
+      const usagesNames = Object.keys(value);
+      expect(usagesNames).toEqual(['Bar']);
+    }
   });
 });

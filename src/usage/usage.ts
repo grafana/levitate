@@ -8,10 +8,14 @@ import { getAllIdentifiers } from '../utils/typescript';
  * Given a project Program and a list of exports, returns a list of
  * symbols that are used in the project.
  */
-export function getUsageOf(project: ts.Program, pkgExports: ExportsInfo, fullPkgName: string) {
+export function getUsageOf(
+  project: ts.Program,
+  pkgExports: ExportsInfo,
+  fullPkgName: string
+): Map<ts.SourceFile, Record<string, ts.Identifier>> {
   // remove the last pat ofh the package name if exists (e.g. @latest)
   const importName = fullPkgName.replace(/(?<=.)(@.*$)/, '');
-  const usageSymbols: Record<string, ts.Symbol> = {};
+  const usageMap = new Map<ts.SourceFile, Record<string, ts.Identifier>>();
   for (const sourceFile of project.getSourceFiles()) {
     // skip node_modules dependencies
     if (sourceFile.fileName.includes('/node_modules/')) {
@@ -19,12 +23,16 @@ export function getUsageOf(project: ts.Program, pkgExports: ExportsInfo, fullPkg
     }
     logDebug('getting usages of', importName, 'in', sourceFile.fileName);
     const sourceFileUsage = getUsageOfSourceFile(sourceFile, pkgExports, importName);
-    Object.assign(usageSymbols, sourceFileUsage);
+    usageMap.set(sourceFile, sourceFileUsage);
   }
-  return usageSymbols;
+  return usageMap;
 }
 
-function getUsageOfSourceFile(sourceFile: ts.SourceFile, pkgExports: ExportsInfo, importName: string) {
+function getUsageOfSourceFile(
+  sourceFile: ts.SourceFile,
+  pkgExports: ExportsInfo,
+  importName: string
+): Record<string, ts.Identifier> {
   const sourceFileImports = getImportsForFile(sourceFile, [importName]);
   const importsPropertyNames = sourceFileImports.map((imp) => imp.propertyName);
   const identifiers = getAllIdentifiers(sourceFile);
