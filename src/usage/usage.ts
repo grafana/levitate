@@ -8,7 +8,7 @@ import { getAllIdentifiers } from '../utils/typescript';
  * Given a project Program and a list of exports, returns a list of
  * symbols that are used in the project.
  */
-export function getUsageOfPackageExports(
+export function getPackageUsage(
   project: ts.Program,
   pkgExports: ExportsInfo,
   fullPkgName: string
@@ -28,12 +28,8 @@ export function getUsageOfPackageExports(
   return usageMap;
 }
 
-export function getFlattenUsageOfPackageExports(
-  project: ts.Program,
-  pkgExports: ExportsInfo,
-  fullPkgName: string
-): UsageInfo[] {
-  const sourceFileUsageMap = getUsageOfPackageExports(project, pkgExports, fullPkgName);
+export function getFlattenPackageUsage(project: ts.Program, pkgExports: ExportsInfo, fullPkgName: string): UsageInfo[] {
+  const sourceFileUsageMap = getPackageUsage(project, pkgExports, fullPkgName);
   const usagePerIdentifier: Record<string, IdentifierWithCounter & { files?: ts.SourceFile[] }> = {};
   const usage: UsageInfo[] = [];
   for (const [sourceFile, sourceFileUsage] of sourceFileUsageMap) {

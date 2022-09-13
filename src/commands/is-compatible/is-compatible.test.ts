@@ -1,7 +1,7 @@
 import { getIncompatibilitiesFromComparison } from '../../comparison/source';
 import { getExportInfo } from '../../compiler/exports';
 import { generateTmpFileWithContent } from '../../tests/test-utils';
-import { getUsageOfPackageExports } from '../../usage/usage';
+import { getPackageUsage } from '../../usage/usage';
 import { createTsProgram } from '../../utils/typescript';
 import { testCompare } from '../compare/utils';
 
@@ -48,7 +48,7 @@ describe('is compatible command', () => {
     const projectProgram = createTsProgram(file);
     const sourceFile = projectProgram.getSourceFile(file);
     const comparison = testCompare(prevAPIWithoutChange, targetAPIWithChange);
-    const usagePerSourceFile = getUsageOfPackageExports(
+    const usagePerSourceFile = getPackageUsage(
       projectProgram,
       getExportInfo(generateTmpFileWithContent(prevAPIWithoutChange)),
       'test-module'

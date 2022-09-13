@@ -2,7 +2,7 @@ import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
 import { IdentifierWithCounter } from '../types';
 import { createTsProgram } from '../utils/typescript';
-import { getFlattenUsageOfPackageExports, getUsageOfPackageExports } from './usage';
+import { getFlattenPackageUsage, getPackageUsage } from './usage';
 
 describe('Usage', () => {
   const methodsExportsTestingModule = `
@@ -40,7 +40,7 @@ describe('Usage', () => {
 
     const projectProgram = createTsProgram(projectFile);
 
-    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
+    const usages = getPackageUsage(projectProgram, testingModuleExports, 'testing-module');
     const value = usages.values().next().value;
     const usagesNames = Object.keys(value);
     expect(usagesNames).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
@@ -62,12 +62,12 @@ describe('Usage', () => {
 
     const projectProgram = createTsProgram(projectFile);
 
-    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
+    const usages = getPackageUsage(projectProgram, testingModuleExports, 'testing-module');
     const value = usages.values().next().value;
     const usagesNames = Object.keys(value);
     expect(usagesNames).toEqual(['Bar', 'Baz', 'Qux']);
 
-    const usages2 = getUsageOfPackageExports(projectProgram, otherModuleExports, 'other-module');
+    const usages2 = getPackageUsage(projectProgram, otherModuleExports, 'other-module');
     const value2 = usages2.values().next().value;
     const usagesNames2 = Object.keys(value2);
     expect(usagesNames2).toEqual(['Foo']);
@@ -91,7 +91,7 @@ describe('Usage', () => {
 
     const projectProgram = createTsProgram(projectFile);
 
-    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
+    const usages = getPackageUsage(projectProgram, testingModuleExports, 'testing-module');
     const value = usages.values().next().value;
     const usagesNames = Object.keys(value);
     expect(usagesNames).toEqual(['Bar']);
@@ -127,7 +127,7 @@ describe('Usage', () => {
 
     const projectProgram = createTsProgram(projectFile);
 
-    const usages = getUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
+    const usages = getPackageUsage(projectProgram, testingModuleExports, 'testing-module');
     const value = usages.values().next().value as Record<string, IdentifierWithCounter>;
     for (const key in counters) {
       expect(value[key].count).toEqual(counters[key]);
@@ -159,7 +159,7 @@ describe('Usage', () => {
     const projectFile = generateTmpFileWithContent(projectSrc);
     const testingModuleExports = getExportInfo(testingModuleFile);
     const projectProgram = createTsProgram(projectFile);
-    const flattenUsages = getFlattenUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
+    const flattenUsages = getFlattenPackageUsage(projectProgram, testingModuleExports, 'testing-module');
     expect(flattenUsages.length).toEqual(3);
     for (const usage of flattenUsages) {
       expect(usage.count).toEqual(counters[usage.propertyName]);

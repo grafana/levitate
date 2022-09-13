@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { compareExports } from '../commands/compare/compare';
 import { getExportInfo } from '../compiler/exports';
 import { Comparison, IncompatibilityInfo } from '../types';
-import { getUsageOfPackageExports } from '../usage/usage';
+import { getPackageUsage } from '../usage/usage';
 import { logDebug } from '../utils/log';
 import { resolvePackage } from '../utils/npm';
 
@@ -17,7 +17,7 @@ export async function getIncompatibilitiesBetweenPackages(
   const exportsComparison = compareExports(fromPathResolved, toPathResolved);
   const incompatibilities: IncompatibilityInfo[] = [];
 
-  const usagePerSourceFile = getUsageOfPackageExports(projectProgram, getExportInfo(fromPathResolved), pkgFrom);
+  const usagePerSourceFile = getPackageUsage(projectProgram, getExportInfo(fromPathResolved), pkgFrom);
   for (const [sourceFile, usages] of usagePerSourceFile) {
     const incompatibilitiesInFile = getIncompatibilitiesFromComparison({
       sourceFile,
