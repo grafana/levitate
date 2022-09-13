@@ -22,7 +22,7 @@ runs:
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
-    - uses: marocchino/sticky-pull-request-comment@v2.2.2
+    - uses: marocchino/sticky-pull-request-comment@v2.2.0
       with:
         message: |
           Levitate is-compatible report:
