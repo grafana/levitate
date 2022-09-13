@@ -38,9 +38,6 @@ runs:
         echo "::set-output name=is-compatible-exit-code::$CODE"
       shell: "bash"
     # find the current PR (if running in one)
-    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.code == 0
-      run: exit 1
-      shell: "bash"
     - uses: jwalton/gh-find-current-pr@e12d66bc9ecc4fdcde07b0f70a3cb68ce7e4d807
       id: finder
       if: inputs.comment-pr == 'yes'
@@ -53,3 +50,8 @@ runs:
           Levitate is-compatible report:
 
           ${{ steps.run-levitate.outputs.is-compatible-stdout }}
+    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.code == 1
+      run: |
+        echo "Possible incompatibilities found. Check Levitate output for further information"
+        exit 1
+      shell: "bash"

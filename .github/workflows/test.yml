@@ -11,4 +11,4 @@ jobs:
         with:
           module: "./src/bin.ts"
           comment-pr: 'yes'
-          fail-if-incompatible: 'no'
+          fail-if-incompatible: 'yes'
