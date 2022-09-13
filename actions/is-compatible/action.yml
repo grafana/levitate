@@ -15,15 +15,16 @@ runs:
     - id: run-levitate
       run: |
         # RUN levitate is-compatible
-        IS_COMPATIBLE=$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema)
+        npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime | tee .levitate_output
+        CODE=${PIPESTATUS[0]}
+        IS_COMPATIBLE=$(cat .levitate_output)
         # 
         IS_COMPATIBLE="${IS_COMPATIBLE//'%'/'%25'}"
         IS_COMPATIBLE="${IS_COMPATIBLE//$'\n'/'%0A'}"
         IS_COMPATIBLE="${IS_COMPATIBLE//$'\r'/'%0D'}"
         echo "::set-output name=is-compatible-stdout::$IS_COMPATIBLE"
+        echo "::set-output name=is-compatible-exit-code::$CODE"
 
-      shell: "bash"
-    - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
     - uses: jwalton/gh-find-current-pr@e12d66bc9ecc4fdcde07b0f70a3cb68ce7e4d807
       id: finder
