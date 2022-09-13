@@ -14,7 +14,8 @@ runs:
         node-version: 16
     - id: run-levitate
       run: |
-        echo "::set-output name=is-compatible-stdout::$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema | cat)"
+        npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema > iscompatible
+        echo "::set-output name=is-compatible-stdout::$(cat iscompatible)"
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
