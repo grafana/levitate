@@ -14,8 +14,9 @@ runs:
         node-version: 16
     - id: run-levitate
       run: |
-        # echo "::set-output name=is-compatible-stdout::$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema | cat)"
+        # RUN levitate is-compatible
         IS_COMPATIBLE=$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema)
+        # 
         IS_COMPATIBLE="${IS_COMPATIBLE//'%'/'%25'}"
         IS_COMPATIBLE="${IS_COMPATIBLE//$'\n'/'%0A'}"
         IS_COMPATIBLE="${IS_COMPATIBLE//$'\r'/'%0D'}"
@@ -24,9 +25,9 @@ runs:
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
-    - uses: jwalton/gh-find-current-pr@v1
+    - uses: jwalton/gh-find-current-pr@e12d66bc9ecc4fdcde07b0f70a3cb68ce7e4d807
       id: finder
-    - uses: marocchino/sticky-pull-request-comment@v2.2.0
+    - uses: marocchino/sticky-pull-request-comment@e3c0353c9ad3f0cad0fbab901e5bcd7d04c6e97b
       with:
         number: ${{ steps.finder.outputs.pr }}
         message: |
