@@ -34,7 +34,6 @@ runs:
           const sha = core.getInput('sha', { required: true });
 
           const octokit = github.getOctokit(token);
-          const context = github.context;
           const result = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
               owner: context.repo.owner,
               repo: context.repo.repo,
