@@ -24,11 +24,11 @@ runs:
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
-    - name: Test
+    - name: Find PR
+      id: finder
       uses: actions/github-script@v6
       with:
         script: |
-          const prNumber = context.payload.number;
           const token = core.getInput('github-token', { required: false }) || process.env.GITHUB_TOKEN;
           const state = (core.getInput('state', { required: false }) || 'open').toLowerCase();
           const sha = core.getInput('sha', { required: true });
@@ -43,10 +43,10 @@ runs:
 
           const prs = result.data.filter((el) => state === 'all' || el.state === state);
           const pr = prs[0];
-          core.exportVariable('PULL_NUMBER', pr);
+          core.setOutput('pr', (pr && pr.number) || '');
     - uses: marocchino/sticky-pull-request-comment@v2.2.0
       with:
-        number: ${{ env.PULL_NUMBER }}
+        number: ${{ steps.finder.outputs.pr }}
         message: |
           Levitate is-compatible report:
 
