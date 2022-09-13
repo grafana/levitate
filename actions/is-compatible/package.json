@@ -1,10 +1,11 @@
 {
   "name": "levitate-actions",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "build/index.js",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.9.1",
-    "@actions/github": "^5.0.3"
+    "@actions/github": "^5.0.3",
+    "@vercel/ncc": "^0.34.0"
   }
 }
