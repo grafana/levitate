@@ -24,9 +24,16 @@ runs:
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
+    - name: Test
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const core = require('@actions/core')
+          const prNumber = context.payload.number;
+          core.exportVariable('PULL_NUMBER', prNumber);
     - uses: marocchino/sticky-pull-request-comment@v2.2.0
       with:
-        number: ${{ github.event.number }}
+        number: ${{ env.PULL_NUMBER }}
         message: |
           Levitate is-compatible report:
 
