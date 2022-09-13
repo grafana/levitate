@@ -1,10 +1,10 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Levitate is compatible'
+description: 'Check if your plugin code is compatible with grafana latest APIs'
 
 outputs:
-  random:
-    description: 'no idea'
-    value: ${{ steps.run-levitate.outputs.is-compatible-out}}
+  is-compatible-stdout:
+    description: 'Standard output from running levitate is-compatible command against the module'
+    value: ${{ steps.run-levitate.outputs.is-compatible-stdout}}
 inputs:
   module:
     required: true
@@ -18,7 +18,13 @@ runs:
         node-version: 16
     - id: run-levitate
       run: |
-        echo "::set-output name=is-compatible-out::$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data --force)"
+        echo "::set-output name=is-compatible-stdout::$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema)"
       shell: "bash"
-    - run: echo "${{ steps.run-levitate.outputs.is-compatible-out }}"
+    - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
+    - uses: marocchino/sticky-pull-request-comment@v2.2.2
+      with:
+        message: |
+          Levitate is-compatible report:
+
+          ${{ steps.run-levitate.outputs.is-compatible-stdout }}
