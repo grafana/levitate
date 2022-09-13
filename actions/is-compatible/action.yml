@@ -4,7 +4,7 @@ description: 'Check if your grafana plugin code is compatible with grafana lates
 inputs:
   module:
     required: true
-    description: 'Path to your plugin module.ts file'
+    description: 'Path to your plugin module.ts file. Usually ./src/module.ts'
   comment-pr:
     description: "If running the action inside a pull_request write a comment with the check output. yes or no"
     default: "yes"
