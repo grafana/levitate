@@ -1,10 +1,6 @@
 name: 'Levitate is compatible'
 description: 'Check if your plugin code is compatible with grafana latest APIs'
 
-outputs:
-  is-compatible-stdout:
-    description: 'Standard output from running levitate is-compatible command against the module'
-    value: ${{ steps.run-levitate.outputs.is-compatible-stdout}}
 inputs:
   module:
     required: true
