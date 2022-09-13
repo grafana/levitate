@@ -1,13 +1,22 @@
 name: 'Hello World'
 description: 'Greet someone and record the time'
-inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
+
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  random:
+    description: 'no idea'
+    value: ${{ steps.run-levitate.outputs.is-compatible-out}}
+inputs:
+  module:
+    required: true
+    description: 'Path to your plugin module.ts file'
 runs:
-  using: 'node16'
-  main: 'build/index.js'
+  using: 'composite'
+  steps: 
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - id: run-levitate
+      run: |
+        echo "::set-output name=is-compatible-out::$(echo ${{ inputs.module }})"
+      shell: "bash"
