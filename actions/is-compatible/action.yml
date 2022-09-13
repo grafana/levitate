@@ -24,9 +24,29 @@ runs:
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
+    - name: Test
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const prNumber = context.payload.number;
+          const token = core.getInput('github-token', { required: false }) || process.env.GITHUB_TOKEN;
+          const state = (core.getInput('state', { required: false }) || 'open').toLowerCase();
+          const sha = core.getInput('sha', { required: true });
+
+          const octokit = github.getOctokit(token);
+          const context = github.context;
+          const result = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: sha,
+          });
+
+          const prs = result.data.filter((el) => state === 'all' || el.state === state);
+          const pr = prs[0];
+          core.exportVariable('PULL_NUMBER', pr);
     - uses: marocchino/sticky-pull-request-comment@v2.2.0
       with:
-        number: ${{ github.event.pull_request.number }}
+        number: ${{ env.PULL_NUMBER }}
         message: |
           Levitate is-compatible report:
 
