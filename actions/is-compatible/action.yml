@@ -1,5 +1,5 @@
 name: 'Levitate is compatible'
-description: 'Check if your plugin code is compatible with grafana latest APIs'
+description: 'Check if your grafana plugin code is compatible with grafana latest APIs'
 
 inputs:
   module:

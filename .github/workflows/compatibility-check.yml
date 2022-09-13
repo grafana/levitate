@@ -1,9 +1,9 @@
 on: [push]
 
 jobs:
-  hello_world_job:
+  compatibility-check:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: Check compatibility with previous levitate versions
     steps:
       - name: Check compatibility
         id: levitate
