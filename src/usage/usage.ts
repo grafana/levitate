@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { getImportsForFile } from '../compiler/imports';
-import { ExportsInfo, IdentifierWithCounter } from '../types';
+import { ExportsInfo, IdentifierWithCounter, UsageInfo } from '../types';
 import { logDebug } from '../utils/log';
 import { getAllIdentifiers } from '../utils/typescript';
 
@@ -26,6 +26,37 @@ export function getUsageOfPackageExports(
     usageMap.set(sourceFile, sourceFileUsage);
   }
   return usageMap;
+}
+
+export function getFlattenUsageOfPackageExports(
+  project: ts.Program,
+  pkgExports: ExportsInfo,
+  fullPkgName: string
+): UsageInfo[] {
+  const sourceFileUsageMap = getUsageOfPackageExports(project, pkgExports, fullPkgName);
+  const usagePerIdentifier: Record<string, IdentifierWithCounter & { files?: ts.SourceFile[] }> = {};
+  const usage: UsageInfo[] = [];
+  for (const [sourceFile, sourceFileUsage] of sourceFileUsageMap) {
+    for (const [exportName, identifier] of Object.entries(sourceFileUsage)) {
+      if (!usagePerIdentifier[exportName]) {
+        usagePerIdentifier[exportName] = identifier;
+      } else {
+        usagePerIdentifier[exportName].count += identifier.count;
+      }
+      usagePerIdentifier[exportName].files = usagePerIdentifier[exportName].files || [];
+      usagePerIdentifier[exportName].files.push(sourceFile);
+    }
+  }
+  // convert usagePerIdentifier to array
+  for (const identifier of Object.values(usagePerIdentifier)) {
+    usage.push({
+      packageName: fullPkgName,
+      propertyName: identifier.getText(),
+      count: identifier.count,
+      fileNames: identifier.files?.map((file) => file.fileName),
+    });
+  }
+  return usage;
 }
 
 function getUsageOfSourceFile(

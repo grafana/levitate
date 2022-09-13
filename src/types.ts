@@ -109,3 +109,14 @@ export type PackageWithVersion = {
 export interface IdentifierWithCounter extends ts.Identifier {
   count?: number;
 }
+
+export type UsageInfo = {
+  // the name of the API that is used
+  propertyName: string;
+  // the times that the API is used across all fileNames
+  count: number;
+  // the fileNames where the API is used
+  fileNames: string[];
+  // the package from which the API is imported
+  packageName: string;
+};

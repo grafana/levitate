@@ -2,7 +2,7 @@ import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
 import { IdentifierWithCounter } from '../types';
 import { createTsProgram } from '../utils/typescript';
-import { getUsageOfPackageExports } from './usage';
+import { getFlattenUsageOfPackageExports, getUsageOfPackageExports } from './usage';
 
 describe('Usage', () => {
   const methodsExportsTestingModule = `
@@ -131,6 +131,38 @@ describe('Usage', () => {
     const value = usages.values().next().value as Record<string, IdentifierWithCounter>;
     for (const key in counters) {
       expect(value[key].count).toEqual(counters[key]);
+    }
+  });
+
+  it('returns a flatten version of the usages', () => {
+    const projectSrc = `
+    import { Bar, Baz, Qux } from 'testing-module';
+    import { Foo } from 'other-module';
+
+    Qux();
+    Qux();
+    Foo();
+    Foo();
+    Bar();
+    Bar();
+    Bar();
+    Baz();
+    Qux();
+    Qux();
+    `;
+    const counters = {
+      Bar: 4, // 3 usages, 1 import
+      Qux: 5, // 4 usages, 1 import
+      Baz: 2, // 1 usage, 1 import
+      // Foo: 0 // 0 usages because it is not imported from testing-module
+    };
+    const projectFile = generateTmpFileWithContent(projectSrc);
+    const testingModuleExports = getExportInfo(testingModuleFile);
+    const projectProgram = createTsProgram(projectFile);
+    const flattenUsages = getFlattenUsageOfPackageExports(projectProgram, testingModuleExports, 'testing-module');
+    expect(flattenUsages.length).toEqual(3);
+    for (const usage of flattenUsages) {
+      expect(usage.count).toEqual(counters[usage.propertyName]);
     }
   });
 });
