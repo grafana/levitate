@@ -5,8 +5,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Check compatibility with previous levitate versions
     steps:
-      - name: Check compatibility
-        id: levitate
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+      - name: Install dependencies
+        run: yarn install
+      - name: Build plugin
+        run: yarn build
+      - name: Compatibility check
         uses: grafana/levitate/actions/is-compatible@levitate-action-comment
         with:
           module: "./src/bin.ts"
