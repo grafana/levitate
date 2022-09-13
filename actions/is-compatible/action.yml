@@ -14,8 +14,13 @@ runs:
         node-version: 16
     - id: run-levitate
       run: |
-        npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema > iscompatible
-        echo "::set-output name=is-compatible-stdout::$(cat iscompatible)"
+        # echo "::set-output name=is-compatible-stdout::$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema | cat)"
+        IS_COMPATIBLE=$(npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema)
+        IS_COMPATIBLE="${IS_COMPATIBLE//'%'/'%25'}"
+        IS_COMPATIBLE="${IS_COMPATIBLE//$'\n'/'%0A'}"
+        IS_COMPATIBLE="${IS_COMPATIBLE//$'\r'/'%0D'}"
+        echo "::set-output name=is-compatible-stdout::$IS_COMPATIBLE"
+
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
