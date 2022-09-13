@@ -22,8 +22,11 @@ runs:
       shell: "bash"
     - run: echo "${{ steps.run-levitate.outputs.is-compatible-stdout }}"
       shell: "bash"
+    - uses: jwalton/gh-find-current-pr@v1
+      id: finder
     - uses: marocchino/sticky-pull-request-comment@v2.2.0
       with:
+        number: ${{ steps.finder.outputs.pr }}
         message: |
           Levitate is-compatible report:
 
