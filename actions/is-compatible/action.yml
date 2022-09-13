@@ -38,7 +38,7 @@ runs:
         echo "::set-output name=is-compatible-exit-code::$CODE"
       shell: "bash"
     # find the current PR (if running in one)
-    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.code == 1
+    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.code == 0
       run: exit 1
       shell: "bash"
     - uses: jwalton/gh-find-current-pr@e12d66bc9ecc4fdcde07b0f70a3cb68ce7e4d807
