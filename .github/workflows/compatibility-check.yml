@@ -1,3 +1,4 @@
+name: Compatibility check
 on: [push]
 
 jobs:
@@ -14,8 +15,9 @@ jobs:
       - name: Build plugin
         run: yarn build
       - name: Compatibility check
-        uses: grafana/levitate/actions/is-compatible@levitate-action-comment
+        uses: grafana/plugin-actions/is-compatible@v1
         with:
           module: "./src/bin.ts"
           comment-pr: 'yes'
           fail-if-incompatible: 'yes'
+          targets: '@grafana/levitate@latest'
