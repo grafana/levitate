@@ -1,0 +1,56 @@
+name: 'Levitate is compatible'
+description: 'Check if your grafana plugin code is compatible with grafana latest APIs'
+
+inputs:
+  module:
+    required: true
+    description: 'Path to your plugin module.ts file. Usually ./src/module.ts'
+  comment-pr:
+    description: "If running the action inside a pull_request write a comment with the check output. yes or no"
+    default: "yes"
+    required: false
+  fail-if-incompatible:
+    description: "Fail the job if levitate finds incompatibilities. yes or no"
+    default: "no"
+    required: false
+
+runs:
+  using: 'composite'
+  steps: 
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - id: run-levitate
+      run: |
+        # RUN levitate is-compatible. Save the output to .levitate_output
+        npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target @grafana/data,@grafana/ui,@grafana/runtime,@grafana/schema,@grafana/e2e-selectors,@grafana/experimental | tee .levitate_output
+        # Save the command exit code for latesr use
+        CODE=${PIPESTATUS[0]}
+        # Capture levitate output in an ENV variable
+        IS_COMPATIBLE=$(cat .levitate_output)
+        # Github action specific: Escape special characters to save it in a github output context
+        IS_COMPATIBLE="${IS_COMPATIBLE//'%'/'%25'}"
+        IS_COMPATIBLE="${IS_COMPATIBLE//$'\n'/'%0A'}"
+        IS_COMPATIBLE="${IS_COMPATIBLE//$'\r'/'%0D'}"
+        # Save outputs in github contexts
+        echo "::set-output name=is-compatible-stdout::$IS_COMPATIBLE"
+        echo "::set-output name=is-compatible-exit-code::$CODE"
+      shell: "bash"
+    # find the current PR (if running in one)
+    - uses: jwalton/gh-find-current-pr@e12d66bc9ecc4fdcde07b0f70a3cb68ce7e4d807
+      id: finder
+      if: inputs.comment-pr == 'yes'
+    # write a comment with levitate output
+    - uses: marocchino/sticky-pull-request-comment@e3c0353c9ad3f0cad0fbab901e5bcd7d04c6e97b
+      if: inputs.comment-pr == 'yes'
+      with:
+        number: ${{ steps.finder.outputs.pr }}
+        message: |
+          Levitate is-compatible report:
+
+          ${{ steps.run-levitate.outputs.is-compatible-stdout }}
+    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.code == 1
+      run: |
+        echo "Possible incompatibilities found. Check Levitate output for further information"
+        exit 1
+      shell: "bash"
