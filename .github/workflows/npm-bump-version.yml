@@ -44,11 +44,5 @@ jobs:
       - name: bump version
         run: npm version ${{ github.event.inputs.version }}
 
-      - name: Update latest tag
-        run: |
-          git tag -d latest
-          git push origin :refs/tags/latest
-          git tag -fa latest -m "latest version"
-
       - name: Push latest version
         run: git push origin main --follow-tags
