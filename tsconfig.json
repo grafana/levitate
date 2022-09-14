@@ -6,8 +6,10 @@
     "esModuleInterop": true,
     "declaration": true,
     "outDir": "dist",
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "target": "ES6"
   },
   "exclude": ["./dist", "./fixtures"],
-  "files": ["./src/bin.ts"]
+  "files": ["./src/bin.ts"],
+  "include": ["src/**/*"]
 }

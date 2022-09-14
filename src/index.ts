@@ -9,3 +9,4 @@ export * from './utils/file';
 export * from './utils/npm';
 export * from './comparison/source';
 export * from './print';
+export * from './usage/usage';

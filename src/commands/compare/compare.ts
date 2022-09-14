@@ -242,8 +242,8 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
 
     // If a previously optional member becomes not optional, then it is a breaking change
     if (
-      (prevMember.valueDeclaration as ts.PropertySignature).questionToken &&
-      !(currentMember.valueDeclaration as ts.PropertySignature).questionToken
+      (prevMember.valueDeclaration as ts.PropertySignature)?.questionToken &&
+      !(currentMember.valueDeclaration as ts.PropertySignature)?.questionToken
     ) {
       return true;
     }
@@ -263,7 +263,7 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
     }
 
     // New optional member -> does not need to be implemented so it is not a breaking change
-    if ((currentMember.valueDeclaration as ts.PropertySignature).questionToken) {
+    if ((currentMember.valueDeclaration as ts.PropertySignature)?.questionToken) {
       return false;
     }
 

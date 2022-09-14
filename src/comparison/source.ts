@@ -1,44 +1,49 @@
 import ts from 'typescript';
 import { compareExports } from '../commands/compare/compare';
+import { getExportInfo } from '../compiler/exports';
 import { Comparison, IncompatibilityInfo } from '../types';
+import { getPackageUsage } from '../usage/usage';
 import { logDebug } from '../utils/log';
 import { resolvePackage } from '../utils/npm';
-import { getAllIdentifiers } from '../utils/typescript';
 
 export async function getIncompatibilitiesBetweenPackages(
-  program: ts.Program,
+  projectProgram: ts.Program,
   pkgFrom: string,
   pkgTo: string
 ): Promise<IncompatibilityInfo[]> {
   const fromPathResolved = await resolvePackage(pkgFrom);
   const toPathResolved = await resolvePackage(pkgTo);
   logDebug("Comparing '" + fromPathResolved + "' to '" + toPathResolved + "'");
-  const comparison = compareExports(fromPathResolved, toPathResolved);
+  const exportsComparison = compareExports(fromPathResolved, toPathResolved);
   const incompatibilities: IncompatibilityInfo[] = [];
-  for (const sourceFile of program.getSourceFiles()) {
-    if (!sourceFile.isDeclarationFile) {
-      incompatibilities.push(...getIncompatibilitiesFromComparison(sourceFile, comparison));
-    }
+
+  const usagePerSourceFile = getPackageUsage(projectProgram, getExportInfo(fromPathResolved), pkgFrom);
+  for (const [sourceFile, usages] of usagePerSourceFile) {
+    const incompatibilitiesInFile = getIncompatibilitiesFromComparison({
+      sourceFile,
+      usages,
+      comparison: exportsComparison,
+    });
+    incompatibilities.push(...incompatibilitiesInFile);
   }
 
   return incompatibilities;
 }
 
-export function getIncompatibilitiesFromComparison(
-  sourceFile: ts.SourceFile,
-  comparison: Comparison
-): IncompatibilityInfo[] {
-  const possibleIncompatibilities: IncompatibilityInfo[] = [];
-  const identifiers = getAllIdentifiers(sourceFile);
-  const identifiersMap: Record<string, ts.Identifier> = {};
-  for (const identifier of identifiers) {
-    identifiersMap[identifier.getText()] = identifier;
-  }
-
+export function getIncompatibilitiesFromComparison({
+  sourceFile,
+  usages,
+  comparison,
+}: {
+  usages: Record<string, ts.Identifier>;
+  sourceFile: ts.SourceFile;
+  comparison: Comparison;
+}): IncompatibilityInfo[] {
+  const incompatibilities: IncompatibilityInfo[] = [];
   for (const change of Object.keys(comparison.changes)) {
-    if (identifiersMap[change]) {
-      const identifier = identifiersMap[change];
-      possibleIncompatibilities.push({
+    if (usages[change]) {
+      const identifier = usages[change];
+      incompatibilities.push({
         name: identifier.getText(),
         codeIdentifier: identifier,
         sourceFile: sourceFile,
@@ -48,9 +53,9 @@ export function getIncompatibilitiesFromComparison(
   }
 
   for (const removal of Object.keys(comparison.removals)) {
-    if (identifiersMap[removal]) {
-      const identifier = identifiersMap[removal];
-      possibleIncompatibilities.push({
+    if (usages[removal]) {
+      const identifier = usages[removal];
+      incompatibilities.push({
         name: identifier.getText(),
         codeIdentifier: identifier,
         sourceFile: sourceFile,
@@ -59,5 +64,5 @@ export function getIncompatibilitiesFromComparison(
     }
   }
 
-  return possibleIncompatibilities;
+  return incompatibilities;
 }
