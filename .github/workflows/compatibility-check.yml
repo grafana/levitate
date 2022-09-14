@@ -1,3 +1,4 @@
+name: Compatibility check
 on: [push]
 
 jobs:
