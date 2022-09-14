@@ -20,4 +20,4 @@ jobs:
           module: "./src/bin.ts"
           comment-pr: 'yes'
           fail-if-incompatible: 'yes'
-          target: '@grafana/levitate@latest'
+          targets: '@grafana/levitate@latest'
