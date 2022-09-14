@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: [push]
 
 jobs:
   compatibility-check:
@@ -14,7 +14,7 @@ jobs:
       - name: Build plugin
         run: yarn build
       - name: Compatibility check
-        uses: grafana/levitate/actions/is-compatible
+        uses: grafana/levitate/actions/is-compatible@main
         with:
           module: "./src/bin.ts"
           comment-pr: 'yes'
