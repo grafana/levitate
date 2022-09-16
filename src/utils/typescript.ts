@@ -47,8 +47,11 @@ export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: t
   return undefined;
 }
 
-export function createTsProgram(fileName: string): ts.Program {
-  const program = ts.createProgram([fileName], COMPILER_OPTIONS);
+export function createTsProgram(fileName: string, compilerOptions: ts.CompilerOptions = {}): ts.Program {
+  const program = ts.createProgram([fileName], {
+    ...COMPILER_OPTIONS,
+    ...compilerOptions,
+  });
 
   program.getTypeChecker();
 
