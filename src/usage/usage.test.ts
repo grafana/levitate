@@ -1,11 +1,11 @@
 import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
-import { IdentifierWithCounter } from '../types';
 import { createTsProgram } from '../utils/typescript';
+import { getUsageForTesting } from './test-utils';
 import { getFlattenPackageUsage, getPackageUsage } from './usage';
 
 describe('Usage', () => {
-  const methodsExportsTestingModule = `
+  const testingModuleSrc = `
   export function Foo(){}
 
   export function Bar(){}
@@ -14,8 +14,8 @@ describe('Usage', () => {
 
   export function Qux(){}
   `;
-  const testingModuleFile = generateTmpFileWithContent(methodsExportsTestingModule);
-  const methodsExportsOtherModule = `
+  const testingModuleFile = generateTmpFileWithContent(testingModuleSrc);
+  const otherTestingModuleSrc = `
   export function Foo(){}
 
   export function Cox(){}
@@ -24,7 +24,7 @@ describe('Usage', () => {
 
   export function Tox(){}
   `;
-  const otherModuleFile = generateTmpFileWithContent(methodsExportsOtherModule);
+  const otherModuleFile = generateTmpFileWithContent(otherTestingModuleSrc);
 
   it('should detect basic usage of direct methods exports', () => {
     const projectSrc = `
@@ -34,16 +34,13 @@ describe('Usage', () => {
     Baz();
     Qux();
     `;
-    const projectFile = generateTmpFileWithContent(projectSrc);
 
-    const testingModuleExports = getExportInfo(testingModuleFile);
-
-    const projectProgram = createTsProgram(projectFile);
-
-    const usages = getPackageUsage(projectProgram, testingModuleExports, 'testing-module');
-    const value = usages.values().next().value;
-    const usagesNames = Object.keys(value);
-    expect(usagesNames).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
+    const use = getUsageForTesting({
+      projectSrc,
+      testingModuleSrc: testingModuleSrc,
+      testingModuleName: 'testing-module',
+    });
+    expect(Object.keys(use)).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
   });
 
   it('should differentiate from usages of other modules with similar names', () => {
@@ -85,16 +82,13 @@ describe('Usage', () => {
     is();
     Bar(); // should be reported
     `;
-    const projectFile = generateTmpFileWithContent(projectSrc);
 
-    const testingModuleExports = getExportInfo(testingModuleFile);
-
-    const projectProgram = createTsProgram(projectFile);
-
-    const usages = getPackageUsage(projectProgram, testingModuleExports, 'testing-module');
-    const value = usages.values().next().value;
-    const usagesNames = Object.keys(value);
-    expect(usagesNames).toEqual(['Bar']);
+    const use = getUsageForTesting({
+      projectSrc,
+      testingModuleSrc: testingModuleSrc,
+      testingModuleName: 'testing-module',
+    });
+    expect(Object.keys(use)).toEqual(['Bar']);
   });
 
   it('Should correctly count how many times an API is used', () => {
@@ -121,16 +115,14 @@ describe('Usage', () => {
       Baz: 2, // 1 usage, 1 import
       // Foo: 0 // 0 usages because it is not imported from testing-module
     };
-    const projectFile = generateTmpFileWithContent(projectSrc);
 
-    const testingModuleExports = getExportInfo(testingModuleFile);
-
-    const projectProgram = createTsProgram(projectFile);
-
-    const usages = getPackageUsage(projectProgram, testingModuleExports, 'testing-module');
-    const value = usages.values().next().value as Record<string, IdentifierWithCounter>;
+    const use = getUsageForTesting({
+      projectSrc,
+      testingModuleSrc: testingModuleSrc,
+      testingModuleName: 'testing-module',
+    });
     for (const key in counters) {
-      expect(value[key].count).toEqual(counters[key]);
+      expect(use[key].count).toEqual(counters[key]);
     }
   });
 
@@ -164,5 +156,38 @@ describe('Usage', () => {
     for (const usage of flattenUsages) {
       expect(usage.count).toEqual(counters[usage.propertyName]);
     }
+  });
+
+  it('should report usages of a pacakge sub-exports', () => {
+    const packageSrc = `
+      export function Qux(){}
+
+      export type Foo = 'foo';
+
+      export class FooBar{
+        public internal(){}
+        public method(){}
+      }
+
+      export interface FooBarInterface{
+        method(): void;
+        attr: string;
+      }
+    `;
+
+    const projectSrc = `
+    import { FooBar } from 'testing-module';
+
+    const fooBar = new FooBar();
+    fooBar.method();
+
+    `;
+
+    const usages = getUsageForTesting({
+      projectSrc,
+      testingModuleSrc: packageSrc,
+      testingModuleName: 'testing-module',
+    });
+    expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
   });
 });
