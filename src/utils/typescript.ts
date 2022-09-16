@@ -22,6 +22,17 @@ export function getAllIdentifiers(node: ts.Node | ts.SourceFile): ts.Identifier[
   return identifiers;
 }
 
+export function getAllPropertyAccessExpressions(node: ts.Node | ts.SourceFile): ts.PropertyAccessExpression[] {
+  const identifiers: ts.PropertyAccessExpression[] = [];
+  ts.forEachChild(node, (childNode) => {
+    if (ts.isPropertyAccessExpression(childNode)) {
+      identifiers.push(childNode);
+    }
+    identifiers.push(...getAllPropertyAccessExpressions(childNode));
+  });
+  return identifiers;
+}
+
 export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: ts.Program): ts.Symbol | undefined {
   if (program && Object.hasOwnProperty.call(node, 'type') && ts.isTypeReferenceNode(node.type)) {
     return program.getTypeChecker().getSymbolAtLocation(node.type.typeName);
