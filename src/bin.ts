@@ -14,9 +14,10 @@ import { printExports } from './print/exports';
 import { areChangesBreaking, compareExports } from './commands/compare/compare';
 import { printComparison } from './print/comparison';
 import { isCompatible } from './commands/is-compatible/is-compatible';
+import { forceDebugExit } from './utils/debug';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-yargs
+const command = yargs
   .scriptName('levitate')
   .usage('$0 <cmd> [args]')
 
@@ -220,4 +221,12 @@ yargs
     console.log('Try running levitate with --help to see available commands.');
     exit(1);
   })
-  .help().argv;
+  .help();
+
+// in DEBUG mode this allows the debugger to connect and disconnect more easily
+if (process.env.DEBUG) {
+  forceDebugExit();
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+command.argv;
