@@ -3,6 +3,7 @@ import Table from 'tty-table';
 import ts from 'typescript';
 import { IncompatibilityInfo } from '../types';
 import { getSymbolDiff } from '../utils/diff';
+import { logInfo } from '../utils/log';
 import { printHeading, printSpacing } from './utils';
 
 export function printIncompatibilities(incompatibilities: IncompatibilityInfo[]) {
@@ -12,7 +13,7 @@ export function printIncompatibilities(incompatibilities: IncompatibilityInfo[])
   printHeading(chalk.green(`INCOMPATIBILITIES (${count})`));
 
   if (!count) {
-    console.log(chalk.gray('  No incompatibilities found.'));
+    logInfo(chalk.gray('  No incompatibilities found.'));
     return;
   }
 
@@ -34,7 +35,7 @@ export function printIncompatibilities(incompatibilities: IncompatibilityInfo[])
     })
   );
 
-  console.log(table.render());
+  logInfo(table.render());
 }
 
 function getIncompatibilityDetail(incompatibility: IncompatibilityInfo) {

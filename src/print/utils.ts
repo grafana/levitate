@@ -1,24 +1,25 @@
 import chalk from 'chalk';
+import { logInfo } from '../utils/log';
 
 // 🥃
 export function printRedLabel(text: string) {
-  console.log(chalk.bgRed.bold.white(` ${text} `));
+  logInfo(chalk.bgRed.bold.white(` ${text} `));
 }
 
 export function printHeading(text: string, description?: string) {
-  console.log(chalk.bold(`  ${text}`));
+  logInfo(chalk.bold(`  ${text}`));
 
   if (description) {
-    console.log(chalk.gray(description));
+    logInfo(chalk.gray(description));
   }
 }
 
 export function printSpacing(count?: number) {
   if (count > 0) {
     for (let i = 0; i < count; i++) {
-      console.log('');
+      logInfo('');
     }
   } else {
-    console.log('');
+    logInfo('');
   }
 }

@@ -4,6 +4,7 @@ import { PackageWithVersion } from '../../types';
 import { getIncompatibilitiesBetweenPackages } from '../../comparison/source';
 import { getNpmPackageVersionFromProjectPath } from '../../utils/npm';
 import { createTsProgram } from '../../utils/typescript';
+import { logInfo, logWarning } from '../../utils/log';
 
 export async function isCompatible(
   projectPath: string,
@@ -17,7 +18,7 @@ export async function isCompatible(
 
   let isPathCompatible = true;
   for (const pkg of packagesToCheck) {
-    console.log(
+    logInfo(
       `🔬 Checking compatibility between ${chalk.blue(projectPath)} and ${chalk.blue(pkg.name)}@${chalk.yellow(
         pkg.version
       )}...`
@@ -25,10 +26,10 @@ export async function isCompatible(
     // check if this package is used in the project if not skip
     let installedPackageVersion = await getNpmPackageVersionFromProjectPath(projectPath, pkg.name);
     if (!installedPackageVersion && !options.force) {
-      console.log(
+      logWarning(
         chalk.grey(`   Skipping package ${pkg.name} because it is not used in the project or not installed locally.`)
       );
-      console.log(
+      logWarning(
         chalk.grey(
           '   did you forget to run ' + chalk.yellow('yarn install') + ' or ' + chalk.yellow('npm install') + '?\n'
         )
@@ -46,9 +47,9 @@ export async function isCompatible(
 
     if (incompatibilities.length > 0 && options.printIncompatibilities) {
       isPathCompatible = false;
-      console.log(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
+      logInfo(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
       printIncompatibilities(incompatibilities);
-      console.log('---\n');
+      logInfo('---\n');
     }
   }
   return isPathCompatible;

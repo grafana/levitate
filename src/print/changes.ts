@@ -3,6 +3,7 @@ import Table from 'tty-table';
 import ts from 'typescript';
 import { Changes } from '../types';
 import { getSymbolDiff } from '../utils/diff';
+import { logInfo } from '../utils/log';
 import { printHeading, printSpacing } from './utils';
 
 export function printChanges(changes: Changes, prevProgram: ts.Program, currentProgram: ts.Program) {
@@ -12,7 +13,7 @@ export function printChanges(changes: Changes, prevProgram: ts.Program, currentP
   printHeading(chalk.yellow(`CHANGES (${count})`));
 
   if (!count) {
-    console.log(chalk.gray('  No changes.'));
+    logInfo(chalk.gray('  No changes.'));
     return;
   }
 
@@ -47,5 +48,5 @@ export function printChanges(changes: Changes, prevProgram: ts.Program, currentP
     ]
   );
 
-  console.log(table.render());
+  logInfo(table.render());
 }

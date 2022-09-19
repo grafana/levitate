@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { Comparison, Exports } from '../types';
-import { logDebug } from '../utils/log';
+import { logDebug, logInfo } from '../utils/log';
 import { printChanges } from './changes';
 import { printRemovals } from './removals';
 import { printHeading, printSpacing } from './utils';
@@ -25,7 +25,7 @@ function printAdditions(additions: Exports) {
   printHeading(chalk.green(`ADDITIONS (${count})`));
 
   if (!count) {
-    console.log(chalk.gray('  No additions.'));
+    logInfo(chalk.gray('  No additions.'));
     return;
   }
 
@@ -45,5 +45,5 @@ function printAdditions(additions: Exports) {
     ]
   );
 
-  console.log(table.render());
+  logInfo(table.render());
 }
