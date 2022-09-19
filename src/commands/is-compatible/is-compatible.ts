@@ -30,10 +30,9 @@ export async function isCompatible(
       );
       console.log(
         chalk.grey(
-          '   did you forget to run ' + chalk.yellow('yarn install') + ' or ' + chalk.yellow('npm install') + '?'
+          '   did you forget to run ' + chalk.yellow('yarn install') + ' or ' + chalk.yellow('npm install') + '?\n'
         )
       );
-      console.log('');
       continue;
     }
 
