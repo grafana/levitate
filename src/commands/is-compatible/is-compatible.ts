@@ -18,7 +18,7 @@ export async function isCompatible(
   let isPathCompatible = true;
   for (const pkg of packagesToCheck) {
     console.log(
-      `◎ Checking compatibility between ${chalk.blue(projectPath)} and ${chalk.blue(pkg.name)}@${chalk.yellow(
+      `🔬 Checking compatibility between ${chalk.blue(projectPath)} and ${chalk.blue(pkg.name)}@${chalk.yellow(
         pkg.version
       )}...`
     );
@@ -26,13 +26,14 @@ export async function isCompatible(
     let installedPackageVersion = await getNpmPackageVersionFromProjectPath(projectPath, pkg.name);
     if (!installedPackageVersion && !options.force) {
       console.log(
-        chalk.grey(`> Skipping package ${pkg.name}  because it is not used in the project or not installed locally.`)
+        chalk.grey(`   Skipping package ${pkg.name} because it is not used in the project or not installed locally.`)
       );
       console.log(
         chalk.grey(
-          '  did you forget to run ' + chalk.yellow('yarn install') + ' or ' + chalk.yellow('npm install') + '?'
+          '   did you forget to run ' + chalk.yellow('yarn install') + ' or ' + chalk.yellow('npm install') + '?'
         )
       );
+      console.log('');
       continue;
     }
 
