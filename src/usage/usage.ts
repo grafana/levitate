@@ -76,7 +76,6 @@ function getUsageOfSourceFile(
   }
 
   const checker = project.getTypeChecker();
-  // property access expressions are calls to a property of an object
   const expressions = getAllPropertyAccessExpressions(sourceFile);
   for (const expression of expressions) {
     const propertyName = expression.name.getText();
