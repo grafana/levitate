@@ -23,14 +23,14 @@ export function getAllIdentifiers(node: ts.Node | ts.SourceFile): ts.Identifier[
 }
 
 export function getAllPropertyAccessExpressions(node: ts.Node | ts.SourceFile): ts.PropertyAccessExpression[] {
-  const identifiers: ts.PropertyAccessExpression[] = [];
+  const expresssions: ts.PropertyAccessExpression[] = [];
   ts.forEachChild(node, (childNode) => {
     if (ts.isPropertyAccessExpression(childNode)) {
-      identifiers.push(childNode);
+      expresssions.push(childNode);
     }
-    identifiers.push(...getAllPropertyAccessExpressions(childNode));
+    expresssions.push(...getAllPropertyAccessExpressions(childNode));
   });
-  return identifiers;
+  return expresssions;
 }
 
 export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: ts.Program): ts.Symbol | undefined {
