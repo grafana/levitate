@@ -1,11 +1,11 @@
 import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
 import { createTsProgram } from '../utils/typescript';
-import { getUsageForTesting } from './test-utils';
+import { getPackageUsageForTesting } from './test-utils';
 import { getFlattenPackageUsage, getPackageUsage } from './usage';
 
 describe('Usage', () => {
-  const testingModuleSrc = `
+  const testingPackageSrc = `
   export function Foo(){}
 
   export function Bar(){}
@@ -14,7 +14,7 @@ describe('Usage', () => {
 
   export function Qux(){}
   `;
-  const testingModuleFile = generateTmpFileWithContent(testingModuleSrc);
+  const testingModuleFile = generateTmpFileWithContent(testingPackageSrc);
   const otherTestingModuleSrc = `
   export function Foo(){}
 
@@ -36,10 +36,10 @@ describe('Usage', () => {
     Qux();
     `;
 
-      const use = getUsageForTesting({
+      const use = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: testingModuleSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(use)).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
     });
@@ -84,10 +84,10 @@ describe('Usage', () => {
     Bar(); // should be reported
     `;
 
-      const use = getUsageForTesting({
+      const use = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: testingModuleSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(use)).toEqual(['Bar']);
     });
@@ -117,10 +117,10 @@ describe('Usage', () => {
         // Foo: 0 // 0 usages because it is not imported from testing-module
       };
 
-      const use = getUsageForTesting({
+      const use = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: testingModuleSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc,
+        testingPackageName: 'testing-module',
       });
       for (const key in counters) {
         expect(use[key].count).toEqual(counters[key]);
@@ -191,10 +191,10 @@ describe('Usage', () => {
         fooBar.method();
         `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
     });
@@ -210,10 +210,10 @@ describe('Usage', () => {
 
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
     });
@@ -229,10 +229,10 @@ describe('Usage', () => {
 
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
     });
@@ -250,10 +250,10 @@ describe('Usage', () => {
         tt.get();
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
     });
@@ -269,10 +269,10 @@ describe('Usage', () => {
         get();
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
     });
@@ -288,10 +288,10 @@ describe('Usage', () => {
         test.method();
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
     });
@@ -309,10 +309,10 @@ describe('Usage', () => {
         test.method();
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBarInterface']);
     });
@@ -325,10 +325,10 @@ describe('Usage', () => {
         const { method } = new FooBar();
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBar']);
     });
@@ -340,10 +340,10 @@ describe('Usage', () => {
         const test = FooBarEnum.A;
     `;
 
-      const usages = getUsageForTesting({
+      const usages = getPackageUsageForTesting({
         projectSrc,
-        testingModuleSrc: packageSrc,
-        testingModuleName: 'testing-module',
+        testingPackageSrc: packageSrc,
+        testingPackageName: 'testing-module',
       });
       expect(Object.keys(usages)).toEqual(['FooBarEnum', 'FooBarEnum.A']);
     });

@@ -4,12 +4,12 @@ import { IdentifierWithCounter } from '../types';
 import { createTsProgram } from '../utils/typescript';
 import { getPackageUsage } from './usage';
 
-export function getUsageForTesting({
+export function getPackageUsageForTesting({
   projectSrc,
-  testingModuleSrc,
-  testingModuleName = 'testing-module',
+  testingPackageSrc,
+  testingPackageName = 'testing-module',
 }): Record<string, IdentifierWithCounter> {
-  const testingModuleFile = generateTmpFileWithContent(testingModuleSrc);
+  const testingModuleFile = generateTmpFileWithContent(testingPackageSrc);
   const testingModuleExports = getExportInfo(testingModuleFile);
 
   const projectFile = generateTmpFileWithContent(projectSrc);
@@ -19,7 +19,7 @@ export function getUsageForTesting({
     },
   });
 
-  const usages = getPackageUsage(projectProgram, testingModuleExports, testingModuleName);
+  const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
   const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
   return usages.get(mainFile);
 }
