@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import * as yargs from 'yargs';
+import yargs from 'yargs';
 import chalk from 'chalk';
 import { getImportsInfo, getGroupedImports } from './compiler/imports';
 import { getListImportsCliArgs, CliError } from './utils/cli';
