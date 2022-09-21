@@ -1,7 +1,7 @@
 import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
 import { createTsProgram } from '../utils/typescript';
-import { getPackageUsageForTesting } from './test-utils';
+import { getProjectUsageSetupForTesting } from './test-utils';
 import { getFlattenPackageUsage, getPackageUsage } from './usage';
 
 describe('Usage', () => {
@@ -36,11 +36,14 @@ describe('Usage', () => {
     Qux();
     `;
 
-      const use = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc,
         testingPackageName: 'testing-module',
       });
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
       expect(Object.keys(use)).toEqual(['Foo', 'Bar', 'Baz', 'Qux']);
     });
 
@@ -84,11 +87,14 @@ describe('Usage', () => {
     Bar(); // should be reported
     `;
 
-      const use = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc,
         testingPackageName: 'testing-module',
       });
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
       expect(Object.keys(use)).toEqual(['Bar']);
     });
 
@@ -117,11 +123,15 @@ describe('Usage', () => {
         // Foo: 0 // 0 usages because it is not imported from testing-module
       };
 
-      const use = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc,
         testingPackageName: 'testing-module',
       });
+
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
       for (const key in counters) {
         expect(use[key].count).toEqual(counters[key]);
       }
@@ -191,12 +201,16 @@ describe('Usage', () => {
         fooBar.method();
         `;
 
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBar', 'FooBar.method']);
     });
 
     it('should report usage of package object properties through variable assignments', () => {
@@ -210,12 +224,16 @@ describe('Usage', () => {
 
     `;
 
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBar', 'FooBar.method']);
     });
 
     it('should report usage of package object properties through proxy classes assignments', () => {
@@ -229,12 +247,16 @@ describe('Usage', () => {
 
     `;
 
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBar', 'FooBar.method']);
     });
 
     it('should report usage of package object properties through proxy methods assignments', () => {
@@ -250,12 +272,16 @@ describe('Usage', () => {
         tt.get();
     `;
 
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBar', 'FooBar.method']);
     });
 
     it('should report usage of package object properties through proxy variable assignments', () => {
@@ -268,13 +294,16 @@ describe('Usage', () => {
 
         get();
     `;
-
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBar', 'FooBar.method']);
     });
 
     it('should report usage of package object properties through class extensions', () => {
@@ -288,12 +317,16 @@ describe('Usage', () => {
         test.method();
     `;
 
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBar', 'FooBar.method']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBar', 'FooBar.method']);
     });
 
     //TODO detect usage through interface extension
@@ -308,13 +341,16 @@ describe('Usage', () => {
         const test = new Bar();
         test.method();
     `;
-
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBarInterface']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBarInterface']);
     });
 
     // TODO detect usage through destructuring
@@ -325,12 +361,16 @@ describe('Usage', () => {
         const { method } = new FooBar();
     `;
 
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBar']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBar']);
     });
 
     it('should report usage of package ENUM properties ', () => {
@@ -340,12 +380,16 @@ describe('Usage', () => {
         const test = FooBarEnum.A;
     `;
 
-      const usages = getPackageUsageForTesting({
+      const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
         projectSrc,
         testingPackageSrc: packageSrc,
         testingPackageName: 'testing-module',
       });
-      expect(Object.keys(usages)).toEqual(['FooBarEnum', 'FooBarEnum.A']);
+      const usages = getPackageUsage(projectProgram, testingModuleExports, testingPackageName);
+      const mainFile = Array.from(usages.keys()).find((f) => f.fileName === projectFile);
+      const use = usages.get(mainFile);
+
+      expect(Object.keys(use)).toEqual(['FooBarEnum', 'FooBarEnum.A']);
     });
   });
 });
