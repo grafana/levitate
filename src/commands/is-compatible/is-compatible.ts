@@ -19,7 +19,7 @@ export async function isCompatible(
 
   let isPathCompatible = true;
   for (const pkg of packagesToCheck) {
-    console.log('\n');
+    logInfo('\n');
     logInfo(
       `🔬 Checking compatibility between ${chalk.blue(projectPath)} and ${chalk.blue(pkg.name)}@${chalk.yellow(
         pkg.version
