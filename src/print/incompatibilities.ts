@@ -31,9 +31,12 @@ export function printIncompatibilities(
       chalk.white(counter + ')'),
       chalk.red('Removed'),
       chalk.cyan.bold('`' + item.name + '`'),
-      chalk.white(item.sourceFile.fileName) +
+      'used in',
+      '`' +
+        chalk.white(item.sourceFile.fileName) +
         ':' +
-        chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1)
+        chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1) +
+        '`'
     );
     counter++;
   }
@@ -45,9 +48,12 @@ export function printIncompatibilities(
         chalk.white(counter + ')'),
         chalk.yellow('Changed'),
         chalk.cyan.bold('`' + item.name + '`'),
-        chalk.white(item.sourceFile.fileName) +
+        'used in',
+        '`' +
+          chalk.white(item.sourceFile.fileName) +
           ':' +
-          chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1)
+          chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1) +
+          '`'
       );
       if (markdown) {
         logInfo('```diff');

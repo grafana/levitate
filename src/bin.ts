@@ -99,9 +99,14 @@ yargs
           type: 'boolean',
           default: false,
           describe: 'Force the check even if the target package is not installed.',
+        })
+        .option('markdown', {
+          type: 'boolean',
+          default: false,
+          describe: 'Output the result in a markdown-friendly format.',
         });
     },
-    async function ({ target, path, force }: { target: string; path: string; force: boolean }) {
+    async function ({ target, path, force, markdown }) {
       try {
         // validate the path is accesible and readable
         await access(path, constants.R_OK);
@@ -110,7 +115,7 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
-        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true, force });
+        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true, force, markdown });
         if (isPathCompatible) {
           logInfo('\n');
           logInfo(chalk.green(`✔️  ${path} appears to be compatible with ${target}`));

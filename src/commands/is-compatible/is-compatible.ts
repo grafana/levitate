@@ -12,6 +12,7 @@ export async function isCompatible(
   options: {
     printIncompatibilities: boolean;
     force: boolean;
+    markdown: boolean;
   }
 ): Promise<boolean> {
   const projectProgram = createTsProgram(projectPath);
@@ -49,7 +50,7 @@ export async function isCompatible(
     if (incompatibilities.length > 0 && options.printIncompatibilities) {
       isPathCompatible = false;
       logInfo(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
-      printIncompatibilities(incompatibilities);
+      printIncompatibilities(incompatibilities, { markdown: options.markdown });
     }
   }
   return isPathCompatible;
