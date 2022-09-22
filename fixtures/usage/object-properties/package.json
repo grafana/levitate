@@ -1,0 +1,11 @@
+{
+  "name": "classes-methods-fixture-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/css": "^11.10.0",
+    "@grafana/data": "9.1.0",
+    "@grafana/ui": "9.1.0"
+  }
+}

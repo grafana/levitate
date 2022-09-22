@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { getImportsForFile } from '../compiler/imports';
 import { ExportsInfo, IdentifierWithCounter, UsageInfo } from '../types';
 import { logDebug } from '../utils/log';
-import { getAllIdentifiers } from '../utils/typescript';
+import { getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript';
 
 /**
  * Given a project Program and a list of exports, returns a list of
@@ -22,7 +22,7 @@ export function getPackageUsage(
       continue;
     }
     logDebug('getting usages of', importName, 'in', sourceFile.fileName);
-    const sourceFileUsage = getUsageOfSourceFile(sourceFile, pkgExports, importName);
+    const sourceFileUsage = getUsageOfSourceFile(project, sourceFile, pkgExports, importName);
     usageMap.set(sourceFile, sourceFileUsage);
   }
   return usageMap;
@@ -56,6 +56,7 @@ export function getFlattenPackageUsage(project: ts.Program, pkgExports: ExportsI
 }
 
 function getUsageOfSourceFile(
+  project: ts.Program,
   sourceFile: ts.SourceFile,
   pkgExports: ExportsInfo,
   importName: string
@@ -71,6 +72,28 @@ function getUsageOfSourceFile(
         usage[identifierName] = identifier;
       }
       usage[identifierName].count = (usage[identifierName].count || 0) + 1;
+    }
+  }
+
+  const checker = project.getTypeChecker();
+  const expressions = getAllPropertyAccessExpressions(sourceFile);
+  for (const expression of expressions) {
+    const propertyName = expression.name.getText();
+    try {
+      const expressionSymbol = checker.getSymbolAtLocation(expression.name);
+      const expressionDeclaration = expressionSymbol.declarations[0];
+      const parentSymbol = expressionDeclaration.parent;
+      //@ts-ignore - obscure ts API
+      const parentName = parentSymbol.name?.getText() || parentSymbol.name?.text || '';
+      if (importsPropertyNames.includes(parentName)) {
+        const compositeName = `${parentName}.${propertyName}`;
+        if (!usage[compositeName]) {
+          usage[compositeName] = expressionDeclaration as ts.Identifier;
+        }
+        usage[compositeName].count = (usage[propertyName].count || 0) + 1;
+      }
+    } catch (e) {
+      logDebug('Could not process', propertyName, 'in', sourceFile.fileName);
     }
   }
   return usage;

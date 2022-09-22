@@ -1,8 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import rimraf from 'rimraf';
+import { tmpdir } from 'os';
 
-export const TMP_DIR = path.join(__dirname, '..', '..', '.tmp');
+export const TMP_DIR = fs.mkdtempSync(path.join(tmpdir(), 'levitate-test'));
 
 export function generateTmpFilename() {
   return path.join(TMP_DIR, `${generateHash()}.ts`);
