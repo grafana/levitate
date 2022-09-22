@@ -6,34 +6,34 @@ import { getFlattenPackageUsage, getPackageUsage } from './usage';
 
 describe('Usage', () => {
   const testingPackageSrc = `
-  export function Foo(){}
+    export function Foo(){}
 
-  export function Bar(){}
+    export function Bar(){}
 
-  export function Baz(){}
+    export function Baz(){}
 
-  export function Qux(){}
+    export function Qux(){}
   `;
   const testingModuleFile = generateTmpFileWithContent(testingPackageSrc);
   const otherTestingModuleSrc = `
-  export function Foo(){}
+    export function Foo(){}
 
-  export function Cox(){}
+    export function Cox(){}
 
-  export function Mox(){}
+    export function Mox(){}
 
-  export function Tox(){}
+    export function Tox(){}
   `;
   const otherModuleFile = generateTmpFileWithContent(otherTestingModuleSrc);
 
   describe('Top exports usage', () => {
     it('should detect basic usage of direct methods exports', () => {
       const projectSrc = `
-    import { Foo, Bar, Baz, Qux } from 'testing-module';
-    Foo();
-    Bar();
-    Baz();
-    Qux();
+        import { Foo, Bar, Baz, Qux } from 'testing-module';
+        Foo();
+        Bar();
+        Baz();
+        Qux();
     `;
 
       const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
@@ -49,12 +49,12 @@ describe('Usage', () => {
 
     it('should differentiate from usages of other modules with similar names', () => {
       const projectSrc = `
-    import { Bar, Baz, Qux } from 'testing-module';
-    import { Foo } from 'other-module';
-    Foo();
-    Bar();
-    Baz();
-    Qux();
+        import { Bar, Baz, Qux } from 'testing-module';
+        import { Foo } from 'other-module';
+        Foo();
+        Bar();
+        Baz();
+        Qux();
     `;
       const projectFile = generateTmpFileWithContent(projectSrc);
 
@@ -76,15 +76,15 @@ describe('Usage', () => {
 
     it('Should only report usages from the passed package name', () => {
       const projectSrc = `
-    import { Bar } from 'testing-module';
-    thisis();
-    a();
-    usage();
-    Foo(); // should not be reported
-    but();
-    thenext();
-    is();
-    Bar(); // should be reported
+        import { Bar } from 'testing-module';
+        thisis();
+        a();
+        usage();
+        Foo(); // should not be reported
+        but();
+        thenext();
+        is();
+        Bar(); // should be reported
     `;
 
       const { projectProgram, testingModuleExports, testingPackageName, projectFile } = getProjectUsageSetupForTesting({
@@ -100,19 +100,19 @@ describe('Usage', () => {
 
     it('Should correctly count how many times an API is used', () => {
       const projectSrc = `
-    import { Bar, Baz, Qux } from 'testing-module';
-    import { Foo } from 'other-module';
+        import { Bar, Baz, Qux } from 'testing-module';
+        import { Foo } from 'other-module';
 
-    Qux();
-    Qux();
-    Foo();
-    Foo();
-    Bar();
-    Bar();
-    Bar();
-    Baz();
-    Qux();
-    Qux();
+        Qux();
+        Qux();
+        Foo();
+        Foo();
+        Bar();
+        Bar();
+        Bar();
+        Baz();
+        Qux();
+        Qux();
     `;
 
       //notice that importing the API itself counts as usage
@@ -139,19 +139,19 @@ describe('Usage', () => {
 
     it('returns a flatten version of the usages', () => {
       const projectSrc = `
-    import { Bar, Baz, Qux } from 'testing-module';
-    import { Foo } from 'other-module';
+        import { Bar, Baz, Qux } from 'testing-module';
+        import { Foo } from 'other-module';
 
-    Qux();
-    Qux();
-    Foo();
-    Foo();
-    Bar();
-    Bar();
-    Bar();
-    Baz();
-    Qux();
-    Qux();
+        Qux();
+        Qux();
+        Foo();
+        Foo();
+        Bar();
+        Bar();
+        Bar();
+        Baz();
+        Qux();
+        Qux();
     `;
       const counters = {
         Bar: 4, // 3 usages, 1 import
