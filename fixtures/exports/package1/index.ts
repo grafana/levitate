@@ -19,6 +19,7 @@ export class FooClass {
   private privateField = 'privateField';
   protected protectedField = 'protectedField';
   publicField = 'publicField';
+  private privateOptionalField?;
 
   private privateMethod(): string {
     return 'private';

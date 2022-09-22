@@ -162,7 +162,7 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('CHANGING A PUBLIC MEMBER TO BE PRIVATE - making a previously public class member to be private should trigger a breaking change', () => {
+  test('CHANGING A PUBLIC MEMBER TO BE PRIVATE - making a previously public class member to be private should trigger a change and removal', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -181,10 +181,10 @@ describe('Compare classes', () => {
 
     expect(Object.keys(comparison.changes).length).toBe(1);
     expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(2); // 2 became private, thus, removed
   });
 
-  test('CHANGING A PUBLIC MEMBER TO BE PROTECTED - making a previously public class member to be protected should trigger a breaking change', () => {
+  test('CHANGING A PUBLIC MEMBER TO BE PROTECTED - making a previously public class member to be protected should trigger a breaking change and removal', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -203,7 +203,7 @@ describe('Compare classes', () => {
 
     expect(Object.keys(comparison.changes).length).toBe(1);
     expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(2); // 2 became protected, thus, removed
   });
 
   // Like this subclasses would not be able to access a previously accessible member.
@@ -251,7 +251,7 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('CHANGING A PRIVATE MEMBER TO BE PUBLIC - making a previously private class member to be public should not trigger a breaking change', () => {
+  test('CHANGING A PRIVATE MEMBER TO BE PUBLIC - making a previously private class member to be public should trigger additions', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -269,11 +269,11 @@ describe('Compare classes', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(2); // two no longer private, thus, added
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('CHANGING A PROTECTED MEMBER TO BE PUBLIC - making a previously protected class member to be public should not trigger a breaking change', () => {
+  test('CHANGING A PROTECTED MEMBER TO BE PUBLIC - making a previously protected class member to be public should trigger additions', () => {
     const prev = `
       export declare class Foo {
         one;
@@ -291,11 +291,11 @@ describe('Compare classes', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(2); // two no longer protected, thus, added
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('NEW METHOD - adding a new class method should not trigger a breaking change', () => {
+  test('NEW METHOD - adding a new class method should trigger additions', () => {
     const prev = `
       export declare class Foo {
         private one;
@@ -318,7 +318,7 @@ describe('Compare classes', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(1); // newClassMethod added
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
@@ -380,7 +380,7 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
+    expect(Object.keys(comparison.changes).length).toBe(2); // Foo and Foo.newClassMethod changed
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
@@ -416,7 +416,7 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
+    expect(Object.keys(comparison.changes).length).toBe(2); // Foo and Foo.getSomething changed
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
@@ -441,12 +441,12 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
+    expect(Object.keys(comparison.changes).length).toBe(3); // Foo, Foo.methodA and Foo.methodB changed
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('RENAMING METHOD - renaming a class method should trigger a breaking change', () => {
+  test('RENAMING METHOD - renaming a class method should trigger a change, addition and removal', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;
@@ -461,12 +461,12 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(Object.keys(comparison.changes).length).toBe(1); // Foo changed
+    expect(Object.keys(comparison.additions).length).toBe(1); // methodARenamed added
+    expect(Object.keys(comparison.removals).length).toBe(1); // methodA removed
   });
 
-  test('REMOVING METHOD - removing a class method should trigger a breaking change', () => {
+  test('REMOVING METHOD - removing a class method should trigger a change and removal', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;
@@ -480,12 +480,12 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
+    expect(Object.keys(comparison.changes).length).toBe(1); // Foo changed
     expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(1); // Foo.methodA removed
   });
 
-  test('changing the generic should trigger a change', () => {
+  test('changing the generic should trigger a change and addition', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;
@@ -498,12 +498,13 @@ describe('Compare classes', () => {
       };
 
       export declare class Foo<T = Bar> {
+        methodA(col: number): number;
         methodB(col: number): number;
       }
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
+    expect(Object.keys(comparison.changes).length).toBe(2); // Foo and Foo<T> changed
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });

@@ -71,16 +71,14 @@ export function isSymbolPrivateDeclaration(symbol: ts.Symbol): boolean {
 
     // private or protected properties or methods
     if (
-      (symbol.flags === ts.SymbolFlags.Property || symbol.flags === ts.SymbolFlags.Method) &&
-      (ts.isPropertyDeclaration(symbol.valueDeclaration) || ts.isMethodDeclaration(symbol.valueDeclaration))
+      (symbol.valueDeclaration,
+      ts.isPropertyDeclaration(symbol.valueDeclaration) || ts.isMethodDeclaration(symbol.valueDeclaration))
     ) {
       return (
-        (symbol.valueDeclaration &&
-          symbol.valueDeclaration.modifiers?.some(
-            (modifier) =>
-              modifier.kind === ts.SyntaxKind.PrivateKeyword || modifier.kind === ts.SyntaxKind.ProtectedKeyword
-          )) ??
-        false
+        symbol.valueDeclaration.modifiers?.some(
+          (modifier) =>
+            modifier.kind === ts.SyntaxKind.PrivateKeyword || modifier.kind === ts.SyntaxKind.ProtectedKeyword
+        ) ?? false
       );
     }
     return false;
