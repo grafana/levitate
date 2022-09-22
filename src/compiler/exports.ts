@@ -29,13 +29,36 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
       continue;
     }
     const exports = checker.getExportsOfModule(sourceFileSymbol);
-    const groupedExports = {};
+    const groupedExports: Record<string, ts.Symbol> = {};
     for (const item of exports) {
       groupedExports[item.getName()] = item;
+      Object.assign(groupedExports, getExportSubMembers(item));
     }
 
     programExports = { ...programExports, ...groupedExports };
   }
 
   return programExports;
+}
+
+const subMembersIgnoreList = ['prototype', '__proto__', '__constructor'];
+
+function getExportSubMembers(symbol: ts.Symbol): Record<string, ts.Symbol> {
+  const parentName = symbol.getName() || '';
+  const subMembers: Record<string, ts.Symbol> = {};
+  if (symbol.members) {
+    symbol.members.forEach((value, key) => {
+      if (typeof key === 'string' && !subMembersIgnoreList.includes(key) && value) {
+        subMembers[`${parentName}.${key}`] = value;
+      }
+    });
+  }
+  if (symbol.exports) {
+    symbol.exports.forEach((value, key) => {
+      if (typeof key === 'string' && !subMembersIgnoreList.includes(key) && value) {
+        subMembers[`${parentName}.${key}`] = value;
+      }
+    });
+  }
+  return subMembers;
 }
