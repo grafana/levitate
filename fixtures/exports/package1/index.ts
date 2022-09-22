@@ -15,9 +15,16 @@ export enum FooEnum {
 export class FooClass {
   constructor(public foo: string) {}
 
+  #privateField = 'privateFieldWithHash';
+  private privateField = 'privateField';
+  protected protectedField = 'protectedField';
+  publicField = 'publicField';
+
   private privateMethod(): string {
     return 'private';
   }
+
+  protected protectedMethod() {}
 
   method1(param1: string, param2: number) {
     return param1 + param2;

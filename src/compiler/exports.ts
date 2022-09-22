@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { Exports, ExportsInfo } from '../types';
-import { createTsProgram } from '../utils/typescript';
+import { createTsProgram, isSymbolPrivateDeclaration } from '../utils/typescript';
 
 // Returns all the exported members of a program identified by a root file (entry file)
 // @param rootFile - Has to be an absolute path
@@ -48,7 +48,12 @@ function getExportSubMembers(symbol: ts.Symbol): Record<string, ts.Symbol> {
   const subMembers: Record<string, ts.Symbol> = {};
   if (symbol.members) {
     symbol.members.forEach((value, key) => {
-      if (typeof key === 'string' && !subMembersIgnoreList.includes(key) && value) {
+      if (
+        value !== undefined &&
+        typeof key === 'string' &&
+        !subMembersIgnoreList.includes(key) &&
+        !isSymbolPrivateDeclaration(value)
+      ) {
         subMembers[`${parentName}.${key}`] = value;
       }
     });
