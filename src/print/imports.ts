@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { ImportInfo } from '../types';
+import { logInfo } from '../utils/log';
 
 export function printImports({
   imports,
@@ -13,7 +14,7 @@ export function printImports({
   isJson?: boolean;
 }) {
   if (isJson) {
-    console.log(JSON.stringify(imports, null, 4));
+    logInfo(JSON.stringify(imports, null, 4));
   } else {
     // Group the imports by packages
     const importsByPackageName: Record<string, ImportInfo[]> = {};
@@ -27,9 +28,9 @@ export function printImports({
 
     // Loop through all the packages
     Object.keys(importsByPackageName).forEach((packageName) => {
-      console.log('');
-      console.log(chalk.bold(packageName) + ' ' + chalk.gray(`(${importsByPackageName[packageName].length} imports)`));
-      console.log('===============================');
+      logInfo('');
+      logInfo(chalk.bold(packageName) + ' ' + chalk.gray(`(${importsByPackageName[packageName].length} imports)`));
+      logInfo('===============================');
 
       // Loop through all the imports from a certain package
       importsByPackageName[packageName]
@@ -37,13 +38,13 @@ export function printImports({
         .forEach((i) => {
           const name = i.isDefaultImport ? 'default' : i.propertyName;
 
-          console.log(`\t ${chalk.green.bold(name)} ${chalk.gray(`(${i.count} occurances)`)}`);
+          logInfo(`\t ${chalk.green.bold(name)} ${chalk.gray(`(${i.count} occurances)`)}`);
 
           if (isVerbose) {
             i.occurances.forEach((ii) => {
-              console.log(`\t\t ${chalk.bold.gray('Filename')}: ${chalk.gray(ii.fileName)}`);
-              console.log(`\t\t ${chalk.gray.bold('Import statement')}: ${chalk.gray(ii.importStatementAsText)}`);
-              console.log('');
+              logInfo(`\t\t ${chalk.bold.gray('Filename')}: ${chalk.gray(ii.fileName)}`);
+              logInfo(`\t\t ${chalk.gray.bold('Import statement')}: ${chalk.gray(ii.importStatementAsText)}`);
+              logInfo('');
             });
           }
         });
