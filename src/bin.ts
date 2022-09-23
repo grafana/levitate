@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import * as yargs from 'yargs';
+import yargs from 'yargs';
 import chalk from 'chalk';
 import { getImportsInfo, getGroupedImports } from './compiler/imports';
 import { getListImportsCliArgs, CliError } from './utils/cli';
@@ -14,6 +14,7 @@ import { printExports } from './print/exports';
 import { areChangesBreaking, compareExports } from './commands/compare/compare';
 import { printComparison } from './print/comparison';
 import { isCompatible } from './commands/is-compatible/is-compatible';
+import { logError, logInfo } from './utils/log';
 import { forceDebugExit } from './utils/debug';
 
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
@@ -56,9 +57,9 @@ yargs
       try {
         // Missing CLI arguments
         if (!prev || !current) {
-          console.log('');
-          console.error(chalk.bgRed.bold.white(' ERROR '));
-          console.error('Missing arguments. Please make sure to provide both the --prev and --current options.\n');
+          logInfo('');
+          logError(chalk.bgRed.bold.white(' ERROR '));
+          logError('Missing arguments. Please make sure to provide both the --prev and --current options.\n');
           yargs.showHelp();
           exit(1);
         }
@@ -74,9 +75,9 @@ yargs
           exit(1);
         }
       } catch (e) {
-        console.log('');
-        console.log(chalk.bgRed.bold.white(' ERROR '));
-        console.log(e);
+        logInfo('');
+        logInfo(chalk.bgRed.bold.white(' ERROR '));
+        logInfo(e);
 
         exit(1);
       }
@@ -104,9 +105,14 @@ yargs
           type: 'boolean',
           default: false,
           describe: 'Force the check even if the target package is not installed.',
+        })
+        .option('markdown', {
+          type: 'boolean',
+          default: false,
+          describe: 'Output the result in a markdown-friendly format.',
         });
     },
-    async function ({ target, path, force }: { target: string; path: string; force: boolean }) {
+    async function ({ target, path, force, markdown }) {
       try {
         // validate the path is accesible and readable
         await access(path, constants.R_OK);
@@ -115,27 +121,28 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
-        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true, force });
+        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true, force, markdown });
         if (isPathCompatible) {
-          console.log('\n');
-          console.log(chalk.green(`${path} appears to be compatible with ${target}`));
+          logInfo('\n');
+          logInfo(chalk.green(`✔️  ${path} appears to be compatible with ${target}`));
         } else {
-          console.log(chalk.red(`${path} is not fully compatible with ${target}`));
-          console.log('Please read over the compatibility report above and update possible issues.');
-          console.log(
+          logInfo('\n');
+          logInfo(chalk.red(`${path} is not fully compatible with ${target}`));
+          logInfo('Please read over the compatibility report above and update possible issues.');
+          logInfo(
             '\nIf you think the compatibility issues are not a problem (e.g. only type changes), it is adviced to update the target list of packages to their latest version in your project.'
           );
           exit(1);
         }
       } catch (e) {
-        console.error(chalk.bgRed.bold.white(' ERROR '));
+        logError(chalk.bgRed.bold.white(' ERROR '));
         if (process.env.DEBUG) {
-          console.error(e);
+          logError(e);
         } else if (e.code === 'ENOENT') {
-          console.error('path:', path);
-          console.error('File not found. Please make sure to provide a valid path to your module file.\n');
+          logError('path:', path);
+          logError('File not found. Please make sure to provide a valid path to your module file.\n');
         } else {
-          console.error(e.message);
+          logError(e.message);
         }
         exit(1);
       }
@@ -190,7 +197,7 @@ yargs
         });
       } catch (e) {
         if (e instanceof CliError) {
-          console.log(`ERROR: ${e.message}\n\n`);
+          logError(`ERROR: ${e.message}\n\n`);
           yargs.showHelp();
         } else {
           throw e;
@@ -222,8 +229,8 @@ yargs
     }
   )
   .command('$0', 'default command', (argv) => {
-    console.error(chalk.red('Unknown command:', chalk.blue(argv.argv['_'][0])));
-    console.log('Try running levitate with --help to see available commands.');
+    logError(chalk.red('Unknown command:', chalk.blue(argv.argv['_'][0])));
+    logInfo('Try running levitate with --help to see available commands.');
     exit(1);
   })
   .help().argv;
