@@ -7,7 +7,7 @@ import os from 'os';
 import { NpmList, PackageWithVersion } from '../types';
 import { pathExists } from './file';
 import { failSpinner, setSpinner, startSpinner, succeedSpinner } from './spinner';
-import { logDebug, logInfo } from './log';
+import { logDebug } from './log';
 
 export const TYPE_DEFINITION_FILE_NAME = 'index.d.ts';
 export const SPINNERS = [];
@@ -149,7 +149,7 @@ export async function downloadNpmPackageAsTarball(packageName: string) {
     await downloadFile(url, tarballPath);
     tar.x({ C: tmpFolderName, file: tarballPath, sync: true });
   } else {
-    logDebug('\nUsing download cache. Flag passed: LEVITATE_CACHE=true');
+    console.log('\nUsing download cache. Flag passed: LEVITATE_CACHE=true');
   }
 
   return path.join(tmpFolderName, 'package');
@@ -241,13 +241,13 @@ export async function getNpmPackageVersionFromProjectPath(path: string, pkgName:
     if (pkgInfo.dependencies) {
       for (const pkg of Object.keys(pkgInfo.dependencies)) {
         if (pkg === pkgName) {
-          logInfo(`✔ Found ${pkgName} version ${pkgInfo.dependencies[pkg].version} locally`);
+          console.log(`✔ Found ${pkgName} version ${pkgInfo.dependencies[pkg].version} locally`);
           return pkgInfo.dependencies[pkg].version ?? undefined;
         }
       }
     }
   } catch (e) {
-    logInfo('Could not retrieve version information about the package ' + pkgName);
+    console.log('Could not retrieve version information about the package ' + pkgName);
     return;
   }
 }
@@ -279,7 +279,7 @@ export async function resolveTargetPackages(target: string): Promise<PackageWith
         version: 'latest',
       };
     }
-    logInfo(`🔍 Resolving ${pkg.name}@${pkg.version}...`);
+    console.log(`🔍 Resolving ${pkg.name}@${pkg.version}...`);
     const resolvedVersion = await resolvePackageVersion(pkg.name, pkg.version);
     if (resolvedVersion) {
       packages.push({ ...pkg, version: resolvedVersion });
