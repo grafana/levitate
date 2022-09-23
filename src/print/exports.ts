@@ -1,14 +1,14 @@
 import { ExportsInfo } from '../types';
-import { logDebug } from '../utils/log';
+import { logDebug, logInfo } from '../utils/log';
 
 export function printExports(exports: ExportsInfo) {
   logDebug('Printing results...');
 
-  console.log('');
-  console.log('List of exported members:');
-  console.log('===================================');
-  console.log(Object.keys(exports.exports).forEach((name) => console.log(`\t - ${name}`)));
-  console.log('===================================');
+  logInfo('');
+  logInfo('List of exported members:');
+  logInfo('===================================');
+  logInfo(Object.keys(exports.exports).forEach((name) => logInfo(`\t - ${name}`)));
+  logInfo('===================================');
 }
 
 export function indentLines(str: string, tabsCount: number) {
