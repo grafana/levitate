@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import Table from 'tty-table';
 import { Exports } from '../types';
-import { logInfo } from '../utils/log';
 import { printHeading, printSpacing } from './utils';
 
 export function printRemovals(removals: Exports) {
@@ -11,7 +10,7 @@ export function printRemovals(removals: Exports) {
   printHeading(chalk.red(`REMOVALS (${count})`));
 
   if (!count) {
-    logInfo(chalk.gray('  No removals.'));
+    console.log(chalk.gray('  No removals.'));
     return;
   }
 
@@ -31,5 +30,5 @@ export function printRemovals(removals: Exports) {
     ]
   );
 
-  logInfo(table.render());
+  console.log(table.render());
 }

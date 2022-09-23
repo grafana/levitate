@@ -1,83 +1,43 @@
 import chalk from 'chalk';
+import Table from 'tty-table';
 import ts from 'typescript';
 import { IncompatibilityInfo } from '../types';
 import { getSymbolDiff } from '../utils/diff';
-import { logInfo } from '../utils/log';
 import { printHeading, printSpacing } from './utils';
 
-export function printIncompatibilities(
-  incompatibilities: IncompatibilityInfo[],
-  {
-    markdown = false,
-  }: {
-    markdown?: boolean;
-  } = {}
-) {
+export function printIncompatibilities(incompatibilities: IncompatibilityInfo[]) {
   const count = Object.keys(incompatibilities).length;
+
   printSpacing(1);
-  printHeading(chalk.green(`INCOMPATIBILITIES (${count})\n`));
+  printHeading(chalk.green(`INCOMPATIBILITIES (${count})`));
 
   if (!count) {
-    logInfo(chalk.gray('  No incompatibilities found.'));
+    console.log(chalk.gray('  No incompatibilities found.'));
     return;
   }
-  let counter = 1;
 
-  const removals = incompatibilities.filter((i) => i.removal);
-  const changes = incompatibilities.filter((i) => i.change);
-
-  for (const item of removals) {
-    logInfo(
-      chalk.white(counter + ')'),
-      chalk.red('Removed'),
-      chalk.cyan.bold('`' + item.name + '`'),
-      'used in',
-      '`' +
+  const table = Table(
+    [
+      { value: 'Name', width: 30, align: 'left', headerAlign: 'left' },
+      { value: 'Location', width: 40, align: 'left', headerAlign: 'left' },
+      { value: 'Detail', align: 'left', headerAlign: 'left' },
+    ],
+    //@ts-expect-error
+    incompatibilities.map((item) => {
+      return [
+        chalk.green.bold(item.name),
         chalk.white(item.sourceFile.fileName) +
-        ':' +
-        chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1) +
-        '`'
-    );
-    counter++;
-  }
-
-  for (const item of changes) {
-    const detail = getIncompatibilityDescription(item);
-    if (detail !== '') {
-      logInfo(
-        chalk.white(counter + ')'),
-        chalk.yellow('Changed'),
-        chalk.cyan.bold('`' + item.name + '`'),
-        'used in',
-        '`' +
-          chalk.white(item.sourceFile.fileName) +
           ':' +
-          chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1) +
-          '`'
-      );
-      if (markdown) {
-        logInfo('```diff');
-      }
-      logInfo(detail);
-      if (markdown) {
-        logInfo('```');
-      }
-      counter++;
-    }
-  }
+          chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1),
+        getIncompatibilityDetail(item),
+      ];
+    })
+  );
+
+  console.log(table.render());
 }
 
-export function getIncompatibilityType(incompatibility: IncompatibilityInfo): string {
-  if (incompatibility.change) {
-    return chalk.yellow('API Signature changed\n');
-  }
-  if (incompatibility.removal) {
-    return chalk.red('API Removed\n');
-  }
-  return '';
-}
-
-function getIncompatibilityDescription(incompatibility: IncompatibilityInfo): string {
+function getIncompatibilityDetail(incompatibility: IncompatibilityInfo) {
   if (incompatibility.change) {
     const diff = getSymbolDiff({
       prev: {
@@ -92,7 +52,10 @@ function getIncompatibilityDescription(incompatibility: IncompatibilityInfo): st
       },
     });
 
-    return diff;
+    return chalk.yellow('API Signature changed\n') + diff;
   }
-  return '';
+
+  if (incompatibility.removal) {
+    return chalk.red('API Removed\n');
+  }
 }

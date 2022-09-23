@@ -11,13 +11,3 @@ export const logError = (...args: any[]) => {
 export function isSilent() {
   return process.env.LEVITATE_SILENT ? true : false;
 }
-
-export function logInfo(...args: any[]) {
-  console.log(...args);
-}
-
-export function logWarning(...args: any[]) {
-  if (!isSilent()) {
-    console.log(...args);
-  }
-}
