@@ -15,6 +15,12 @@ import { areChangesBreaking, compareExports } from './commands/compare/compare';
 import { printComparison } from './print/comparison';
 import { isCompatible } from './commands/is-compatible/is-compatible';
 import { logError, logInfo } from './utils/log';
+import { forceDebugExit } from './utils/debug';
+
+// in DEBUG mode this allows the debugger to connect and disconnect more easily
+if (process.env.DEBUG) {
+  forceDebugExit();
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs

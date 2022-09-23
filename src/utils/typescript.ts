@@ -22,6 +22,17 @@ export function getAllIdentifiers(node: ts.Node | ts.SourceFile): ts.Identifier[
   return identifiers;
 }
 
+export function getAllPropertyAccessExpressions(node: ts.Node | ts.SourceFile): ts.PropertyAccessExpression[] {
+  const expresssions: ts.PropertyAccessExpression[] = [];
+  ts.forEachChild(node, (childNode) => {
+    if (ts.isPropertyAccessExpression(childNode)) {
+      expresssions.push(childNode);
+    }
+    expresssions.push(...getAllPropertyAccessExpressions(childNode));
+  });
+  return expresssions;
+}
+
 export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: ts.Program): ts.Symbol | undefined {
   if (program && Object.hasOwnProperty.call(node, 'type') && ts.isTypeReferenceNode(node.type)) {
     return program.getTypeChecker().getSymbolAtLocation(node.type.typeName);
@@ -36,8 +47,11 @@ export function getSymbolFromParameter(node: ts.ParameterDeclaration, program: t
   return undefined;
 }
 
-export function createTsProgram(fileName: string): ts.Program {
-  const program = ts.createProgram([fileName], COMPILER_OPTIONS);
+export function createTsProgram(fileName: string, compilerOptions: ts.CompilerOptions = {}): ts.Program {
+  const program = ts.createProgram([fileName], {
+    ...COMPILER_OPTIONS,
+    ...compilerOptions,
+  });
 
   program.getTypeChecker();
 
