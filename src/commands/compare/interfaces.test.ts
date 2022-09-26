@@ -181,7 +181,7 @@ describe('Compare interfaces', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('REMOVING METHOD - removing a method should not trigger a removal', () => {
+  test('REMOVING METHOD - removing a method should trigger a removal', () => {
     const prev = `
       export interface Foo {
         data: string;
