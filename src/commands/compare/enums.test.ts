@@ -39,7 +39,7 @@ describe('Compare enums', () => {
     expect(Object.keys(comparison.removals).length).toBe(4);
   });
 
-  test('NEW VALUE - adding a new value to an enum should an addition', () => {
+  test('NEW VALUE - adding a new value to an enum should trigger an addition', () => {
     const prev = `
       export declare enum SampleEnum {
         Append = 'append',
