@@ -34,15 +34,5 @@ describe('Compile exports test', () => {
         'Test3.test',
       ]);
     });
-    // it.only('should reutrn exports from a class', () => {
-    //   const filePath = generateTmpFileWithContent(`
-    //     export declare class Foo<T = any> {
-    //       private one;
-    //       private two?: string;
-    //     }
-    //   `);
-    //   const exports = getExportInfo(filePath);
-    //   console.log(exports);
-    // });
   });
 });
