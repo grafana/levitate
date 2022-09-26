@@ -86,7 +86,7 @@ describe('Compare interfaces', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('REMOVING A VARIABLE - removing a interface variable should not trigger a breaking change and removal', () => {
+  test('REMOVING A VARIABLE - removing a interface variable should trigger a removal', () => {
     const prev = `
       export interface Foo {
         one: string;
