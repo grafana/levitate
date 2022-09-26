@@ -485,7 +485,7 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.removals).length).toBe(1); // Foo.methodA removed
   });
 
-  test('changing the generic should trigger a change and addition', () => {
+ test('changing the generic should trigger a change', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;
