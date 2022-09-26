@@ -44,7 +44,7 @@ export function getIncompatibilitiesFromComparison({
     if (usages[change]) {
       const identifier = usages[change];
       incompatibilities.push({
-        name: identifier.getText(),
+        name: change,
         codeIdentifier: identifier,
         sourceFile: sourceFile,
         change: comparison.changes[change],
@@ -56,7 +56,7 @@ export function getIncompatibilitiesFromComparison({
     if (usages[removal]) {
       const identifier = usages[removal];
       incompatibilities.push({
-        name: identifier.getText(),
+        name: removal,
         codeIdentifier: identifier,
         sourceFile: sourceFile,
         removal: comparison.removals[removal],
