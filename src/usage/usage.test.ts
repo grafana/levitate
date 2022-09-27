@@ -1,8 +1,11 @@
+import path from 'path';
 import { getExportInfo } from '../compiler/exports';
 import { generateTmpFileWithContent } from '../tests/test-utils';
 import { createTsProgram } from '../utils/typescript';
 import { getProjectUsageSetupForTesting } from './test-utils';
-import { getFlattenPackageUsage, getPackageUsage } from './usage';
+import { getFlattenPackageUsage, getPackageUsage, getUsageInfo } from './usage';
+
+const MINUTE_TIMEOUT = 60000;
 
 describe('Usage', () => {
   const testingPackageSrc = `
@@ -391,5 +394,106 @@ describe('Usage', () => {
 
       expect(Object.keys(use)).toEqual(['FooBarEnum', 'FooBarEnum.A']);
     });
+  });
+
+  // NOTE: We need MINUTE_TIMEOUTs because we are using the real file system,
+  // and installing packages which is slow
+  describe('getUsageInfo high level API', () => {
+    const originalCacheValue = process.env.LEVITATE_CACHE;
+
+    beforeAll(() => {
+      // force cache to not download the same package on each test
+      process.env.LEVITATE_CACHE = 'true';
+    });
+
+    afterAll(() => {
+      process.env.LEVITATE_CACHE = originalCacheValue;
+    });
+
+    const projectSrc = `
+      import React, { FC } from 'react';
+      import { GrafanaTheme2, DataFrameType } from '@grafana/data';
+      import { useStyles2, AsyncSelectProps } from '@grafana/ui';
+
+      const MyComponent: FC = ({ test }: { test: AsyncSelectProps<Number>['invalid'] }) => {
+        const styles = useStyles2(getStyles);
+
+        // Use styles with classNames
+        return (
+          <div className={styles.styleA} id={DataFrameType.HeatmapSparse}>
+            ...
+          </div>
+        );
+      };
+
+      const getStyles = (theme: GrafanaTheme2) => ({
+        styleA: '',
+      });
+
+      export default MyComponent;
+    `;
+    it(
+      'should return a de-duplicated list of package usages from a module and list of filters (single file)',
+      async () => {
+        const projectPath = generateTmpFileWithContent(projectSrc);
+        const usages = await getUsageInfo(projectPath, ['@grafana/data', '@grafana/ui']);
+        expect(usages.length).toBe(4);
+
+        const properties = usages.map((u) => u.propertyName);
+        expect(properties).toEqual(['GrafanaTheme2', 'DataFrameType', 'useStyles2', 'AsyncSelectProps']);
+      },
+      MINUTE_TIMEOUT
+    );
+
+    it(
+      'Should only report usages passed from the filtered packages',
+      async () => {
+        const projectPath = generateTmpFileWithContent(projectSrc);
+        const usages = await getUsageInfo(projectPath, ['@grafana/data']);
+        expect(usages.length).toBe(2);
+
+        const properties = usages.map((u) => u.propertyName);
+        expect(properties).toEqual(['GrafanaTheme2', 'DataFrameType']);
+      },
+      MINUTE_TIMEOUT
+    );
+
+    it(
+      'Should only report usages passed from the filtered packages (part 2)',
+      async () => {
+        const projectPath = generateTmpFileWithContent(projectSrc);
+        const usages = await getUsageInfo(projectPath, ['@grafana/ui']);
+        expect(usages.length).toBe(2);
+
+        const properties = usages.map((u) => u.propertyName);
+        expect(properties).toEqual(['useStyles2', 'AsyncSelectProps']);
+      },
+      MINUTE_TIMEOUT
+    );
+
+    it(
+      'Should report usages from projects with multiple files and imports',
+      async () => {
+        const projectFile = path.join(__dirname, '../../fixtures/usage/grafana-plugin/module.ts');
+        const usages = await getUsageInfo(projectFile, ['@grafana/data', '@grafana/ui']);
+        const properties = usages.map((u) => u.propertyName);
+
+        expect(usages.length).toBe(11);
+        expect(properties).toEqual([
+          'GrafanaTheme2',
+          'DataFrameType',
+          'DataFrameType.TimeSeriesLong',
+          'GrafanaTheme2.breakpoints',
+          'PanelPlugin',
+          'FieldColorModeId',
+          'PanelPlugin.setPanelOptions',
+          'PanelPlugin.useFieldConfig',
+          'FieldColorModeId.ContinuousGrYlRd',
+          'useStyles2',
+          'AsyncSelectProps',
+        ]);
+      },
+      MINUTE_TIMEOUT
+    );
   });
 });
