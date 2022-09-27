@@ -57,3 +57,32 @@ export function createTsProgram(fileName: string, compilerOptions: ts.CompilerOp
 
   return program;
 }
+
+export function isSymbolPrivateDeclaration(symbol: ts.Symbol): boolean {
+  try {
+    // properties defined with '#' before the name are private fields
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
+    if (
+      symbol.flags === ts.SymbolFlags.Property &&
+      (symbol.getName().startsWith('#') || symbol.escapedName.toString().startsWith('__#'))
+    ) {
+      return true;
+    }
+
+    // private or protected properties or methods
+    if (
+      (symbol.valueDeclaration,
+      ts.isPropertyDeclaration(symbol.valueDeclaration) || ts.isMethodDeclaration(symbol.valueDeclaration))
+    ) {
+      return (
+        symbol.valueDeclaration.modifiers?.some(
+          (modifier) =>
+            modifier.kind === ts.SyntaxKind.PrivateKeyword || modifier.kind === ts.SyntaxKind.ProtectedKeyword
+        ) ?? false
+      );
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
