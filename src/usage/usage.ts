@@ -1,8 +1,30 @@
 import ts from 'typescript';
+import { getExportInfo } from '../compiler/exports';
 import { getImportsForFile } from '../compiler/imports';
 import { ExportsInfo, IdentifierWithCounter, UsageInfo } from '../types';
 import { logDebug } from '../utils/log';
-import { getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript';
+import { resolvePackage } from '../utils/npm';
+import { createTsProgram, getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript';
+
+export async function getUsageInfo(path: string, packages: string[]) {
+  const project = createTsProgram(path);
+  const usageInfo: Record<string, UsageInfo> = {};
+  for (const pkgName of packages) {
+    const packageResolved = await resolvePackage(pkgName);
+    const pkgExports = getExportInfo(packageResolved);
+    const usage = getFlattenPackageUsage(project, pkgExports, pkgName);
+    for (const use of usage) {
+      const key = `${use.packageName}.${use.propertyName}`;
+      if (!usageInfo[key]) {
+        usageInfo[key] = use;
+      } else {
+        usageInfo[key].count += use.count;
+        usageInfo[key].fileNames = [...usageInfo[key].fileNames, ...use.fileNames];
+      }
+    }
+  }
+  return Object.values(usageInfo);
+}
 
 /**
  * Given a project Program and a list of exports, returns a list of
@@ -44,10 +66,10 @@ export function getFlattenPackageUsage(project: ts.Program, pkgExports: ExportsI
     }
   }
   // convert usagePerIdentifier to array
-  for (const identifier of Object.values(usagePerIdentifier)) {
+  for (const [key, identifier] of Object.entries(usagePerIdentifier)) {
     usage.push({
       packageName: fullPkgName,
-      propertyName: identifier.getText(),
+      propertyName: key,
       count: identifier.count,
       fileNames: identifier.files?.map((file) => file.fileName),
     });
