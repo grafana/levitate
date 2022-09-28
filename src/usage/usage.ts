@@ -103,6 +103,9 @@ function getUsageOfSourceFile(
     const propertyName = expression.name.getText();
     try {
       const expressionSymbol = checker.getSymbolAtLocation(expression.name);
+      if (!expressionSymbol || !expressionSymbol.declarations || expressionSymbol.declarations.length === 0) {
+        continue;
+      }
       const expressionDeclaration = expressionSymbol.declarations[0];
       const parentSymbol = expressionDeclaration.parent;
       //@ts-ignore - obscure ts API
@@ -112,7 +115,7 @@ function getUsageOfSourceFile(
         if (!usage[compositeName]) {
           usage[compositeName] = expressionDeclaration as ts.Identifier;
         }
-        usage[compositeName].count = (usage[propertyName].count || 0) + 1;
+        usage[compositeName].count = (usage[propertyName]?.count || 0) + 1;
       }
     } catch (e) {
       logDebug('Could not process', propertyName, 'in', sourceFile.fileName);
