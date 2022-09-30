@@ -398,6 +398,7 @@ describe('Usage', () => {
 
   // NOTE: We need MINUTE_TIMEOUTs because we are using the real file system,
   // and installing packages which is slow
+  // https://github.com/grafana/levitate/blob/main/TYPECRIPT_NOTES.md
   describe('getUsageInfo high level API', () => {
     const originalCacheValue = process.env.LEVITATE_CACHE;
 

@@ -97,6 +97,10 @@ function getUsageOfSourceFile(
     }
   }
 
+  // for the following code to work as it should
+  // we need the project to have dependencies installed
+  // https://github.com/grafana/levitate/blob/main/TYPECRIPT_NOTES.md
+
   const checker = project.getTypeChecker();
   const expressions = getAllPropertyAccessExpressions(sourceFile);
   for (const expression of expressions) {
