@@ -116,7 +116,7 @@ export type UsageInfo = {
   // the times that the API is used across all fileNames
   count: number;
   // the fileNames where the API is used
-  fileNames: string[];
+  fileName: string;
   // the package from which the API is imported
   packageName: string;
 };

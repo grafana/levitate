@@ -8,18 +8,19 @@ import { createTsProgram, getAllIdentifiers, getAllPropertyAccessExpressions } f
 
 export async function getUsageInfo(path: string, packages: string[]) {
   const project = createTsProgram(path);
-  const usageInfo: Record<string, UsageInfo> = {};
+  const usageInfo: UsageInfo[] = [];
   for (const pkgName of packages) {
     const packageResolved = await resolvePackage(pkgName);
     const pkgExports = getExportInfo(packageResolved);
-    const usage = getFlattenPackageUsage(project, pkgExports, pkgName);
-    for (const use of usage) {
-      const key = `${use.packageName}.${use.propertyName}`;
-      if (!usageInfo[key]) {
-        usageInfo[key] = use;
-      } else {
-        usageInfo[key].count += use.count;
-        usageInfo[key].fileNames = [...usageInfo[key].fileNames, ...use.fileNames];
+    const usages = getPackageUsage(project, pkgExports, pkgName);
+    for (const [sourceFile, identifiers] of usages) {
+      for (const [identifier, identifierInfo] of Object.entries(identifiers)) {
+        usageInfo.push({
+          fileName: sourceFile.fileName,
+          propertyName: identifier,
+          count: identifierInfo.count,
+          packageName: pkgName,
+        });
       }
     }
   }
@@ -71,7 +72,7 @@ export function getFlattenPackageUsage(project: ts.Program, pkgExports: ExportsI
       packageName: fullPkgName,
       propertyName: key,
       count: identifier.count,
-      fileNames: identifier.files?.map((file) => file.fileName),
+      fileName: identifier.files?.[0].fileName ?? '',
     });
   }
   return usage;
