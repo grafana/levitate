@@ -4,7 +4,7 @@ import { PackageWithVersion } from '../../types';
 import { getIncompatibilitiesBetweenPackages } from '../../comparison/source';
 import { getNpmPackageVersionFromProjectPath } from '../../utils/npm';
 import { createTsProgram } from '../../utils/typescript';
-import { logInfo, logWarning } from '../../utils/log';
+import { logError, logInfo, logWarning } from '../../utils/log';
 
 export async function isCompatible(
   projectPath: string,
@@ -45,12 +45,16 @@ export async function isCompatible(
 
     const pkgFrom = `${pkg.name}@${installedPackageVersion}`;
     const pkgTo = `${pkg.name}@${pkg.version}`;
-    const incompatibilities = await getIncompatibilitiesBetweenPackages(projectProgram, pkgFrom, pkgTo);
+    try {
+      const incompatibilities = await getIncompatibilitiesBetweenPackages(projectProgram, pkgFrom, pkgTo);
 
-    if (incompatibilities.length > 0 && options.printIncompatibilities) {
-      isPathCompatible = false;
-      logInfo(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
-      printIncompatibilities(incompatibilities, { markdown: options.markdown });
+      if (incompatibilities.length > 0 && options.printIncompatibilities) {
+        isPathCompatible = false;
+        logInfo(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
+        printIncompatibilities(incompatibilities, { markdown: options.markdown });
+      }
+    } catch (e) {
+      logError('Could not process the package ' + pkg.name);
     }
   }
   return isPathCompatible;

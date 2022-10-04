@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { getExportInfo } from '../compiler/exports';
 import { getImportsForFile } from '../compiler/imports';
 import { ExportsInfo, IdentifierWithCounter, UsageInfo } from '../types';
-import { logDebug } from '../utils/log';
+import { logDebug, logError } from '../utils/log';
 import { resolvePackage } from '../utils/npm';
 import { createTsProgram, getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript';
 
@@ -10,18 +10,22 @@ export async function getUsageInfo(path: string, packages: string[]) {
   const project = createTsProgram(path);
   const usageInfo: UsageInfo[] = [];
   for (const pkgName of packages) {
-    const packageResolved = await resolvePackage(pkgName);
-    const pkgExports = getExportInfo(packageResolved);
-    const usages = getPackageUsage(project, pkgExports, pkgName);
-    for (const [sourceFile, identifiers] of usages) {
-      for (const [identifier, identifierInfo] of Object.entries(identifiers)) {
-        usageInfo.push({
-          fileName: sourceFile.fileName,
-          propertyName: identifier,
-          count: identifierInfo.count,
-          packageName: pkgName,
-        });
+    try {
+      const packageResolved = await resolvePackage(pkgName);
+      const pkgExports = getExportInfo(packageResolved);
+      const usages = getPackageUsage(project, pkgExports, pkgName);
+      for (const [sourceFile, identifiers] of usages) {
+        for (const [identifier, identifierInfo] of Object.entries(identifiers)) {
+          usageInfo.push({
+            fileName: sourceFile.fileName,
+            propertyName: identifier,
+            count: identifierInfo.count,
+            packageName: pkgName,
+          });
+        }
       }
+    } catch (e) {
+      logError('Could not process', pkgName);
     }
   }
   return Object.values(usageInfo);
