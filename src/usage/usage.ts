@@ -1,8 +1,35 @@
 import ts from 'typescript';
+import { getExportInfo } from '../compiler/exports';
 import { getImportsForFile } from '../compiler/imports';
 import { ExportsInfo, IdentifierWithCounter, UsageInfo } from '../types';
-import { logDebug } from '../utils/log';
-import { getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript';
+import { logDebug, logError } from '../utils/log';
+import { resolvePackage } from '../utils/npm';
+import { createTsProgram, getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript';
+
+export async function getUsageInfo(path: string, packages: string[]) {
+  const project = createTsProgram(path);
+  const usageInfo: UsageInfo[] = [];
+  for (const pkgName of packages) {
+    try {
+      const packageResolved = await resolvePackage(pkgName);
+      const pkgExports = getExportInfo(packageResolved);
+      const usages = getPackageUsage(project, pkgExports, pkgName);
+      for (const [sourceFile, identifiers] of usages) {
+        for (const [identifier, identifierInfo] of Object.entries(identifiers)) {
+          usageInfo.push({
+            fileName: sourceFile.fileName,
+            propertyName: identifier,
+            count: identifierInfo.count,
+            packageName: pkgName,
+          });
+        }
+      }
+    } catch (e) {
+      logError('Could not process', pkgName);
+    }
+  }
+  return Object.values(usageInfo);
+}
 
 /**
  * Given a project Program and a list of exports, returns a list of
@@ -44,12 +71,12 @@ export function getFlattenPackageUsage(project: ts.Program, pkgExports: ExportsI
     }
   }
   // convert usagePerIdentifier to array
-  for (const identifier of Object.values(usagePerIdentifier)) {
+  for (const [key, identifier] of Object.entries(usagePerIdentifier)) {
     usage.push({
       packageName: fullPkgName,
-      propertyName: identifier.getText(),
+      propertyName: key,
       count: identifier.count,
-      fileNames: identifier.files?.map((file) => file.fileName),
+      fileName: identifier.files?.[0].fileName ?? '',
     });
   }
   return usage;
@@ -75,12 +102,19 @@ function getUsageOfSourceFile(
     }
   }
 
+  // for the following code to work as it should
+  // we need the project to have dependencies installed
+  // https://github.com/grafana/levitate/blob/main/TYPECRIPT_NOTES.md
+
   const checker = project.getTypeChecker();
   const expressions = getAllPropertyAccessExpressions(sourceFile);
   for (const expression of expressions) {
     const propertyName = expression.name.getText();
     try {
       const expressionSymbol = checker.getSymbolAtLocation(expression.name);
+      if (!expressionSymbol || !expressionSymbol.declarations || expressionSymbol.declarations.length === 0) {
+        continue;
+      }
       const expressionDeclaration = expressionSymbol.declarations[0];
       const parentSymbol = expressionDeclaration.parent;
       //@ts-ignore - obscure ts API
@@ -90,7 +124,7 @@ function getUsageOfSourceFile(
         if (!usage[compositeName]) {
           usage[compositeName] = expressionDeclaration as ts.Identifier;
         }
-        usage[compositeName].count = (usage[propertyName].count || 0) + 1;
+        usage[compositeName].count = (usage[propertyName]?.count || 0) + 1;
       }
     } catch (e) {
       logDebug('Could not process', propertyName, 'in', sourceFile.fileName);
