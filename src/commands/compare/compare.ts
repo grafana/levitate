@@ -157,6 +157,12 @@ export function getFunctionParametersDiff({
 
     const currentParamType = currentDeclaration.parameters[i]?.type || undefined;
     const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+
+    // native types (e.g. MouseEvent) don't have declarations
+    if (!currentParamSymbol.declarations || !prevParamSymbol.declarations) {
+      return;
+    }
+
     if (ts.isTypeReferenceNode(currentParamType) && ts.isTypeReferenceNode(prevParamType)) {
       if (currentParamSymbol.declarations[0].getText() !== prevParamSymbol.declarations[0].getText()) {
         return {
