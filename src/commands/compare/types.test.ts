@@ -52,7 +52,7 @@ describe('Compare types', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['Foo', 'Bar']);
-    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(1);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 });

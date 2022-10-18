@@ -32,7 +32,7 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
     const groupedExports: Record<string, ts.Symbol> = {};
     for (const item of exports) {
       groupedExports[item.getName()] = item;
-      Object.assign(groupedExports, getExportSubMembers(item));
+      Object.assign(groupedExports, getExportSubMembers(item, program));
     }
 
     programExports = { ...programExports, ...groupedExports };
@@ -43,11 +43,17 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
 
 const subMembersIgnoreList = ['prototype', '__proto__', '__constructor'];
 
-function getExportSubMembers(symbol: ts.Symbol): Record<string, ts.Symbol> {
+function getExportSubMembers(symbol: ts.Symbol, program: ts.Program): Record<string, ts.Symbol> {
+  const checker = program.getTypeChecker();
   const parentName = symbol.getName() || '';
   const subMembers: Record<string, ts.Symbol> = {};
-  if (symbol.members) {
-    symbol.members.forEach((value, key) => {
+  const declaredType = checker.getDeclaredTypeOfSymbol(symbol);
+  const resolvedSymbol = declaredType.getSymbol() ?? symbol;
+
+  // in most cases the resolvedSymbol should have the information. Using the symbol as a fallback
+  const members = resolvedSymbol.members ?? symbol.members;
+  if (members) {
+    members.forEach((value, key) => {
       if (
         value !== undefined &&
         typeof key === 'string' &&
@@ -58,8 +64,11 @@ function getExportSubMembers(symbol: ts.Symbol): Record<string, ts.Symbol> {
       }
     });
   }
-  if (symbol.exports) {
-    symbol.exports.forEach((value, key) => {
+
+  // in most cases the resolvedSymbol should have the information. Using the symbol as a fallback
+  const exports = resolvedSymbol.exports ?? symbol.exports;
+  if (exports) {
+    exports.forEach((value, key) => {
       if (typeof key === 'string' && !subMembersIgnoreList.includes(key) && value) {
         subMembers[`${parentName}.${key}`] = value;
       }
