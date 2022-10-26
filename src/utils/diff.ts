@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import * as diff from 'diff';
-import { getFunctionParametersDiff, isFunction } from '../commands/compare/compare';
+import { getFunctionParametersDiff, isFunction, isMethod } from '../commands/compare/compare';
 import { ChangeType, SymbolMeta } from '../types';
 
 function getDiffLegend() {
@@ -28,12 +28,12 @@ export function getSymbolDiff({ prev, current }: { prev: SymbolMeta; current: Sy
   const prevDeclaration = prev.symbol.declarations[0].getText();
   const currentDeclaration = current.symbol.declarations[0].getText();
 
-  if (isFunction(prev.symbol) && isFunction(current.symbol)) {
+  if ((isFunction(prev.symbol) && isFunction(current.symbol)) || (isMethod(prev.symbol) && isMethod(current.symbol))) {
     const functionDiffText = getDiff(prevDeclaration, currentDeclaration);
     let paramsDiffText = '';
     const parametersDiff = getFunctionParametersDiff({ prev, current });
     if (parametersDiff && parametersDiff.type === ChangeType.PARAMETER_TYPE) {
-      paramsDiffText += chalk.yellow('parameter type changed\n');
+      paramsDiffText += chalk.yellow('Parameter type changed:\n');
       try {
         paramsDiffText += getDiff(
           parametersDiff.prev.declarations[0].getText(),
