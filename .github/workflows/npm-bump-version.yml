@@ -22,7 +22,7 @@ jobs:
           token: ${{ secrets.GH_BOT_ACCESS_TOKEN }}
 
       - name: Setup environment
-        uses: actions/setup-node@v2.5.1
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: '16'
           cache: 'yarn'
