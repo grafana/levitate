@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { compareExports } from '../commands/compare/compare';
 import { getExportInfo } from '../compiler/exports';
-import { Comparison, IncompatibilityInfo } from '../types';
+import { Comparison, IgnoreExportChanges, IncompatibilityInfo } from '../types';
 import { getPackageUsage } from '../usage/usage';
 import { logDebug } from '../utils/log';
 import { resolvePackage } from '../utils/npm';
@@ -9,12 +9,13 @@ import { resolvePackage } from '../utils/npm';
 export async function getIncompatibilitiesBetweenPackages(
   projectProgram: ts.Program,
   pkgFrom: string,
-  pkgTo: string
+  pkgTo: string,
+  ignoredExports: IgnoreExportChanges
 ): Promise<IncompatibilityInfo[]> {
   const fromPathResolved = await resolvePackage(pkgFrom);
   const toPathResolved = await resolvePackage(pkgTo);
   logDebug("Comparing '" + fromPathResolved + "' to '" + toPathResolved + "'");
-  const exportsComparison = compareExports(fromPathResolved, toPathResolved);
+  const exportsComparison = compareExports(fromPathResolved, toPathResolved, ignoredExports);
   const incompatibilities: IncompatibilityInfo[] = [];
 
   const usagePerSourceFile = getPackageUsage(projectProgram, getExportInfo(fromPathResolved), pkgFrom);

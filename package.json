@@ -13,7 +13,7 @@
   "scripts": {
     "tdd": "LEVITATE_SILENT=true yarn test -- -o --watch",
     "setup-fixtures": "find ./fixtures -name package.json -not -path '*/node_modules/*' -execdir yarn install \\;",
-    "test": "yarn setup-fixtures && LEVITATE_SILENT=true yarn jest",
+    "test": "yarn setup-fixtures && yarn build && LEVITATE_SILENT=true yarn jest",
     "build": "tsc && chmod +x ./dist/bin.js",
     "dev": "tsc-watch ./src/bin.ts --m commonjs --outDir ./dist --esModuleInterop",
     "dev-compare": "nodemon --exec yarn run dev:compare",

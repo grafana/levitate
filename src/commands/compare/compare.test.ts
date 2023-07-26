@@ -22,7 +22,9 @@ describe('Utils compare tests', () => {
       `
     );
 
-    const comparison = compareExports(old, newFile);
+    const ignoredExports = {};
+
+    const comparison = compareExports(old, newFile, ignoredExports);
     expect(Object.keys(comparison.changes).length).toBe(1);
   });
 });
