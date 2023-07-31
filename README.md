@@ -47,7 +47,7 @@ against another version of the same package (e.g. @grafana/data@9.0.5).
 # compatible with the latest version of it
 npx @grafana/levitate is-compatible \
     --path <PATH-TO-A-PACKAGE>/module.ts \
-    -- target "@grafana/data@latest"
+    --target "@grafana/data@latest"
 ```
 
 ## Contributing
