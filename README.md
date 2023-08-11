@@ -50,6 +50,36 @@ npx @grafana/levitate is-compatible \
     -- target "@grafana/data@latest"
 ```
 
+## Ignore specific exports changes
+
+To ignore changes (add, change, remove) from specific export names you can create a `.levignore.js` file in the same directory where you invoke levitate.
+
+The format of this file should be as follows:
+
+```javascript
+module.exports = {
+  removals: [
+    // each entry is a regex
+    /Sample\.ignoreThisOne/,
+    /Sample\.ignoreThisOneToo/,
+    /Sample.*\b/,
+    'Sample.ignoreThisOneToo', // strings are converted to regex to match exact
+  ],
+  changes: [
+    //...
+  ],
+  additions: [
+    //...
+  ],
+};
+```
+
+Note:
+
+- Levitate will ignore symbols matching the regexes in any of the packages it inspects. If several packages export the same symbol name, they all will be ignored.
+- This only affects the `compare` and `is-compatible` commands. It doesn't affect the `list-imports` or `list-exports` commands.
+- You should locate your `.levignore.js` file in the same directory where you invoke levitate.
+
 ## Contributing
 
 If you are interested in contributing to the Levitate project please read the [Contributing guide](https://github.com/grafana/levitate/blob/HEAD/CONTRIBUTING.md).
