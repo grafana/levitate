@@ -16,6 +16,7 @@ import { printComparison } from './print/comparison';
 import { isCompatible } from './commands/is-compatible/is-compatible';
 import { logError, logInfo } from './utils/log';
 import { forceDebugExit } from './utils/debug';
+import { readLevignoreFile } from './utils';
 
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
 if (process.env.DEBUG) {
@@ -64,9 +65,10 @@ yargs
           exit(1);
         }
 
+        const levignore = await readLevignoreFile(process.cwd());
         const prevPathResolved = await resolvePackage(prev);
         const currentPathResolved = await resolvePackage(current);
-        const comparison = compareExports(prevPathResolved, currentPathResolved);
+        const comparison = compareExports(prevPathResolved, currentPathResolved, levignore);
         const isBreaking = areChangesBreaking(comparison);
 
         printComparison(comparison);
@@ -121,7 +123,13 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
-        const isPathCompatible = await isCompatible(path, packages, { printIncompatibilities: true, force, markdown });
+        const levignore = await readLevignoreFile(process.cwd());
+        const isPathCompatible = await isCompatible(
+          path,
+          packages,
+          { printIncompatibilities: true, force, markdown },
+          levignore
+        );
         if (isPathCompatible) {
           logInfo('\n');
           logInfo(chalk.green(`✔️  ${path} appears to be compatible with ${target}`));

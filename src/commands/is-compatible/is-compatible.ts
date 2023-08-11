@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { printIncompatibilities } from '../../print/incompatibilities';
-import { PackageWithVersion } from '../../types';
+import { IgnoreExportChanges, PackageWithVersion } from '../../types';
 import { getIncompatibilitiesBetweenPackages } from '../../comparison/source';
 import { getNpmPackageVersionFromProjectPath } from '../../utils/npm';
 import { createTsProgram } from '../../utils/typescript';
@@ -13,7 +13,8 @@ export async function isCompatible(
     printIncompatibilities: boolean;
     force: boolean;
     markdown: boolean;
-  }
+  },
+  ignoredExports: IgnoreExportChanges
 ): Promise<boolean> {
   const projectProgram = createTsProgram(projectPath);
 
@@ -46,7 +47,12 @@ export async function isCompatible(
     const pkgFrom = `${pkg.name}@${installedPackageVersion}`;
     const pkgTo = `${pkg.name}@${pkg.version}`;
     try {
-      const incompatibilities = await getIncompatibilitiesBetweenPackages(projectProgram, pkgFrom, pkgTo);
+      const incompatibilities = await getIncompatibilitiesBetweenPackages(
+        projectProgram,
+        pkgFrom,
+        pkgTo,
+        ignoredExports
+      );
 
       if (incompatibilities.length > 0 && options.printIncompatibilities) {
         isPathCompatible = false;

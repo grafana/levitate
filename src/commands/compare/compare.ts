@@ -1,11 +1,15 @@
 import ts from 'typescript';
-import { Change, ChangeType, Comparison, SymbolMeta } from '../../types';
+import { Change, ChangeType, Comparison, IgnoreExportChanges, SymbolMeta } from '../../types';
 import { setSpinner, startSpinner, succeedSpinner } from '../../utils/spinner';
 import { logDebug } from '../../utils/log';
 import { getExportInfo } from '../../compiler/exports';
 import { getSymbolFromParameter } from '../../utils/typescript';
 
-export function compareExports(prevRootFile: string, currentRootFile: string): Comparison {
+export function compareExports(
+  prevRootFile: string,
+  currentRootFile: string,
+  ignoredExports: IgnoreExportChanges
+): Comparison {
   setSpinner('compare', 'Detecting changes between versions');
   startSpinner('compare');
 
@@ -26,13 +30,16 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
   for (const [currentExportName, currentExportSymbol] of Object.entries(current.exports)) {
     // Addition
     if (!prev.exports[currentExportName]) {
-      additions[currentExportName] = currentExportSymbol;
+      if (!isIgnoredExport(currentExportName, ignoredExports.additions)) {
+        additions[currentExportName] = currentExportSymbol;
+      }
     }
 
     // Change
     // (present in the previous version as well)
     else {
       if (
+        !isIgnoredExport(currentExportName, ignoredExports.changes) &&
         hasChanged(
           {
             key: currentExportName,
@@ -59,7 +66,7 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
   // Removals
   // (look for exported entries that cannot be found in the new version)
   for (const [exportName, exportSymbol] of Object.entries(prev.exports)) {
-    if (!current.exports[exportName]) {
+    if (!current.exports[exportName] && !isIgnoredExport(exportName, ignoredExports.removals)) {
       removals[exportName] = exportSymbol;
     }
   }
@@ -67,6 +74,13 @@ export function compareExports(prevRootFile: string, currentRootFile: string): C
   succeedSpinner('compare', 'Successfully compared versions');
 
   return { changes, additions, removals, prevProgram: prev.program, currentProgram: current.program };
+}
+
+function isIgnoredExport(exportName: string, regexes?: RegExp[]) {
+  if (!regexes) {
+    return false;
+  }
+  return regexes.some((regex) => regex.test(exportName));
 }
 
 export function areChangesBreaking({ changes, removals }: Comparison) {

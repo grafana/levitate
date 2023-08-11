@@ -46,9 +46,9 @@ async function main() {
   }
 }
 
-function extractList(stdout: string) {
+function extractList(stdout: string): string[] {
   const lines = stdout.split('\n');
-  const final = [];
+  const final: string[] = [];
   for (const line of lines) {
     const trimmed = line.replace(/\s/g, '');
     if (trimmed.startsWith('-')) {

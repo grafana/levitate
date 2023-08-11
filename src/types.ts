@@ -31,6 +31,12 @@ export type ExportsInfo = {
   program: ts.Program;
 };
 
+export type IgnoreExportChanges = {
+  additions?: RegExp[];
+  removals?: RegExp[];
+  changes?: RegExp[];
+};
+
 export type ImportInfo = {
   // The name of the package (or path) that we are importing from
   packageName: string;
