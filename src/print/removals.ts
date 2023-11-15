@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import Table from 'tty-table';
-import { Exports } from '../types';
-import { logInfo } from '../utils/log';
-import { printHeading, printSpacing } from './utils';
+import { Exports } from '../types.js';
+import { logInfo } from '../utils/log.js';
+import { printHeading, printSpacing } from './utils.js';
 
 export function printRemovals(removals: Exports) {
   const count = Object.keys(removals).length;

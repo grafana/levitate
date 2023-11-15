@@ -1,7 +1,9 @@
 import path from 'path';
-import execa from 'execa';
+import { execa } from 'execa';
+import { fileURLToPath } from 'url';
 
 const nodeBinary = process.execPath;
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const levitateBinary = path.resolve(__dirname, '../../dist/bin.js');
 
 describe('Levitate', () => {

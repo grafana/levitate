@@ -1,8 +1,8 @@
 import fs from 'fs';
-import { generateTmpFilename, TMP_DIR } from '../../tests/test-utils';
-import { Comparison, IgnoreExportChanges } from '../../types';
-import { pathExists } from '../../utils/file';
-import { compareExports } from './compare';
+import { generateTmpFilename, TMP_DIR } from '../../tests/test-utils.js';
+import { Comparison, IgnoreExportChanges } from '../../types.js';
+import { pathExists } from '../../utils/file.js';
+import { compareExports } from './compare.js';
 
 // As `compareExports()` only works on existing files, we have created this
 // utility to persist the contents in temporary files

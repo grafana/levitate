@@ -2,21 +2,21 @@
 
 import yargs from 'yargs';
 import chalk from 'chalk';
-import { getImportsInfo, getGroupedImports } from './compiler/imports';
-import { getListImportsCliArgs, CliError } from './utils/cli';
-import { resolvePackage, resolveTargetPackages } from './utils/npm';
-import { getExportInfo } from './compiler/exports';
+import { getImportsInfo, getGroupedImports } from './compiler/imports.js';
+import { getListImportsCliArgs, CliError } from './utils/cli.js';
+import { resolvePackage, resolveTargetPackages } from './utils/npm.js';
+import { getExportInfo } from './compiler/exports.js';
 import { exit } from 'process';
 import { access } from 'fs/promises';
 import { constants } from 'fs';
-import { printImports } from './print/imports';
-import { printExports } from './print/exports';
-import { areChangesBreaking, compareExports } from './commands/compare/compare';
-import { printComparison } from './print/comparison';
-import { isCompatible } from './commands/is-compatible/is-compatible';
-import { logError, logInfo } from './utils/log';
-import { forceDebugExit } from './utils/debug';
-import { readLevignoreFile } from './utils';
+import { printImports } from './print/imports.js';
+import { printExports } from './print/exports.js';
+import { areChangesBreaking, compareExports } from './commands/compare/compare.js';
+import { printComparison } from './print/comparison.js';
+import { isCompatible } from './commands/is-compatible/is-compatible.js';
+import { logError, logInfo } from './utils/log.js';
+import { forceDebugExit } from './utils/debug.js';
+import { readLevignoreFile } from './utils.js';
 
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
 if (process.env.DEBUG) {
@@ -25,6 +25,7 @@ if (process.env.DEBUG) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs
+  //@ts-ignore
   .scriptName('levitate')
   .usage('$0 <cmd> [args]')
 
@@ -61,6 +62,7 @@ yargs
           logInfo('');
           logError(chalk.bgRed.bold.white(' ERROR '));
           logError('Missing arguments. Please make sure to provide both the --prev and --current options.\n');
+          //@ts-ignore
           yargs.showHelp();
           exit(1);
         }
@@ -206,6 +208,7 @@ yargs
       } catch (e) {
         if (e instanceof CliError) {
           logError(`ERROR: ${e.message}\n\n`);
+          //@ts-ignore
           yargs.showHelp();
         } else {
           throw e;

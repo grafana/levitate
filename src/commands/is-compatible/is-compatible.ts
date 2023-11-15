@@ -1,10 +1,10 @@
 import chalk from 'chalk';
-import { printIncompatibilities } from '../../print/incompatibilities';
-import { IgnoreExportChanges, PackageWithVersion } from '../../types';
-import { getIncompatibilitiesBetweenPackages } from '../../comparison/source';
-import { getNpmPackageVersionFromProjectPath } from '../../utils/npm';
-import { createTsProgram } from '../../utils/typescript';
-import { logError, logInfo, logWarning } from '../../utils/log';
+import { printIncompatibilities } from '../../print/incompatibilities.js';
+import { IgnoreExportChanges, PackageWithVersion } from '../../types.js';
+import { getIncompatibilitiesBetweenPackages } from '../../comparison/source.js';
+import { getNpmPackageVersionFromProjectPath } from '../../utils/npm.js';
+import { createTsProgram } from '../../utils/typescript.js';
+import { logError, logInfo, logWarning } from '../../utils/log.js';
 
 export async function isCompatible(
   projectPath: string,

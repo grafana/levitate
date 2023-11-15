@@ -1,4 +1,4 @@
-import { testCompare } from './utils';
+import { testCompare } from './utils.js';
 
 describe('Levignore', () => {
   test.each([

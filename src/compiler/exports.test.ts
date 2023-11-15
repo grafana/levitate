@@ -1,5 +1,8 @@
 import path from 'path';
-import { getExportInfo } from './exports';
+import { getExportInfo } from './exports.js';
+import { fileURLToPath } from 'url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 describe('Compile exports test', () => {
   describe('getExportInfo', () => {

@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { logInfo } from '../utils/log';
+import { logInfo } from '../utils/log.js';
 
 // 🥃
 export function printRedLabel(text: string) {

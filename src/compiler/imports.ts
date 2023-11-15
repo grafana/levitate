@@ -1,6 +1,6 @@
 import ts from 'typescript';
-import { ImportInfo, ImportsInfo } from '../types';
-import { createTsProgram } from '../utils/typescript';
+import { ImportInfo, ImportsInfo } from '../types.js';
+import { createTsProgram } from '../utils/typescript.js';
 
 export function getImportsInfo(rootFile: string, filters?: string[]): ImportsInfo {
   const program = createTsProgram(rootFile);

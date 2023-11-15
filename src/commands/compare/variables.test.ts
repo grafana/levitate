@@ -1,4 +1,4 @@
-import { testCompare } from './utils';
+import { testCompare } from './utils.js';
 
 describe('Compare variables', () => {
   test('NO CHANGES - no changes should not trigger anything', () => {

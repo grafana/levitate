@@ -1,9 +1,9 @@
-import { getIncompatibilitiesFromComparison } from '../../comparison/source';
-import { getExportInfo } from '../../compiler/exports';
-import { generateTmpFileWithContent } from '../../tests/test-utils';
-import { getPackageUsage } from '../../usage/usage';
-import { createTsProgram } from '../../utils/typescript';
-import { testCompare } from '../compare/utils';
+import { getIncompatibilitiesFromComparison } from '../../comparison/source.js';
+import { getExportInfo } from '../../compiler/exports.js';
+import { generateTmpFileWithContent } from '../../tests/test-utils.js';
+import { getPackageUsage } from '../../usage/usage.js';
+import { createTsProgram } from '../../utils/typescript.js';
+import { testCompare } from '../compare/utils.js';
 
 const prevAPIWithoutChange = `
       export declare type Foo = (value: number) => string;

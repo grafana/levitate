@@ -1,4 +1,4 @@
-import { testCompare } from './utils';
+import { testCompare } from './utils.js';
 
 describe('Compare classes', () => {
   test('NO CHANGES - not changing anything should not trigger a change', () => {
@@ -485,7 +485,7 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.removals).length).toBe(1); // Foo.methodA removed
   });
 
- test('changing the generic should trigger a change', () => {
+  test('changing the generic should trigger a change', () => {
     const prev = `
       export declare class Foo<T = any> {
         methodA(col: number): number;

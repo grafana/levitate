@@ -1,7 +1,9 @@
-import execa from 'execa';
+import { execa } from 'execa';
 import path from 'path';
 import chalk from 'chalk';
+import { fileURLToPath } from 'url';
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const packages = ['@grafana/data', '@grafana/runtime', '@grafana/ui'];
 
 const env = {

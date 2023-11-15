@@ -1,6 +1,6 @@
-import { createTsProgram } from '..';
-import { generateTmpFileWithContent } from '../tests/test-utils';
-import { getAllIdentifiers, getAllPropertyAccessExpressions, isSymbolPrivateDeclaration } from '../utils/typescript';
+import { createTsProgram } from '../index.js';
+import { generateTmpFileWithContent } from '../tests/test-utils.js';
+import { getAllIdentifiers, getAllPropertyAccessExpressions, isSymbolPrivateDeclaration } from '../utils/typescript.js';
 
 describe('Typescript utils', () => {
   it('should return all the identifiers from a typescript node', () => {

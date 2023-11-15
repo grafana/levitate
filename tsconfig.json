@@ -1,15 +1,23 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "esModuleInterop": true,
     "declaration": true,
     "outDir": "dist",
     "noUnusedLocals": true,
-    "target": "ES6"
+    "target": "ES6",
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true,
   },
   "exclude": ["./dist", "./fixtures"],
   "files": ["./src/bin.ts"],
   "include": ["src/**/*"]
 }
+
+
+
+
+
