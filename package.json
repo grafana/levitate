@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
