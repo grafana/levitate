@@ -409,9 +409,9 @@
   integrity sha512-Kn7K8dx/5U6+cT1yEhpX1w4PCSg0M+XyRILPgvwcEBjerFWCwQj5sbr3/VmxqV0JGHCBCzyd6LxypEuehypY1w==
 
 "@grafana/eslint-config@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@grafana/eslint-config/-/eslint-config-6.0.0.tgz#31c639cf31cec9b2233624a7defa2d874605a867"
-  integrity sha512-sBXsqwEJrkQEbPbDa67KScQjGeEiXRdY/vl+sb2fSiZhbTFUEmrUGa/6CA/0bQ+8n9R+JdlJT88PHp5Lmd0kSQ==
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@grafana/eslint-config/-/eslint-config-6.0.1.tgz#70f3e1990ab83591b566dec7bce214a1eb4d09c4"
+  integrity sha512-Tv6BUyJu2kHjrghkQJGhVCwJfNeyNbf/UqqUDW5j04+R0Y4YgWshZ4FrJibkfJc26/3UvfYSnYd+On1psbQIlA==
   dependencies:
     "@typescript-eslint/eslint-plugin" "5.59.9"
     "@typescript-eslint/parser" "5.59.9"
