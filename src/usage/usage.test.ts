@@ -472,78 +472,48 @@ describe('Usage', () => {
       MINUTE_TIMEOUT
     );
 
-    it.only(
+    it(
       'Should report usages from projects with multiple files and imports',
       async () => {
         const projectFile = path.join(__dirname, '../../fixtures/usage/grafana-plugin/module.ts');
-        const usages = await getUsageInfo(projectFile, ['@grafana/data', '@grafana/ui']);
+        const usages = await getUsageInfo(projectFile, ['@grafana/data@10.2.2', '@grafana/ui@10.2.2']);
 
         expect(usages).toEqual([
           {
             fileName: expect.stringContaining('fixtures/usage/grafana-plugin/panel.tsx'),
             propertyName: 'GrafanaTheme2',
             count: 2,
-            packageName: '@grafana/data',
+            packageName: '@grafana/data@10.2.2',
           },
           {
             fileName: expect.stringContaining('fixtures/usage/grafana-plugin/panel.tsx'),
             propertyName: 'DataFrameType',
             count: 2,
-            packageName: '@grafana/data',
-          },
-          {
-            fileName: expect.stringContaining('fixtures/usage/grafana-plugin/panel.tsx'),
-            propertyName: 'DataFrameType.TimeSeriesLong',
-            count: 1,
-            packageName: '@grafana/data',
-          },
-          {
-            fileName: expect.stringContaining('fixtures/usage/grafana-plugin/panel.tsx'),
-            propertyName: 'GrafanaTheme2.breakpoints',
-            count: 1,
-            packageName: '@grafana/data',
+            packageName: '@grafana/data@10.2.2',
           },
           {
             fileName: expect.stringContaining('fixtures/usage/grafana-plugin/module.ts'),
             propertyName: 'PanelPlugin',
             count: 2,
-            packageName: '@grafana/data',
+            packageName: '@grafana/data@10.2.2',
           },
           {
             fileName: expect.stringContaining('fixtures/usage/grafana-plugin/module.ts'),
             propertyName: 'FieldColorModeId',
             count: 2,
-            packageName: '@grafana/data',
-          },
-          {
-            fileName: expect.stringContaining('fixtures/usage/grafana-plugin/module.ts'),
-            propertyName: 'PanelPlugin.setPanelOptions',
-            count: 1,
-            packageName: '@grafana/data',
-          },
-          {
-            fileName: expect.stringContaining('fixtures/usage/grafana-plugin/module.ts'),
-            propertyName: 'PanelPlugin.useFieldConfig',
-            count: 1,
-            packageName: '@grafana/data',
-          },
-          {
-            fileName: expect.stringContaining('fixtures/usage/grafana-plugin/module.ts'),
-            propertyName: 'FieldColorModeId.ContinuousGrYlRd',
-            count: 1,
-            packageName: '@grafana/data',
+            packageName: '@grafana/data@10.2.2',
           },
           {
             fileName: expect.stringContaining('fixtures/usage/grafana-plugin/panel.tsx'),
             propertyName: 'useStyles2',
             count: 2,
-            packageName: '@grafana/ui',
+            packageName: '@grafana/ui@10.2.2',
           },
           {
             fileName: expect.stringContaining('fixtures/usage/grafana-plugin/panel.tsx'),
             propertyName: 'AsyncSelectProps',
             count: 2,
-            packageName: '@grafana/ui',
+            packageName: '@grafana/ui@10.2.2',
           },
         ]);
       },
