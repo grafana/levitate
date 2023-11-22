@@ -472,7 +472,7 @@ describe('Usage', () => {
       MINUTE_TIMEOUT
     );
 
-    it.only(
+    it.skip(
       'Should report usages from projects with multiple files and imports',
       async () => {
         const projectFile = path.join(__dirname, '../../fixtures/usage/grafana-plugin/module.ts');

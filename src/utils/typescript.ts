@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import ts, { Modifier, NodeArray } from 'typescript';
 
 export const COMPILER_OPTIONS = {
   target: ts.ScriptTarget.ES5,
@@ -72,10 +72,11 @@ export function isSymbolPrivateDeclaration(symbol: ts.Symbol): boolean {
     // private or protected properties or methods
     if (
       (symbol.valueDeclaration,
-      ts.isPropertyDeclaration(symbol.valueDeclaration) || ts.isMethodDeclaration(symbol.valueDeclaration))
+      ts.isPropertyDeclaration(symbol.valueDeclaration) || ts.isMethodDeclaration(symbol.valueDeclaration)) &&
+      'modifiers' in symbol.valueDeclaration
     ) {
       return (
-        symbol.valueDeclaration.modifiers?.some(
+        (symbol.valueDeclaration.modifiers as NodeArray<Modifier>)?.some(
           (modifier) =>
             modifier.kind === ts.SyntaxKind.PrivateKeyword || modifier.kind === ts.SyntaxKind.ProtectedKeyword
         ) ?? false
