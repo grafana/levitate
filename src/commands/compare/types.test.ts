@@ -116,7 +116,7 @@ describe('Compare types', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('', () => {
+  test('Adding "declare" from a symbol should not trigger a breaking change', () => {
     const prev = `
       type Bar = {
         one: string;
