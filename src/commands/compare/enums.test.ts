@@ -114,4 +114,44 @@ describe('Compare enums', () => {
     expect(Object.keys(comparison.additions).length).toBe(1);
     expect(Object.keys(comparison.removals).length).toBe(1);
   });
+
+  test('Removing "declare" from a symbol should not trigger a breaking change', () => {
+    const prev = `
+      export declare enum Bar = {
+        Append = 'append',
+        Replace = 'replace',
+      }
+    `;
+    const current = `
+      export enum Bar = {
+        Append = 'append',
+        Replace = 'replace',
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.changes).length).toBe(0);
+  });
+
+  test('Adding "declare" to a symbol should not trigger a breaking change', () => {
+    const prev = `
+      export enum Bar = {
+        Append = 'append',
+        Replace = 'replace',
+      }
+    `;
+    const current = `
+      export declare enum Bar = {
+        Append = 'append',
+        Replace = 'replace',
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.changes).length).toBe(0);
+  });
 });

@@ -387,7 +387,7 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
   // Changed if anything has changed.
   // (This is a bit tricky, as a type declaration can be a `FunctionType`, a `UnionType`, a `TypeLiteral`, etc. A `TypeLiteral` should need to be checked similarly to a Class or an Interface.)
   // TODO: revisit how much trouble "false negatives" coming from this are causing us.
-  if (isTypexTextEqual(prevDeclaration.getText(), currentDeclaration.getText())) {
+  if (!isTypexTextEqual(prevDeclaration.getText(), currentDeclaration.getText())) {
     return true;
   }
 
@@ -395,8 +395,7 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
 }
 
 function isTypexTextEqual(a: string, b: string) {
-  // we want to ignore if `declare` is present in the text
-  return a.replace(/\sdeclare\/s/, 'i') === b.replace(/\sdeclare\/s/, 'i');
+  return a.replace(/\sdeclare\s/i, ' ') === b.replace(/\sdeclare\s/i, ' ');
 }
 
 export function isFunction(symbol: ts.Symbol) {
