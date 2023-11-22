@@ -364,7 +364,9 @@ export function hasEnumChanged(prev: SymbolMeta, current: SymbolMeta) {
   // (all previous members must be left intact, otherwise any code that depends on them can possibly have type errors)
   for (let i = 0; i < prevDeclaration.members.length; i++) {
     const prevMemberText = prevDeclaration.members[i].getText();
-    const currentMember = currentDeclaration.members.find((member) => prevMemberText === member.getText());
+    const currentMember = currentDeclaration.members.find((member) => {
+      return isTypexTextEqual(prevMemberText, member.getText());
+    });
 
     // Member is missing in the current declaration, or has changed
     if (!currentMember) {
@@ -385,11 +387,16 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
   // Changed if anything has changed.
   // (This is a bit tricky, as a type declaration can be a `FunctionType`, a `UnionType`, a `TypeLiteral`, etc. A `TypeLiteral` should need to be checked similarly to a Class or an Interface.)
   // TODO: revisit how much trouble "false negatives" coming from this are causing us.
-  if (prevDeclaration.getText() !== currentDeclaration.getText()) {
+  if (isTypexTextEqual(prevDeclaration.getText(), currentDeclaration.getText())) {
     return true;
   }
 
   return false;
+}
+
+function isTypexTextEqual(a: string, b: string) {
+  // we want to ignore if `declare` is present in the text
+  return a.replace(/\sdeclare\/s/, 'i') === b.replace(/\sdeclare\/s/, 'i');
 }
 
 export function isFunction(symbol: ts.Symbol) {
