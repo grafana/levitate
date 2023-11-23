@@ -360,22 +360,11 @@ export function hasEnumChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.declarations[0] as ts.EnumDeclaration;
   const currentDeclaration = current.symbol.declarations[0] as ts.EnumDeclaration;
 
-  // Check previous members
-  // (all previous members must be left intact, otherwise any code that depends on them can possibly have type errors)
-  for (let i = 0; i < prevDeclaration.members.length; i++) {
-    const prevMemberText = prevDeclaration.members[i].getText();
-    const currentMember = currentDeclaration.members.find((member) => prevMemberText === member.getText());
+  const checker = prev.program.getTypeChecker();
+  const prevType = checker.getTypeAtLocation(prevDeclaration);
+  const currentType = checker.getTypeAtLocation(currentDeclaration);
 
-    // Member is missing in the current declaration, or has changed
-    if (!currentMember) {
-      return true;
-    }
-  }
-
-  // We don't care about any new members added at the moment
-  // TODO: check if the statement above is valid
-
-  return false;
+  return !checker.isTypeAssignableTo(prevType, currentType);
 }
 
 export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
@@ -393,7 +382,7 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevType = checker.getTypeAtLocation(prevDeclaration);
   const currentType = checker.getTypeAtLocation(currentDeclaration);
 
-  return !checker.isTypeComparableTo(prevType, currentType);
+  return !checker.isTypeAssignableTo(prevType, currentType);
 }
 
 export function isFunction(symbol: ts.Symbol) {
