@@ -298,13 +298,11 @@ export function hasVariableChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.declarations[0] as ts.VariableDeclaration;
   const currentDeclaration = current.symbol.declarations[0] as ts.VariableDeclaration;
 
-  // Changed if anything has changed in its type signature
-  // (any type changes can cause issues in the code that depends on them)
-  if (prevDeclaration.getText() !== currentDeclaration.getText()) {
-    return true;
-  }
+  const checker = prev.program.getTypeChecker();
+  const prevType = checker.getTypeAtLocation(prevDeclaration);
+  const currentType = checker.getTypeAtLocation(currentDeclaration);
 
-  return false;
+  return !checker.isTypeIdenticalTo(prevType, currentType);
 }
 
 export function hasClassChanged(prev: SymbolMeta, current: SymbolMeta) {
