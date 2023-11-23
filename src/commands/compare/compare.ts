@@ -371,7 +371,7 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
 
   // first try a fast text comparison
   // this is required because ENUM individual elements
-  // are not comparable with the type checker
+  // are not comparable with the type checker internal mechanism
   if (prevDeclaration.getText() === currentDeclaration.getText()) {
     return false;
   }
