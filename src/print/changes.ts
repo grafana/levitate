@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import Table from 'tty-table';
-import ts from 'typescript';
+import ts from '@tsd/typescript';
 import { Changes } from '../types';
 import { getSymbolDiff } from '../utils/diff';
 import { logInfo } from '../utils/log';

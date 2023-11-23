@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import ts from '@tsd/typescript';
 import { Change, ChangeType, Comparison, IgnoreExportChanges, SymbolMeta } from '../../types';
 import { setSpinner, startSpinner, succeedSpinner } from '../../utils/spinner';
 import { logDebug } from '../../utils/log';
@@ -382,14 +382,18 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.declarations[0] as ts.TypeAliasDeclaration;
   const currentDeclaration = current.symbol.declarations[0] as ts.TypeAliasDeclaration;
 
-  // Changed if anything has changed.
-  // (This is a bit tricky, as a type declaration can be a `FunctionType`, a `UnionType`, a `TypeLiteral`, etc. A `TypeLiteral` should need to be checked similarly to a Class or an Interface.)
-  // TODO: revisit how much trouble "false negatives" coming from this are causing us.
-  if (prevDeclaration.getText() !== currentDeclaration.getText()) {
-    return true;
+  // first try a fast text comparison
+  // this is required because ENUM individual elements
+  // are not comparable with the type checker
+  if (prevDeclaration.getText() === currentDeclaration.getText()) {
+    return false;
   }
 
-  return false;
+  const checker = prev.program.getTypeChecker();
+  const prevType = checker.getTypeAtLocation(prevDeclaration);
+  const currentType = checker.getTypeAtLocation(currentDeclaration);
+
+  return !checker.isTypeComparableTo(prevType, currentType);
 }
 
 export function isFunction(symbol: ts.Symbol) {
