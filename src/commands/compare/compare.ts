@@ -140,11 +140,13 @@ export function getFunctionParametersDiff({
 }): Change | undefined {
   const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
+  const checker = prev.program.getTypeChecker();
   // Check previous function parameters
   // (all previous parameters must be present at their previous position)
   for (let i = 0; i < prevDeclaration.parameters.length; i++) {
-    const prevParamType = prevDeclaration.parameters[i].type;
+    // const prevParamTypeNode = prevDeclaration.parameters[i].type;
     const prevParamSymbol = getSymbolFromParameter(prevDeclaration.parameters[i], prev.program);
+    const prevParamType = checker.getTypeAtLocation(prevDeclaration.parameters[i]);
 
     // No parameter at the same position
     if (!currentDeclaration.parameters[i]) {
@@ -157,9 +159,11 @@ export function getFunctionParametersDiff({
       };
     }
 
-    // Changed parameter at the old position
-    if (currentDeclaration.parameters[i].getText() !== prevDeclaration.parameters[i].getText()) {
-      const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+    // const currentParamTypeNode = currentDeclaration.parameters[i]?.type || undefined;
+    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+    const currentParamType = checker.getTypeAtLocation(currentDeclaration.parameters[i]);
+
+    if (!checker.isTypeAssignableTo(prevParamType, currentParamType)) {
       return {
         prev: prevParamSymbol,
         prevProgram: prev.program,
@@ -167,26 +171,6 @@ export function getFunctionParametersDiff({
         currentProgram: current.program,
         type: ChangeType.PARAMETER_NAME,
       };
-    }
-
-    const currentParamType = currentDeclaration.parameters[i]?.type || undefined;
-    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
-
-    // native types (e.g. MouseEvent) don't have declarations
-    if (!currentParamSymbol.declarations || !prevParamSymbol.declarations) {
-      return;
-    }
-
-    if (ts.isTypeReferenceNode(currentParamType) && ts.isTypeReferenceNode(prevParamType)) {
-      if (currentParamSymbol.declarations[0].getText() !== prevParamSymbol.declarations[0].getText()) {
-        return {
-          prev: prevParamSymbol,
-          prevProgram: prev.program,
-          current: currentParamSymbol,
-          currentProgram: current.program,
-          type: ChangeType.PARAMETER_TYPE,
-        };
-      }
     }
   }
 
@@ -212,6 +196,11 @@ export function getFunctionParametersDiff({
 export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
+
+  const parameterChanges = getFunctionParametersDiff({ prev, current });
+  if (parameterChanges) {
+    return true;
+  }
 
   const checker = prev.program.getTypeChecker();
 

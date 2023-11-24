@@ -123,4 +123,42 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
+
+  describe('Deeper function parameters', () => {
+    test('Changing an unexported type of a parameter to a compatible version should not trigger a breaking change', () => {
+      const prev = `
+      type TestType = 'a' | 'b';
+      export function foo(a: string, b: TestType): string {};
+    `;
+
+      // adding to union type is still compatible
+      const current = `
+      type TestType = 'a' | 'b' | 'c';
+      export function foo(a: string, b: TestType): string {};
+    `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(0);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    test('Changing an unexported type of a parameter to an incompatible version should rigger a breaking change', () => {
+      const prev = `
+      type TestType = 'a' | 'b' | 'c';
+      export function foo(a: string, b: TestType): string {};
+    `;
+
+      //removing from union type is not compatible
+      const current = `
+      type TestType = 'a' | 'b';
+      export function foo(a: string, b: TestType): string {};
+    `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+  });
 });
