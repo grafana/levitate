@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import ts from '@tsd/typescript';
 import { ImportInfo, ImportsInfo } from '../types';
 import { createTsProgram } from '../utils/typescript';
 

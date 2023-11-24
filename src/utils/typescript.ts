@@ -1,4 +1,4 @@
-import ts, { Modifier, NodeArray } from 'typescript';
+import ts, { Modifier, NodeArray } from '@tsd/typescript';
 
 export const COMPILER_OPTIONS = {
   target: ts.ScriptTarget.ES5,
