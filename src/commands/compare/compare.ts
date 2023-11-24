@@ -213,18 +213,15 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
 
-  const parameterChanges = getFunctionParametersDiff({ prev, current });
-  if (parameterChanges) {
-    return true;
-  }
+  const checker = prev.program.getTypeChecker();
 
-  // Check return type signatures -> they must be the same
-  // (It can happen that a function/method does not have a return type defined)
-  if (prevDeclaration.type?.getText() !== currentDeclaration.type?.getText()) {
-    return true;
-  }
+  const prevDeclarationType = checker.getTypeAtLocation(prevDeclaration);
+  const currentDeclarationType = checker.getTypeAtLocation(currentDeclaration);
 
-  return false;
+  return !(
+    checker.isTypeAssignableTo(prevDeclarationType, currentDeclarationType) &&
+    checker.isTypeAssignableTo(currentDeclarationType, prevDeclarationType)
+  );
 }
 
 function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
