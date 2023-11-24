@@ -31,10 +31,15 @@ export type ExportsInfo = {
   program: ts.Program;
 };
 
+export type IgnoreExportOptions = {
+  useTypeComparable?: boolean;
+};
+
 export type IgnoreExportChanges = {
   additions?: RegExp[];
   removals?: RegExp[];
   changes?: RegExp[];
+  options?: IgnoreExportOptions;
 };
 
 export type ImportInfo = {
