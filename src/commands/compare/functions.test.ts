@@ -161,7 +161,7 @@ describe('Compare functions', () => {
       expect(Object.keys(comparison.removals).length).toBe(0);
     });
 
-    test('Changing an unexported type of a parameter to an compatible version should trigger a breaking change (chained union types)', () => {
+    test('Changing an unexported type of a parameter to a compatible version should not trigger a breaking change (chained union types)', () => {
       const prev = `
       type InnerType = 'a' | 'b';
       type TestType = InnerType | 'c';
