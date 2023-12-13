@@ -72,6 +72,7 @@ yargs
         }
 
         if (json) {
+          // silences all other output to prevent malformed json output
           process.env.LEVITATE_SILENT = 'true';
         }
 
