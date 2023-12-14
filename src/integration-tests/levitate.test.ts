@@ -40,4 +40,33 @@ describe('Levitate', () => {
       expect(stdout).toContain('No breaking changes introduced');
     });
   });
+
+  describe('Comparison json output works as expected', () => {
+    const comparisonJsonFixturePath = path.resolve(__dirname, '../../fixtures/compare');
+    it('Outputs a JSON string representation of the compatibility report', async () => {
+      let stdout: string;
+
+      // this command will fail because compare will exit 1
+      try {
+        await execa(
+          nodeBinary,
+          [levitateBinary, 'compare', '--prev', './bundle-old.ts', '--current', './bundle-new.ts', '--json'],
+          {
+            cwd: comparisonJsonFixturePath,
+          }
+        );
+      } catch (e) {
+        stdout = e.stdout;
+      }
+      const parsed = JSON.parse(stdout);
+      expect(parsed).toBeTruthy();
+
+      expect(Object.keys(parsed)).toEqual(['additions', 'removals', 'changes', 'hasBreakingChanges']);
+
+      expect(parsed.hasBreakingChanges).toBe(true);
+      expect(parsed.additions.length).toBe(3);
+      expect(parsed.removals.length).toBe(0);
+      expect(parsed.changes.length).toBe(2);
+    });
+  });
 });

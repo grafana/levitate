@@ -17,6 +17,7 @@ import { isCompatible } from './commands/is-compatible/is-compatible';
 import { logError, logInfo } from './utils/log';
 import { forceDebugExit } from './utils/debug';
 import { readLevignoreFile } from './utils';
+import { printJsonComparison } from './print/comparison-json';
 
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
 if (process.env.DEBUG) {
@@ -52,9 +53,14 @@ yargs
           demandOption: true,
           describe:
             'Current package version - a name of an NPM package, a URL to a tar ball or a local path pointing to a package directory or a single file. (In case it is a directory make sure it contains an `index.d.ts` type definition file.)',
+        })
+        .option('json', {
+          type: 'boolean',
+          default: false,
+          describe: 'Outputs a JSON string representation of the compatibility report.',
         });
     },
-    async function ({ prev, current }: { prev: string; current: string }) {
+    async function ({ prev, current, json }: { prev: string; current: string; json: boolean }) {
       try {
         // Missing CLI arguments
         if (!prev || !current) {
@@ -65,13 +71,22 @@ yargs
           exit(1);
         }
 
+        if (json) {
+          // silences all other output to prevent malformed json output
+          process.env.LEVITATE_SILENT = 'true';
+        }
+
         const levignore = await readLevignoreFile(process.cwd());
         const prevPathResolved = await resolvePackage(prev);
         const currentPathResolved = await resolvePackage(current);
         const comparison = compareExports(prevPathResolved, currentPathResolved, levignore);
         const isBreaking = areChangesBreaking(comparison);
 
-        printComparison(comparison);
+        if (json) {
+          printJsonComparison(comparison);
+        } else {
+          printComparison(comparison);
+        }
 
         if (isBreaking) {
           exit(1);
