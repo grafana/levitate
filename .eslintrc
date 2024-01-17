@@ -5,6 +5,6 @@
     "no-only-tests/no-only-tests": "error"
   },
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.eslint.json"
   }
 }

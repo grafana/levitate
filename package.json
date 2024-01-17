@@ -22,7 +22,7 @@
     "dev:imports": "run-s build fixtures:imports",
     "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/ui@canary --current @grafana/ui@latest",
     "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
-    "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx ./src",
+    "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx ./src ./scripts",
     "lint:fix": "yarn lint --fix && yarn prettier --write ./src"
   },
   "keywords": [],
