@@ -96,11 +96,11 @@ Levitate consists of two commands _compare_ and _list-imports_. Developing again
 - Use `DEBUG=*` to display debugging messages
 - Use `LEVITATE_CACHE=1` to re-use downloaded npm packages.
 
-### Run with ts-node for faster iteration
+### Run with swc-node for faster iteration
 
-You can run directly from the source with `ts-node`. e.g:
+You can run directly from the source with `swc-node`. e.g:
 
-` node --loader ts-node/esm --inspect ./src/bin.ts compare --prev @grafana/schema@9.0.7 --current @grafana/schema@latest`
+`node -r @swc-node/register src/bin.ts --inspect ./src/bin.ts compare --prev @grafana/schema@9.0.7 --current @grafana/schema@latest`
 
 ### Fixtures for common development cases and test
 
@@ -109,6 +109,7 @@ The `./fixtures/` directory contains several fixtures examples of common and edg
 List of available fixtures:
 
 #### compare
+
 Files to test the compare command. e.g.: `node ./dist/bin.js compare --prev ./fixtures/compare/bundle-old.ts --current ./fixtures/compare/bundle-new.ts`
 
 #### exports
@@ -124,7 +125,6 @@ Files to test the list-imports command: e.g.: `node ./dist/bin.js list-imports -
 Files to test the `getUsageInfo` API. These files are used inside the unit tests and are also usefult to develop levitate commands in general, specially `is-compatible`.
 
 You can run, for example, `is-compatible` in the `grafana-plugin` fixture and modify it at will to test more use cases.
-
 
 ## Contribute Documentation
 
