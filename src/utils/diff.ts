@@ -5,10 +5,12 @@ import { ChangeType, SymbolMeta } from '../types';
 
 type DiffOptions = {
   useAnsi?: boolean;
+  showLegend?: boolean;
 };
 
 const defaultOptions: DiffOptions = {
   useAnsi: true,
+  showLegend: true,
 };
 
 function getDiffLegend(options: DiffOptions = defaultOptions) {
@@ -45,6 +47,9 @@ export function getDiff(prev: string, current: string, options: DiffOptions = de
     return '';
   }
 
+  if (!options.showLegend) {
+    return lines.join('\n');
+  }
   return getDiffLegend(options) + lines.join('\n') + '\n';
 }
 

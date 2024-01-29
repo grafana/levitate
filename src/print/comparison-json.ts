@@ -44,7 +44,7 @@ function printJsonChanges(changes: Comparison['changes']) {
         symbol: changes[name].current,
         program: changes[name].currentProgram,
       },
-      options: { useAnsi: false },
+      options: { useAnsi: false, showLegend: false },
     }),
   }));
 }
