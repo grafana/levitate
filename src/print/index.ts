@@ -1,8 +1,8 @@
-export * from './changes';
-export * from './comparison';
-export * from './exports';
-export * from './imports';
-export * from './incompatibilities';
-export * from './removals';
-export * from './utils';
-export * from './veredict';
+export { printChanges } from './changes.js';
+export { printComparison } from './comparison.js';
+export { printExports, indentLines, indentLine } from './exports.js';
+export { printImports } from './imports.js';
+export { printIncompatibilities, getIncompatibilityType } from './incompatibilities.js';
+export { printRemovals } from './removals.js';
+export { printVerdict } from './veredict.js';
+export { printHeading, printSpacing, printRedLabel } from './utils.js';
