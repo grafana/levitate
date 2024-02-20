@@ -8,8 +8,18 @@
     "outDir": "dist",
     "noUnusedLocals": true,
     "target": "ES2022",
+    "types": [
+      "vitest/globals"
+    ]
   },
-  "exclude": ["./dist", "./fixtures"],
-  "files": ["./src/bin.ts"],
-  "include": ["src/**/*"],
+  "exclude": [
+    "./dist",
+    "./fixtures"
+  ],
+  "files": [
+    "./src/bin.ts"
+  ],
+  "include": [
+    "src/**/*"
+  ]
 }
