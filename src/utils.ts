@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { IgnoreExportChanges } from './types.js';
 
 export function pathExists(path: string): Promise<boolean> {
@@ -40,11 +41,18 @@ export async function readLevignoreFile(cwdPath: string): Promise<IgnoreExportCh
       return {};
     }
 
-    const levignoreFileContent = require(levignoreFilePath);
+    const tempFile = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'levitate')), 'levignore.cjs');
+    fs.copyFileSync(levignoreFilePath, tempFile);
+
+    const levignoreFileContent = await import(tempFile);
+    if (!levignoreFileContent.default) {
+      return {};
+    }
+
     return {
-      additions: parseLevitateFileSection(levignoreFileContent.additions),
-      changes: parseLevitateFileSection(levignoreFileContent.changes),
-      removals: parseLevitateFileSection(levignoreFileContent.removals),
+      additions: parseLevitateFileSection(levignoreFileContent.default.additions),
+      changes: parseLevitateFileSection(levignoreFileContent.default.changes),
+      removals: parseLevitateFileSection(levignoreFileContent.default.removals),
     };
   } catch (e) {
     return {};
@@ -69,4 +77,9 @@ function parseLevitateFileSection(entries?: Array<RegExp | string>): RegExp[] {
       // filter out the nulls
       .filter((entry) => entry !== null)
   );
+}
+
+export function readJsonFile(path: string): any {
+  const content = fs.readFileSync(path);
+  return JSON.parse(content.toString());
 }

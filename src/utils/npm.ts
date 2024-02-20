@@ -1,4 +1,4 @@
-import execa from 'execa';
+import { execa } from 'execa';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import path, { dirname } from 'path';
@@ -8,6 +8,7 @@ import { NpmList, PackageWithVersion } from '../types.js';
 import { pathExists } from './file.js';
 import { failSpinner, setSpinner, startSpinner, succeedSpinner } from './spinner.js';
 import { logDebug, logInfo } from './log.js';
+import { readJsonFile } from '../utils.js';
 
 export const TYPE_DEFINITION_FILE_NAME = 'index.d.ts';
 export const SPINNERS = [];
@@ -187,7 +188,7 @@ export function getPackageJson(packagePath: string): any {
     return null;
   }
 
-  return require(getPackageJsonPath(packagePath));
+  return readJsonFile(getPackageJsonPath(packagePath));
 }
 
 export function getNpmDependencies(packagePath: string): Record<string, string> {

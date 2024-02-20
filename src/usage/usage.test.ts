@@ -5,6 +5,8 @@ import { createTsProgram } from '../utils/typescript.js';
 import { getProjectUsageSetupForTesting } from './test-utils.js';
 import { getFlattenPackageUsage, getPackageUsage, getUsageInfo } from './usage.js';
 
+const __dirname = import.meta.dirname;
+
 const MINUTE_TIMEOUT = 60000;
 
 describe('Usage', () => {

@@ -1,6 +1,8 @@
 import path from 'path';
 import { getExportInfo } from './exports.js';
 
+const __dirname = import.meta.dirname;
+
 describe('Compile exports test', () => {
   describe('getExportInfo', () => {
     it('should return the export info of files with re-exports from other files', () => {

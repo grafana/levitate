@@ -1,6 +1,7 @@
 import path from 'path';
-import execa from 'execa';
+import { execa } from 'execa';
 
+const __dirname = import.meta.dirname;
 const nodeBinary = process.execPath;
 const levitateBinary = path.resolve(__dirname, '../../dist/bin.js');
 
