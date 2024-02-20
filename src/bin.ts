@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs';
+import _yargs from 'yargs';
 import chalk from 'chalk';
 import { getImportsInfo, getGroupedImports } from './compiler/imports.js';
 import { getListImportsCliArgs, CliError } from './utils/cli.js';
@@ -23,6 +23,8 @@ import { printJsonComparison } from './print/comparison-json.js';
 if (process.env.DEBUG) {
   forceDebugExit();
 }
+
+const yargs = _yargs(process.argv.slice(2));
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 yargs
