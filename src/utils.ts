@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { IgnoreExportChanges } from './types';
+import { IgnoreExportChanges } from './types.js';
 
 export function pathExists(path: string): Promise<boolean> {
   return new Promise((resolve) => {

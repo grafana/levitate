@@ -1,5 +1,5 @@
 import path from 'path';
-import { getExportInfo } from './exports';
+import { getExportInfo } from './exports.js';
 
 describe('Compile exports test', () => {
   describe('getExportInfo', () => {

@@ -2,22 +2,22 @@
 
 import yargs from 'yargs';
 import chalk from 'chalk';
-import { getImportsInfo, getGroupedImports } from './compiler/imports';
-import { getListImportsCliArgs, CliError } from './utils/cli';
-import { resolvePackage, resolveTargetPackages } from './utils/npm';
-import { getExportInfo } from './compiler/exports';
+import { getImportsInfo, getGroupedImports } from './compiler/imports.js';
+import { getListImportsCliArgs, CliError } from './utils/cli.js';
+import { resolvePackage, resolveTargetPackages } from './utils/npm.js';
+import { getExportInfo } from './compiler/exports.js';
 import { exit } from 'process';
 import { access } from 'fs/promises';
 import { constants } from 'fs';
-import { printImports } from './print/imports';
-import { printExports } from './print/exports';
-import { areChangesBreaking, compareExports } from './commands/compare/compare';
-import { printComparison } from './print/comparison';
-import { isCompatible } from './commands/is-compatible/is-compatible';
-import { logError, logInfo } from './utils/log';
-import { forceDebugExit } from './utils/debug';
-import { readLevignoreFile } from './utils';
-import { printJsonComparison } from './print/comparison-json';
+import { printImports } from './print/imports.js';
+import { printExports } from './print/exports.js';
+import { areChangesBreaking, compareExports } from './commands/compare/compare.js';
+import { printComparison } from './print/comparison.js';
+import { isCompatible } from './commands/is-compatible/is-compatible.js';
+import { logError, logInfo } from './utils/log.js';
+import { forceDebugExit } from './utils/debug.js';
+import { readLevignoreFile } from './utils.js';
+import { printJsonComparison } from './print/comparison-json.js';
 
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
 if (process.env.DEBUG) {

@@ -1,10 +1,10 @@
 import ts from 'typescript';
-import { getExportInfo } from '../compiler/exports';
-import { getImportsForFile } from '../compiler/imports';
-import { ExportsInfo, IdentifierWithCounter, UsageInfo } from '../types';
-import { logDebug, logError } from '../utils/log';
-import { resolvePackage } from '../utils/npm';
-import { createTsProgram, getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript';
+import { getExportInfo } from '../compiler/exports.js';
+import { getImportsForFile } from '../compiler/imports.js';
+import { ExportsInfo, IdentifierWithCounter, UsageInfo } from '../types.js';
+import { logDebug, logError } from '../utils/log.js';
+import { resolvePackage } from '../utils/npm.js';
+import { createTsProgram, getAllIdentifiers, getAllPropertyAccessExpressions } from '../utils/typescript.js';
 
 export async function getUsageInfo(path: string, packages: string[]) {
   const project = createTsProgram(path);

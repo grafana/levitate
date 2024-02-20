@@ -1,12 +1,12 @@
 import chalk from 'chalk';
-import { Comparison, Exports } from '../types';
-import { logDebug, logInfo } from '../utils/log';
-import { printChanges } from './changes';
-import { printRemovals } from './removals';
-import { printHeading, printSpacing } from './utils';
-import { printVerdict } from './veredict';
+import { Comparison, Exports } from '../types.js';
+import { logDebug, logInfo } from '../utils/log.js';
+import { printChanges } from './changes.js';
+import { printRemovals } from './removals.js';
+import { printHeading, printSpacing } from './utils.js';
+import { printVerdict } from './veredict.js';
 import Table from 'tty-table';
-import { areChangesBreaking } from '../commands/compare/compare';
+import { areChangesBreaking } from '../commands/compare/compare.js';
 
 export function printComparison({ changes, additions, removals, prevProgram, currentProgram }: Comparison) {
   logDebug('Printing results...');

@@ -1,6 +1,6 @@
-import { getExportInfo } from '../compiler/exports';
-import { generateTmpFileWithContent } from '../tests/test-utils';
-import { createTsProgram } from '../utils/typescript';
+import { getExportInfo } from '../compiler/exports.js';
+import { generateTmpFileWithContent } from '../tests/test-utils.js';
+import { createTsProgram } from '../utils/typescript.js';
 
 export function getProjectUsageSetupForTesting({
   projectSrc,

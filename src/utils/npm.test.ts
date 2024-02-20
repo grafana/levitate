@@ -1,6 +1,6 @@
 import execa from 'execa';
 import path from 'path';
-import { getPackageJson, getPackageJsonPath, getNpmDependencies, hasPackageJson, resolveTargetPackages } from './npm';
+import { getPackageJson, getPackageJsonPath, getNpmDependencies, hasPackageJson, resolveTargetPackages } from './npm.js';
 jest.mock('execa');
 
 // Using the projects package.json for testing

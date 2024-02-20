@@ -1,9 +1,9 @@
 import ts from '@tsd/typescript';
-import { Change, ChangeType, Comparison, IgnoreExportChanges, SymbolMeta } from '../../types';
-import { setSpinner, startSpinner, succeedSpinner } from '../../utils/spinner';
-import { logDebug } from '../../utils/log';
-import { getExportInfo } from '../../compiler/exports';
-import { getSymbolFromParameter } from '../../utils/typescript';
+import { Change, ChangeType, Comparison, IgnoreExportChanges, SymbolMeta } from '../../types.js';
+import { setSpinner, startSpinner, succeedSpinner } from '../../utils/spinner.js';
+import { logDebug } from '../../utils/log.js';
+import { getExportInfo } from '../../compiler/exports.js';
+import { getSymbolFromParameter } from '../../utils/typescript.js';
 
 export function compareExports(
   prevRootFile: string,

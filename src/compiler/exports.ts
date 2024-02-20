@@ -1,6 +1,6 @@
 import ts from 'typescript';
-import { Exports, ExportsInfo } from '../types';
-import { createTsProgram, isSymbolPrivateDeclaration } from '../utils/typescript';
+import { Exports, ExportsInfo } from '../types.js';
+import { createTsProgram, isSymbolPrivateDeclaration } from '../utils/typescript.js';
 
 // Returns all the exported members of a program identified by a root file (entry file)
 // @param rootFile - Has to be an absolute path

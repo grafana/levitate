@@ -1,5 +1,5 @@
-import { ExportsInfo } from '../types';
-import { logDebug, logInfo } from '../utils/log';
+import { ExportsInfo } from '../types.js';
+import { logDebug, logInfo } from '../utils/log.js';
 
 export function printExports(exports: ExportsInfo) {
   logDebug('Printing results...');

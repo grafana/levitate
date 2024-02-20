@@ -1,10 +1,10 @@
 import ts from 'typescript';
-import { compareExports } from '../commands/compare/compare';
-import { getExportInfo } from '../compiler/exports';
-import { Comparison, IgnoreExportChanges, IncompatibilityInfo } from '../types';
-import { getPackageUsage } from '../usage/usage';
-import { logDebug } from '../utils/log';
-import { resolvePackage } from '../utils/npm';
+import { compareExports } from '../commands/compare/compare.js';
+import { getExportInfo } from '../compiler/exports.js';
+import { Comparison, IgnoreExportChanges, IncompatibilityInfo } from '../types.js';
+import { getPackageUsage } from '../usage/usage.js';
+import { logDebug } from '../utils/log.js';
+import { resolvePackage } from '../utils/npm.js';
 
 export async function getIncompatibilitiesBetweenPackages(
   projectProgram: ts.Program,
