@@ -41,6 +41,10 @@ export async function readLevignoreFile(cwdPath: string): Promise<IgnoreExportCh
       return {};
     }
 
+    /**
+     * Levitate was converted to ESM, commonjs files require a '.cjs' extension for imports.
+     * Since 'levignore' was originally a commonjs import, we create a temporary '.cjs' copy to maintain compatibility.
+     */
     const tempFile = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'levitate')), 'levignore.cjs');
     fs.copyFileSync(levignoreFilePath, tempFile);
 
