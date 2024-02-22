@@ -83,7 +83,7 @@ Then in your terminal:
 
 - `cd path/to/your/clone`
 - `yarn install`
-- `yarn test && yarn build`
+- `yarn test`
 
 And you should be ready to go!
 

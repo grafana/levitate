@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { ImportInfo } from '../types';
-import { logInfo } from '../utils/log';
+import { ImportInfo } from '../types.js';
+import { logInfo } from '../utils/log.js';
 
 export function printImports({
   imports,

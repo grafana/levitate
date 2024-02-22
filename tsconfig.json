@@ -1,15 +1,25 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "esModuleInterop": true,
     "declaration": true,
     "outDir": "dist",
     "noUnusedLocals": true,
-    "target": "ES6"
+    "target": "ES2022",
+    "types": [
+      "vitest/globals"
+    ]
   },
-  "exclude": ["./dist", "./fixtures"],
-  "files": ["./src/bin.ts"],
-  "include": ["src/**/*"]
+  "exclude": [
+    "./dist",
+    "./fixtures"
+  ],
+  "files": [
+    "./src/bin.ts"
+  ],
+  "include": [
+    "src/**/*"
+  ]
 }

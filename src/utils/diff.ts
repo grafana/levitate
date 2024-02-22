@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import * as diff from 'diff';
-import { getFunctionParametersDiff, isFunction, isMethod } from '../commands/compare/compare';
-import { ChangeType, SymbolMeta } from '../types';
+import { getFunctionParametersDiff, isFunction, isMethod } from '../commands/compare/compare.js';
+import { ChangeType, SymbolMeta } from '../types.js';
 
 type DiffOptions = {
   useAnsi?: boolean;

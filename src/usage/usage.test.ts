@@ -1,9 +1,13 @@
 import path from 'path';
-import { getExportInfo } from '../compiler/exports';
-import { generateTmpFileWithContent } from '../tests/test-utils';
-import { createTsProgram } from '../utils/typescript';
-import { getProjectUsageSetupForTesting } from './test-utils';
-import { getFlattenPackageUsage, getPackageUsage, getUsageInfo } from './usage';
+import { getExportInfo } from '../compiler/exports.js';
+import { generateTmpFileWithContent } from '../tests/test-utils.js';
+import { createTsProgram } from '../utils/typescript.js';
+import { getProjectUsageSetupForTesting } from './test-utils.js';
+import { getFlattenPackageUsage, getPackageUsage, getUsageInfo } from './usage.js';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 
 const MINUTE_TIMEOUT = 60000;
 

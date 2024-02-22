@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import Table from 'tty-table';
 import ts from '@tsd/typescript';
-import { Changes } from '../types';
-import { getSymbolDiff } from '../utils/diff';
-import { logInfo } from '../utils/log';
-import { printHeading, printSpacing } from './utils';
+import { Changes } from '../types.js';
+import { getSymbolDiff } from '../utils/diff.js';
+import { logInfo } from '../utils/log.js';
+import { printHeading, printSpacing } from './utils.js';
 
 export function printChanges(changes: Changes, prevProgram: ts.Program, currentProgram: ts.Program) {
   const count = Object.keys(changes).length;

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { logInfo } from '../utils/log';
-import { printSpacing } from './utils';
+import { logInfo } from '../utils/log.js';
+import { printSpacing } from './utils.js';
 
 export function printVerdict(isBreaking: boolean) {
   if (isBreaking) {

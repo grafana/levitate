@@ -1,6 +1,6 @@
-import { areChangesBreaking } from '../commands/compare/compare';
-import { Comparison } from '../types';
-import { getSymbolDiff } from '../utils/diff';
+import { areChangesBreaking } from '../commands/compare/compare.js';
+import { Comparison } from '../types.js';
+import { getSymbolDiff } from '../utils/diff.js';
 
 export function printJsonComparison({ changes, additions, removals, prevProgram, currentProgram }: Comparison) {
   const isBreaking = areChangesBreaking({ changes, additions, removals, prevProgram, currentProgram });
