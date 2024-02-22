@@ -4,8 +4,10 @@ import { generateTmpFileWithContent } from '../tests/test-utils.js';
 import { createTsProgram } from '../utils/typescript.js';
 import { getProjectUsageSetupForTesting } from './test-utils.js';
 import { getFlattenPackageUsage, getPackageUsage, getUsageInfo } from './usage.js';
+import { fileURLToPath } from 'url';
 
-const __dirname = import.meta.dirname;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 
 const MINUTE_TIMEOUT = 60000;
 
