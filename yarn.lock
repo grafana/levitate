@@ -172,10 +172,10 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.52.0.tgz"
   integrity sha512-mjZVbpaeMZludF2fsWLD0Z9gCref1Tk4i9+wddjRvpUNqqcndPkBD09N/Mapey0b3jaXbLm2kICwFv2E64QinA==
 
-"@eslint/js@8.56.0":
-  version "8.56.0"
-  resolved "https://registry.npmjs.org/@eslint/js/-/js-8.56.0.tgz"
-  integrity sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==
+"@eslint/js@8.57.0":
+  version "8.57.0"
+  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.0.tgz#a5417ae8427873f1dd08b70b3574b453e67b5f7f"
+  integrity sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==
 
 "@grafana/eslint-config@^7.0.0":
   version "7.0.0"
@@ -191,13 +191,13 @@
     eslint-plugin-react-hooks "4.6.0"
     typescript "5.2.2"
 
-"@humanwhocodes/config-array@^0.11.13":
-  version "0.11.13"
-  resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.13.tgz"
-  integrity sha512-JSBDMiDKSzQVngfRjOdFXgFfklaXI4K9nLF49Auh21lmBWRLIK3+xTErTWD4KU54pb6coM6ESE7Awz/FNU3zgQ==
+"@humanwhocodes/config-array@^0.11.13", "@humanwhocodes/config-array@^0.11.14":
+  version "0.11.14"
+  resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.14.tgz#d78e481a039f7566ecc9660b4ea7fe6b1fec442b"
+  integrity sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==
   dependencies:
-    "@humanwhocodes/object-schema" "^2.0.1"
-    debug "^4.1.1"
+    "@humanwhocodes/object-schema" "^2.0.2"
+    debug "^4.3.1"
     minimatch "^3.0.5"
 
 "@humanwhocodes/module-importer@^1.0.1":
@@ -205,10 +205,10 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/module-importer/-/module-importer-1.0.1.tgz"
   integrity sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==
 
-"@humanwhocodes/object-schema@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-2.0.1.tgz"
-  integrity sha512-dvuCeX5fC9dXgJn9t+X5atfmgQAzUOWqS1254Gh0m6i8wKd10ebXkfNKiRK+1GWi/yTvvLDHpoxLr0xxxeslWw==
+"@humanwhocodes/object-schema@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.2.tgz#d9fae00a2d5cb40f92cfe64b47ad749fbc38f917"
+  integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
@@ -1231,7 +1231,7 @@ data-uri-to-buffer@^4.0.0:
   resolved "https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-4.0.1.tgz"
   integrity sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==
 
-debug@^4, debug@^4.1.1, debug@^4.3.2, debug@^4.3.4:
+debug@^4, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4:
   version "4.3.4"
   resolved "https://registry.npmjs.org/debug/-/debug-4.3.4.tgz"
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
@@ -1716,16 +1716,16 @@ eslint@8.52.0:
     strip-ansi "^6.0.1"
     text-table "^0.2.0"
 
-eslint@8.56.0:
-  version "8.56.0"
-  resolved "https://registry.npmjs.org/eslint/-/eslint-8.56.0.tgz"
-  integrity sha512-Go19xM6T9puCOWntie1/P997aXxFsOi37JIHRWI514Hc6ZnaHGKY9xFhrU65RT6CcBEzZoGG1e6Nq+DT04ZtZQ==
+eslint@8.57.0:
+  version "8.57.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.57.0.tgz#c786a6fd0e0b68941aaf624596fb987089195668"
+  integrity sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==
   dependencies:
     "@eslint-community/eslint-utils" "^4.2.0"
     "@eslint-community/regexpp" "^4.6.1"
     "@eslint/eslintrc" "^2.1.4"
-    "@eslint/js" "8.56.0"
-    "@humanwhocodes/config-array" "^0.11.13"
+    "@eslint/js" "8.57.0"
+    "@humanwhocodes/config-array" "^0.11.14"
     "@humanwhocodes/module-importer" "^1.0.1"
     "@nodelib/fs.walk" "^1.2.8"
     "@ungap/structured-clone" "^1.2.0"
@@ -2223,12 +2223,7 @@ ignore-by-default@^1.0.1:
   resolved "https://registry.npmjs.org/ignore-by-default/-/ignore-by-default-1.0.1.tgz"
   integrity sha512-Ius2VYcGNk7T90CppJqcIkS5ooHUZyIQK+ClZfMfMNFEF9VSE73Fq+906u/CWu92x4gzZMWOwfFYckPObzdEbA==
 
-ignore@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.npmjs.org/ignore/-/ignore-5.2.0.tgz"
-  integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
-
-ignore@^5.2.4:
+ignore@^5.2.0, ignore@^5.2.4:
   version "5.3.0"
   resolved "https://registry.npmjs.org/ignore/-/ignore-5.3.0.tgz"
   integrity sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==
