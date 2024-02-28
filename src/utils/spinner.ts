@@ -1,7 +1,7 @@
-import ora from 'ora';
+import ora, { type Ora} from 'ora';
 import { isSilent } from './log.js';
 
-const SPINNERS: Record<string, ora.Ora> = {};
+const SPINNERS: Record<string, Ora> = {};
 
 export function startSpinner(name: string) {
   if (isSilent()) {
@@ -35,7 +35,7 @@ export function failSpinner(name: string, msg: string) {
   getSpinner(name).fail(msg);
 }
 
-export function getSpinner(name: string): ora.Ora {
+export function getSpinner(name: string): Ora {
   if (!SPINNERS[name]) {
     SPINNERS[name] = ora();
   }
