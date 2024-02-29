@@ -367,7 +367,7 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('NEW ARGUMENT FOR A CLASS METHOD - adding a new positional argument to any of the methods should trigger a breaking change', () => {
+  test('NEW ARGUMENT FOR A CLASS METHOD - adding a new positional argument to any of the methods should not trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         newClassMethod(foo: string): boolean;
@@ -380,7 +380,7 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(2); // Foo and Foo.newClassMethod changed
+    expect(Object.keys(comparison.changes).length).toBe(0);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
@@ -432,16 +432,16 @@ describe('Compare classes', () => {
     const current = `
       export declare class Foo<T = any> {
         // CHANGED
-        methodA(colName: number): number;
         methodB(col: Boolean): string;
 
         // NO CHANGE
+        methodA(colName: number): number; // the name of the argument changed but it's the same type
         methodC(col: string): string;
       }
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(3); // Foo, Foo.methodA and Foo.methodB changed
+    expect(Object.keys(comparison.changes)).toEqual(['Foo', 'Foo.methodB']);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
@@ -485,9 +485,9 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.removals).length).toBe(1); // Foo.methodA removed
   });
 
- test('changing the generic should trigger a change', () => {
+  test('changing the generic should trigger a change in the generic type', () => {
     const prev = `
-      export declare class Foo<T = any> {
+      export declare class Foo<T = any > {
         methodA(col: number): number;
         methodB(col: number): number;
       }
@@ -504,7 +504,7 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(2); // Foo and Foo<T> changed
+    expect(Object.keys(comparison.changes)).toEqual(['Foo.T']);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });

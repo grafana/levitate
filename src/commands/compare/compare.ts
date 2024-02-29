@@ -140,6 +140,22 @@ export function getFunctionParametersDiff({
 }): Change | undefined {
   const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
+
+  // first we compare them using the internal typescript method
+  // which is better than text comparison
+  // but it is not 100% reliable so we fallback to text comparison
+  const checker = prev.program.getTypeChecker();
+  const isComparable = checker.isTypeAssignableTo(
+    checker.getTypeAtLocation(prevDeclaration),
+    checker.getTypeAtLocation(currentDeclaration)
+  );
+
+  // we can trust if the typescript compiler calls them comparable
+  // but we can't trust when they are not
+  if (isComparable) {
+    return;
+  }
+
   // Check previous function parameters
   // (all previous parameters must be present at their previous position)
   for (let i = 0; i < prevDeclaration.parameters.length; i++) {
@@ -176,7 +192,6 @@ export function getFunctionParametersDiff({
     if (!currentParamSymbol.declarations || !prevParamSymbol.declarations) {
       return;
     }
-
     if (ts.isTypeReferenceNode(currentParamType) && ts.isTypeReferenceNode(prevParamType)) {
       if (currentParamSymbol.declarations[0].getText() !== prevParamSymbol.declarations[0].getText()) {
         return {
@@ -213,9 +228,22 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
 
+  // check if the parameters of the function changed
   const parameterChanges = getFunctionParametersDiff({ prev, current });
   if (parameterChanges) {
     return true;
+  }
+
+  // first try to check with the internal compiler and fallback
+  // to text comparison. The internal compiler can't be 100% trusted if it says
+  // they are not comparable so we always fallback to text comparison
+  const checker = prev.program.getTypeChecker();
+  const isComparable = checker.isTypeAssignableTo(
+    checker.getTypeAtLocation(prevDeclaration),
+    checker.getTypeAtLocation(currentDeclaration)
+  );
+  if (isComparable) {
+    return false;
   }
 
   // Check return type signatures -> they must be the same
@@ -306,8 +334,20 @@ export function hasVariableChanged(prev: SymbolMeta, current: SymbolMeta) {
 }
 
 export function hasClassChanged(prev: SymbolMeta, current: SymbolMeta) {
-  // TODO: figure out how to fix the typing
-  // @ts-ignore
+  const checker = prev.program.getTypeChecker();
+
+  // first we compare them using the internal typescript method
+  // which is better than text comparison
+  // but it is not 100% reliable so we fallback to text comparison
+  const isComparable = checker.isTypeAssignableTo(
+    checker.getTypeAtLocation(current.symbol.declarations[0]),
+    checker.getTypeAtLocation(prev.symbol.declarations[0])
+  );
+
+  if (isComparable) {
+    return false;
+  }
+
   for (let entry of prev.symbol.members.entries()) {
     const [memberName, prevMember]: [ts.__String, ts.Symbol] = entry;
     const currentMember = current.symbol.members.get(memberName);

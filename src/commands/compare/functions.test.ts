@@ -70,10 +70,10 @@ describe('Compare functions', () => {
       export function foo4({ a, b }: { a: number, b: number }): number {};
     `;
     const current = `
-      export function foo(a: string, b: number): string {};
-      export function foo2(a: boolean: b: number): boolean {};
-      export function foo3(a: number): boolean {};
-      export function foo4({ a, b }: { a: string, b: number }): number {};
+      export function foo(a: string, b: number): string {}; // argument b changed from string to number
+      export function foo2(a: boolean: b: number): boolean {}; // argument a changed from boolean to number
+      export function foo3(a: number): boolean {}; // nothing changed 
+      export function foo4({ a, b }: { a: string, b: number }): number {}; // argument a changed from number to string
     `;
     const comparison = testCompare(prev, current);
 
@@ -96,7 +96,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('NEW ARGUMENT - adding a new positional argument to a function should trigger a breaking change', () => {
+  test('NEW ARGUMENT - adding a new positional argument to a function should not trigger a breaking change', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
@@ -105,7 +105,7 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes)).toEqual(['foo']);
+    expect(Object.keys(comparison.changes).length).toBe(0);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
@@ -116,6 +116,52 @@ describe('Compare functions', () => {
     `;
     const current = `
       export function foo(a: string, b: string, c?: number): string {};
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(0);
+  });
+
+  test("REMOVING DECLARE from a parameter's type should not trigger a removal", () => {
+    const prev = `
+      export declare type Bar = {
+        one: string;
+        two: number;
+      }
+
+      export function foo(bar: Bar) {
+        bar.one;
+      }
+    `;
+    const current = `
+      export type Bar = {
+        one: string;
+        two: number;
+      }
+
+      export function foo(bar: Bar) {
+        bar.one;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(Object.keys(comparison.removals).length).toBe(0);
+  });
+
+  test('Changing the name of a function parmeter should not trigger a breaking change', () => {
+    const prev = `
+      export function foo(bar: number) {
+        bar;
+      }
+    `;
+    const current = `
+      export function foo(newNameForBar: number) {
+        bar;
+      }
     `;
     const comparison = testCompare(prev, current);
 
