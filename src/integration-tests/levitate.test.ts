@@ -41,7 +41,7 @@ describe('Levitate', () => {
         '@grafana/data@latest',
       ]);
       expect(stdout).toContain('No breaking changes introduced');
-    });
+    }, 60000); // a whole minute of timeout because this downloads packages
   });
 
   describe('Levignore works as expected', () => {
