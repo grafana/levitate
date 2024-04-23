@@ -140,12 +140,12 @@ export function getFunctionParametersDiff({
 }): Change | undefined {
   const prevDeclaration = prev.symbol.valueDeclaration as ts.FunctionDeclaration;
   const currentDeclaration = current.symbol.valueDeclaration as ts.FunctionDeclaration;
+  const checker = prev.program.getTypeChecker();
 
   // first we compare them using the internal typescript method
   // which is better than text comparison
   // but it is not 100% reliable so we fallback to text comparison
-  const checker = prev.program.getTypeChecker();
-  const isComparable = checker.isTypeAssignableTo(
+  const isComparable = checker.isTypeIdenticalTo(
     checker.getTypeAtLocation(prevDeclaration),
     checker.getTypeAtLocation(currentDeclaration)
   );

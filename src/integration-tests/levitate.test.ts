@@ -87,7 +87,7 @@ describe('Levitate', () => {
         'DataSourceRef.foo',
       ]);
       expect(parsed.removals.length).toBe(0);
-      expect(parsed.changes.map((c: any) => c.name)).toEqual(['StreamingFrameAction.Replace']);
+      expect(parsed.changes.map((c: any) => c.name)).toEqual(['isDataSourceRef', 'StreamingFrameAction.Replace']);
     });
   });
 });

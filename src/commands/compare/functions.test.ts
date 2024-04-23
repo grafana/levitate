@@ -96,7 +96,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('NEW ARGUMENT - adding a new positional argument to a function should not trigger a breaking change', () => {
+  test('NEW ARGUMENT - adding a new positional argument to a function should trigger a breaking change', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
@@ -105,7 +105,7 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.changes).length).toBe(1);
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });

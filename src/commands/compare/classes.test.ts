@@ -367,7 +367,7 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('NEW ARGUMENT FOR A CLASS METHOD - adding a new positional argument to any of the methods should not trigger a breaking change', () => {
+  test('NEW ARGUMENT FOR A CLASS METHOD - adding a new positional argument to any of the methods should trigger a breaking change', () => {
     const prev = `
       export declare class Foo<T = any> {
         newClassMethod(foo: string): boolean;
@@ -380,7 +380,7 @@ describe('Compare classes', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.changes).length).toBe(2); // two changes. one for the class one for the method
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
