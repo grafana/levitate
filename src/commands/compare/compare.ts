@@ -151,7 +151,10 @@ export function getFunctionParametersDiff({
   );
 
   // we can trust if the typescript compiler calls them comparable
-  // but we can't trust when they are not
+  // but we can't trust when they are not because there are cases
+  // where the types are identical but typescript will still detect them
+  // as different. This usually happens with generics and deep-down nested types
+  // in big packages exporting many types
   if (isComparable) {
     return;
   }

@@ -487,7 +487,7 @@ describe('Compare classes', () => {
 
   test('changing the generic should trigger a change in the generic type', () => {
     const prev = `
-      export declare class Foo<T = any > {
+      export declare class Foo<T = any> {
         methodA(col: number): number;
         methodB(col: number): number;
       }
