@@ -2,7 +2,7 @@ import { execa } from 'execa';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import path, { dirname } from 'path';
-import tar from 'tar';
+import { extract } from 'tar/x';
 import os from 'os';
 import { NpmList, PackageWithVersion } from '../types.js';
 import { pathExists } from './file.js';
@@ -148,7 +148,7 @@ export async function downloadNpmPackageAsTarball(packageName: string) {
   if (shouldDownload) {
     setSpinner(packageName, `Downloading tarball for ${packageName}`);
     await downloadFile(url, tarballPath);
-    tar.x({ C: tmpFolderName, file: tarballPath, sync: true });
+    extract({ C: tmpFolderName, file: tarballPath, sync: true });
   } else {
     logDebug('\nUsing download cache. Flag passed: LEVITATE_CACHE=true');
   }
