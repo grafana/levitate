@@ -30,6 +30,20 @@ describe('Levitate', () => {
     });
   });
 
+  describe('Base functionality works as expected', () => {
+    it('Should not report changes between two identical packages', async () => {
+      const { stdout } = await execa(nodeBinary, [
+        levitateBinary,
+        'compare',
+        '--prev',
+        '@grafana/data@latest',
+        '--current',
+        '@grafana/data@latest',
+      ]);
+      expect(stdout).toContain('No breaking changes introduced');
+    }, 60000); // a whole minute of timeout because this downloads packages
+  });
+
   describe('Levignore works as expected', () => {
     const levignoreFixturePath = path.resolve(__dirname, '../../fixtures/levignore');
     it("Doesn't report changes that are ignored by levignore", async () => {
@@ -67,9 +81,13 @@ describe('Levitate', () => {
       expect(Object.keys(parsed)).toEqual(['additions', 'removals', 'changes', 'hasBreakingChanges']);
 
       expect(parsed.hasBreakingChanges).toBe(true);
-      expect(parsed.additions.length).toBe(3);
+      expect(parsed.additions.map((a: any) => a.name)).toEqual([
+        'getDataSourceUID',
+        'StreamingFrameAction.Remove',
+        'DataSourceRef.foo',
+      ]);
       expect(parsed.removals.length).toBe(0);
-      expect(parsed.changes.length).toBe(2);
+      expect(parsed.changes.map((c: any) => c.name)).toEqual(['isDataSourceRef', 'StreamingFrameAction.Replace']);
     });
   });
 });
