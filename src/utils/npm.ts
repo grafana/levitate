@@ -71,8 +71,8 @@ export async function installNpmPackage(packageName: string) {
 
   try {
     process.chdir(tmpPackageFolder);
-    await execa('npm', ['init', '-y'], { execPath: tmpPackageFolder });
-    await execa('npm', ['install', packageName], { execPath: tmpPackageFolder });
+    await execa('npm', ['init', '-y'], { nodePath: tmpPackageFolder });
+    await execa('npm', ['install', packageName], { nodePath: tmpPackageFolder });
   } catch (error) {
     failSpinner(packageName, `Failed installing ${packageName}`);
   }
