@@ -484,9 +484,9 @@
   integrity sha512-OGsvXIid2Go21kiNqeTIn79jcaX4l0G93X2rAnas4LFoDyA9wAwVK7xZdm+QsKoMn5Mus2yFLCc4OtX2dD/PWA==
 
 "@swc-node/register@^1.6.8":
-  version "1.10.8"
-  resolved "https://registry.yarnpkg.com/@swc-node/register/-/register-1.10.8.tgz#326be09aa35b94859695aef07abee384b4f40ece"
-  integrity sha512-XklUNYwI//+dVOzY66tsVdknAmmOTO8qSzVEP62fNDHycFhnwZtqFNPc7UiNAhzOQuP1sRBfLZXQ0ynXlrkX7Q==
+  version "1.10.9"
+  resolved "https://registry.yarnpkg.com/@swc-node/register/-/register-1.10.9.tgz#9e2660f99a12969d3e5a34144e6a5812c7187680"
+  integrity sha512-iXy2sjP0phPEpK2yivjRC3PAgoLaT4sjSk0LDWCTdcTBJmR4waEog0E6eJbvoOkLkOtWw37SB8vCkl/bbh4+8A==
   dependencies:
     "@swc-node/core" "^1.13.3"
     "@swc-node/sourcemap-support" "^0.5.1"
