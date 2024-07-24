@@ -63,7 +63,7 @@ describe('Levignore', () => {
 
     // SampleEnum itself changed that's 1 change. SampleEnum.Replace was changed
     // that's 2 changes but, ignored therefore: 1 change
-    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.changes).length).toBe(1);
     expect(Object.keys(comparison.additions).length).toBe(0);
 
     // SampleEnum.Remove was removed but ignored
