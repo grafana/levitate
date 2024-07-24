@@ -110,7 +110,7 @@ describe('Compare enums', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes)).toEqual(['SampleEnum', 'AnotherEnum.two']);
+    expect(Object.keys(comparison.changes)).toEqual(['SampleEnum', 'AnotherEnum', 'AnotherEnum.two']);
     expect(Object.keys(comparison.additions).length).toBe(1);
     expect(Object.keys(comparison.removals).length).toBe(1);
   });
