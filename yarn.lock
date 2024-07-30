@@ -1882,10 +1882,10 @@ eslint-plugin-jsdoc@46.8.2:
     semver "^7.5.4"
     spdx-expression-parse "^3.0.1"
 
-eslint-plugin-jsdoc@48.8.3:
-  version "48.8.3"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-48.8.3.tgz#0a651bc0ab5b0732c39e12b26771fca78c830c1c"
-  integrity sha512-AtIvwwW9D17MRkM0Z0y3/xZYaa9mdAvJrkY6fU/HNUwGbmMtHVvK4qRM9CDixGVtfNrQitb8c6zQtdh6cTOvLg==
+eslint-plugin-jsdoc@48.9.3:
+  version "48.9.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-48.9.3.tgz#a756fc83ee22bde27b1d42b444969bc582631c0c"
+  integrity sha512-9RUsTlW6ZlMgy+dd9uDreU9lZAh4Hxw2ZAV5T0hPtrWgbw0OnvuT3elF6ihnpAY+NCrJx8BUUmcBnKftc/F0qw==
   dependencies:
     "@es-joy/jsdoccomment" "~0.46.0"
     are-docs-informative "^0.0.2"
