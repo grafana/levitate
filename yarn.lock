@@ -585,10 +585,10 @@
   dependencies:
     "@swc/counter" "^0.1.3"
 
-"@tsd/typescript@5.5.4":
-  version "5.5.4"
-  resolved "https://registry.yarnpkg.com/@tsd/typescript/-/typescript-5.5.4.tgz#b4cd368afb00afd659541d59b1f4c6c50f220969"
-  integrity sha512-OyN98Y0mkmuc5DWFPFHNl41417AQ9u7Wj9t4O7+xHntOcekzU+ER548qk64O6y1xkPlkexd0DZHWsC8g4sGZ+w==
+"@tsd/typescript@^5.6.2":
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/@tsd/typescript/-/typescript-5.6.2.tgz#748d037c73a280acb81b5cd6b72781511bb1b324"
+  integrity sha512-sk87KQtOkhxXHN8I3VQM8sZQBNO++T0dP5FVZ5dPKeHaCeA0lbis1673RsTpCeuE2wkdwDbkYocSjcKrpqBUrA==
 
 "@tybys/wasm-util@^0.9.0":
   version "0.9.0"
@@ -4256,14 +4256,7 @@ string.prototype.trimstart@^1.0.8:
     define-properties "^1.2.1"
     es-object-atoms "^1.0.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
-  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
-  dependencies:
-    ansi-regex "^5.0.1"
-
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -4537,7 +4530,7 @@ typescript@5.2.2:
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.2.2.tgz"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
-typescript@^5.3.2:
+typescript@^5.6.2:
   version "5.6.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.6.2.tgz#d1de67b6bef77c41823f822df8f0b3bcff60a5a0"
   integrity sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==
