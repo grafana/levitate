@@ -177,7 +177,10 @@ export function getFunctionParametersDiff({
     }
 
     // Changed parameter at the old position
-    if (currentDeclaration.parameters[i].getText() !== prevDeclaration.parameters[i].getText()) {
+    if (
+      removeComments(currentDeclaration.parameters[i].getText()) !==
+      removeComments(prevDeclaration.parameters[i].getText())
+    ) {
       const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
       return {
         prev: prevParamSymbol,
@@ -195,15 +198,28 @@ export function getFunctionParametersDiff({
     if (!currentParamSymbol.declarations || !prevParamSymbol.declarations) {
       return;
     }
+    // Compare parameter types, but allow if current types have optional fields
     if (ts.isTypeReferenceNode(currentParamType) && ts.isTypeReferenceNode(prevParamType)) {
-      if (currentParamSymbol.declarations[0].getText() !== prevParamSymbol.declarations[0].getText()) {
-        return {
-          prev: prevParamSymbol,
-          prevProgram: prev.program,
-          current: currentParamSymbol,
-          currentProgram: current.program,
-          type: ChangeType.PARAMETER_TYPE,
-        };
+      const prevType = checker.getTypeFromTypeNode(prevParamType);
+      const currentType = checker.getTypeFromTypeNode(currentParamType);
+
+      // check if they have different texts as the base line
+      const currentParamSymbolText = removeComments(currentParamSymbol.declarations[0].getText());
+      const prevParamSymbolText = removeComments(prevParamSymbol.declarations[0].getText());
+
+      if (currentParamSymbolText !== prevParamSymbolText) {
+        // Use isTypeSubtypeOf to allow more flexible comparison between types
+        // including cases where the current type has extra optional fields
+        if (!checker.isTypeSubtypeOf(currentType, prevType)) {
+          // make double sure the text is actually different
+          return {
+            prev: prevParamSymbol,
+            prevProgram: prev.program,
+            current: currentParamSymbol,
+            currentProgram: current.program,
+            type: ChangeType.PARAMETER_TYPE,
+          };
+        }
       }
     }
   }
@@ -251,7 +267,7 @@ export function hasFunctionChanged(prev: SymbolMeta, current: SymbolMeta) {
 
   // Check return type signatures -> they must be the same
   // (It can happen that a function/method does not have a return type defined)
-  if (prevDeclaration.type?.getText() !== currentDeclaration.type?.getText()) {
+  if (removeComments(prevDeclaration.type?.getText()) !== removeComments(currentDeclaration.type?.getText())) {
     return true;
   }
 
@@ -415,7 +431,7 @@ export function hasTypeChanged(prev: SymbolMeta, current: SymbolMeta) {
   // first try a fast text comparison
   // this is required because ENUM individual elements
   // are not comparable with the type checker internal mechanism
-  if (prevDeclaration.getText() === currentDeclaration.getText()) {
+  if (removeComments(prevDeclaration.getText()) === removeComments(currentDeclaration.getText())) {
     return false;
   }
 
@@ -468,4 +484,15 @@ export function isPublic(declaration: ts.PropertyDeclaration) {
       (modifier) => modifier.kind === ts.SyntaxKind.ProtectedKeyword || modifier.kind === ts.SyntaxKind.PrivateKeyword
     )
   );
+}
+
+export function removeComments(code: string) {
+  const sourceFile = ts.createSourceFile('tempFile.ts', code, ts.ScriptTarget.Latest, true);
+
+  const printer = ts.createPrinter({
+    removeComments: true, // This ensures that comments are removed from the output
+  });
+
+  const result = printer.printFile(sourceFile);
+  return result;
 }

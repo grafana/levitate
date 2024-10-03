@@ -169,4 +169,33 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.additions).length).toBe(0);
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
+
+  test('Adding an optional parameter to a function should not trigger a breaking change', () => {
+    const prev = `
+      export declare type Bar = {
+        one: string;
+        two: number;
+      }
+
+      export function foo(bar: Bar) {
+        bar.one;
+      }
+    `;
+    const current = `
+      export type Bar = {
+        one: string;
+        two: number;
+        three?: boolean;
+      }
+
+      export function foo(bar: Bar) {
+        bar.one;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes).length).toBe(0);
+    expect(Object.keys(comparison.additions).length).toBe(1);
+    expect(Object.keys(comparison.removals).length).toBe(0);
+  });
 });
