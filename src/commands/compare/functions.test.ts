@@ -1,7 +1,7 @@
 import { testCompare } from './utils.js';
 
 describe('Compare functions', () => {
-  test('NO CHANGES - not changing anything should not trigger anything', () => {
+  it('NO CHANGES - not changing anything should not trigger anything', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
       export function foo2({ a, b }: { a: string, b: string }): string {};
@@ -17,7 +17,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('REMOVE FUNCTION - removing a previously exported function should trigger a removal', () => {
+  it('REMOVE FUNCTION - removing a previously exported function should trigger a removal', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
       export function foo2(a: string): boolean {};
@@ -32,7 +32,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(1);
   });
 
-  test('NEW FUNCTION - adding a new exported function should trigger an addition', () => {
+  it('NEW FUNCTION - adding a new exported function should trigger an addition', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
       export function foo2(a: string): boolean {};
@@ -49,7 +49,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGE RETURN VALUE - changing a function's return value type should trigger a breaking change", () => {
+  it("CHANGE RETURN VALUE - changing a function's return value type should trigger a breaking change", () => {
     const prev = `
       export function foo(): string {};
     `;
@@ -62,7 +62,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("CHANGE ARGUMENT - changing a function's argument should trigger a breaking change", () => {
+  it("CHANGE ARGUMENT - changing a function's argument should trigger a breaking change", () => {
     const prev = `
       export function foo(a: string, b: string): string {};
       export function foo2(a: number, b: number): boolean {};
@@ -82,7 +82,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('REMOVE ARGUMENT - removing any argument of a function should trigger a breaking change', () => {
+  it('REMOVE ARGUMENT - removing any argument of a function should trigger a breaking change', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
@@ -96,7 +96,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('NEW ARGUMENT - adding a new positional argument to a function should trigger a breaking change', () => {
+  it('NEW ARGUMENT - adding a new positional argument to a function should trigger a breaking change', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
@@ -110,7 +110,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('NEW OPTIONAL ARGUMENT - adding a new optional positional argument to a function should not trigger a breaking change', () => {
+  it('NEW OPTIONAL ARGUMENT - adding a new optional positional argument to a function should not trigger a breaking change', () => {
     const prev = `
       export function foo(a: string, b: string): string {};
     `;
@@ -124,7 +124,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test("REMOVING DECLARE from a parameter's type should not trigger a removal", () => {
+  it("REMOVING DECLARE from a parameter's type should not trigger a removal", () => {
     const prev = `
       export declare type Bar = {
         one: string;
@@ -152,7 +152,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('Changing the name of a function parmeter should not trigger a breaking change', () => {
+  it('Changing the name of a function parmeter should not trigger a breaking change', () => {
     const prev = `
       export function foo(bar: number) {
         bar;
@@ -170,7 +170,7 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.removals).length).toBe(0);
   });
 
-  test('Adding an optional parameter to a function should not trigger a breaking change', () => {
+  it('Adding an optional parameter to a function should not trigger a breaking change', () => {
     const prev = `
       export declare type Bar = {
         one: string;
@@ -197,5 +197,215 @@ describe('Compare functions', () => {
     expect(Object.keys(comparison.changes).length).toBe(0);
     expect(Object.keys(comparison.additions).length).toBe(1);
     expect(Object.keys(comparison.removals).length).toBe(0);
+  });
+
+  describe('Arrow functions', () => {
+    it('Detects changes when a parameter name is changed', () => {
+      const prev = `
+      type params = {
+        x: number;
+        y: string;
+      }
+      export const testFunction = ({x, y}: params) => {}
+    `;
+      const current = `
+      type params = {
+        x: number;
+        z: string; // changed
+      }
+      export const testFunction = ({x, y}: params) => {}
+    `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detects changes when a non-optional parameter is added', () => {
+      const prev = `
+        type params = {
+          x: number;
+          y: string;
+        }
+        export const testFunction = ({x, y}: params) => {}
+      `;
+      const current = `
+        type params = {
+          x: number;
+          y: string;
+          z: string; // added
+        }
+        export const testFunction = ({x, y, z}: params) => {}
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detect changes when a parameter is removed', () => {
+      const prev = `
+        type params = {
+          x: number;
+          y: string;
+        }
+        export const testFunction = ({x, y}: params) => {}
+      `;
+      const current = `
+        type params = {
+          x: number;
+          //        y: string; // removed
+        }
+        export const testFunction = ({x}: params) => {}
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detects changes when a parameter is made optional', () => {
+      const prev = `
+        type params = {
+          x: number;
+          y: string;
+        }
+        export const testFunction = ({x, y}: params) => {}
+      `;
+      const current = `
+        type params = {
+          x: number;
+          y?: string;
+        }
+        export const testFunction = ({x, y}: params) => {}
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detects changes when a parameter name is changed (inline)', () => {
+      const prev = `
+        export const testFunction = ({x, y}: {x: number; y: string}) => {}
+      `;
+      const current = `
+        export const testFunction = ({x, z}: {x: number; z: string}) => {} // changed
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+  });
+
+  describe('Function expressions', function () {
+    it('Detects changes when a parameter name is changed', function () {
+      const prev = `
+        type params = {
+          x: number;
+          y: string;
+        }
+        export const testFunction = function({x, y}: params) {}
+      `;
+      const current = `
+        type params = {
+          x: number;
+          z: string; // changed
+        }
+        export const testFunction = function({x, y}: params) {}
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detects changes when a non-optional parameter is added', function () {
+      const prev = `
+        type params = {
+          x: number;
+          y: string;
+        }
+        export const testFunction = function({x, y}: params) {}
+      `;
+      const current = `
+        type params = {
+          x: number;
+          y: string;
+          z: string; // added
+        }
+        export const testFunction = function({x, y, z}: params) {}
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detect changes when a parameter is removed', function () {
+      const prev = `
+        type params = {
+          x: number;
+          y: string;
+        }
+        export const testFunction = function({x, y}: params) {}
+      `;
+      const current = `
+        type params = {
+          x: number;
+          //        y: string; // removed
+        }
+        export const testFunction = function({x}: params) {}
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detects changes when a parameter is made optional', function () {
+      const prev = `
+        type params = {
+          x: number;
+          y: string;
+        }
+        export const testFunction = function({x, y}: params) {}
+      `;
+      const current = `
+        type params = {
+          x: number;
+          y?: string;
+        }
+        export const testFunction = function({x, y}: params) {}
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
+
+    it('Detects changes when a parameter name is changed', function () {
+      const prev = `
+        export const testFunction = function({x, y}: {x: number; y: string}) {}
+      `;
+      const current = `
+        export const testFunction = function({x, z}: {x: number; z: string}) {} // changed
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(Object.keys(comparison.changes).length).toBe(1);
+      expect(Object.keys(comparison.additions).length).toBe(0);
+      expect(Object.keys(comparison.removals).length).toBe(0);
+    });
   });
 });
