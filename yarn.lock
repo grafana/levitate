@@ -565,9 +565,9 @@
     "@swc/counter" "^0.1.3"
 
 "@tsd/typescript@^5.6.2":
-  version "5.6.3"
-  resolved "https://registry.yarnpkg.com/@tsd/typescript/-/typescript-5.6.3.tgz#995c054ff99d1b5e22f8e7d07d6087a56c58702d"
-  integrity sha512-Jm9tsyjxuyDxGvIlifCQMiTjL20Zv/9mfxLLuJBrlEq5v9Z5qtMB0qXp6BSbq9B2YYP9IBbaMnZ+GYSgDYh5Vw==
+  version "5.7.2"
+  resolved "https://registry.yarnpkg.com/@tsd/typescript/-/typescript-5.7.2.tgz#e290594beca22b0002f29cd273fa979eb1914cc9"
+  integrity sha512-Xuhtk1h4T35XXJWWKmufMV1UMK1C5aMA+3AYDgkQgiaR4lLS+7lNXOEC0lDancspFO9SOZzASpfOvUoATm2cPA==
 
 "@tybys/wasm-util@^0.9.0":
   version "0.9.0"
