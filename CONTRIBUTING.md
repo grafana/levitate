@@ -82,14 +82,14 @@ If you want to go the usual route and run the project locally, though:
 Then in your terminal:
 
 - `cd path/to/your/clone`
-- `yarn install`
-- `yarn test`
+- `npm install`
+- `npm test`
 
 And you should be ready to go!
 
 ### Commands
 
-Levitate consists of two commands _compare_ and _list-imports_. Developing against these commands can be done individually by running `yarn dev-compare` or `yarn dev-imports`. These scripts will build the project, execute the command against the fixtures, then watch for changes before rerunning build and command execution.
+Levitate consists of two commands _compare_ and _list-imports_. Developing against these commands can be done individually by running `npm run  dev-compare` or `npm run dev-imports`. These scripts will build the project, execute the command against the fixtures, then watch for changes before rerunning build and command execution.
 
 ### Environment variables
 

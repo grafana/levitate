@@ -5,13 +5,13 @@
 Given a snippet like this:
 
 ```typescript
-import {Foo} from 'testing-mod';
+import { Foo } from 'testing-mod';
 
 const bar = new Foo();
 bar.method();
 ```
 
-If this was a real project and you didn't install the package `testing-mod` using something like `yarn add testing-mod`
+If this was a real project and you didn't install the package `testing-mod` using something like `npm add testing-mod`
 typescript can't know `method` type. It will report `method` as any.
 
 This is vital to know if typescript Symbols are related to other symbols.
