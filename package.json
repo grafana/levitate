@@ -10,8 +10,11 @@
   },
   "types": "dist/index.d.ts",
   "type": "module",
-  "bin": {
-    "levitate": "dist/bin.js"
+  "bin": "dist/bin.js",
+  "publishConfig": {
+    "bin": {
+      "levitate": "./dist/bin.js"
+    }
   },
   "files": [
     "dist"
