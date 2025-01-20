@@ -99,5 +99,6 @@
   "bugs": {
     "url": "https://github.com/grafana/levitate/issues"
   },
-  "homepage": "https://github.com/grafana/levitate#readme"
+  "homepage": "https://github.com/grafana/levitate#readme",
+  "packageManager": "yarn@4.6.0"
 }
