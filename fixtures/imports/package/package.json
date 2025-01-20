@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Check imports fixture package",
   "private": true,
-  "scripts": {},
   "devDependencies": {
     "@grafana/data": "latest",
     "@grafana/ui": "latest"
