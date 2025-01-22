@@ -10,8 +10,11 @@
   },
   "types": "dist/index.d.ts",
   "type": "module",
-  "bin": {
-    "levitate": "dist/bin.js"
+  "bin": "dist/bin.js",
+  "publishConfig": {
+    "bin": {
+      "levitate": "./dist/bin.js"
+    }
   },
   "files": [
     "dist"
@@ -96,5 +99,6 @@
   "bugs": {
     "url": "https://github.com/grafana/levitate/issues"
   },
-  "homepage": "https://github.com/grafana/levitate#readme"
+  "homepage": "https://github.com/grafana/levitate#readme",
+  "packageManager": "yarn@4.6.0"
 }
