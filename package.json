@@ -62,7 +62,7 @@
     "@types/rimraf": "^4.0.5",
     "@types/tar": "^6.1.2",
     "@types/yargs": "^17.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^5.30.7",
     "eslint": "8.57.1",
     "eslint-config-prettier": "9.1.0",
