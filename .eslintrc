@@ -2,7 +2,8 @@
   "extends": ["@grafana/eslint-config"],
   "plugins": ["no-only-tests"],
   "rules": {
-    "no-only-tests/no-only-tests": "error"
+    "no-only-tests/no-only-tests": "error",
+    "@typescript-eslint/type-annotation-spacing": 0,
   },
   "parserOptions": {
     "project": "./tsconfig.eslint.json"
