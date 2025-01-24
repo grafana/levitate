@@ -38,6 +38,7 @@
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
   "license": "Apache-2.0",
   "dependencies": {
+    "@stylistic/eslint-plugin-ts": "^2.13.0",
     "@tsd/typescript": "^5.6.2",
     "@types/node": "^22.0.0",
     "chalk": "^4.1.2",
@@ -62,8 +63,8 @@
     "@types/rimraf": "^4.0.5",
     "@types/tar": "^6.1.2",
     "@types/yargs": "^17.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
-    "@typescript-eslint/parser": "^5.30.7",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
     "eslint": "8.57.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-jsdoc": "50.6.2",
