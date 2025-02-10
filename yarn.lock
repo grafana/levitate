@@ -694,15 +694,15 @@ __metadata:
   linkType: hard
 
 "@stylistic/eslint-plugin-ts@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "@stylistic/eslint-plugin-ts@npm:3.0.1"
+  version: 3.1.0
+  resolution: "@stylistic/eslint-plugin-ts@npm:3.1.0"
   dependencies:
     "@typescript-eslint/utils": "npm:^8.13.0"
     eslint-visitor-keys: "npm:^4.2.0"
     espree: "npm:^10.3.0"
   peerDependencies:
     eslint: ">=8.40.0"
-  checksum: 10c0/ff7959cbd18c6b9955d7003c9c1e07d7def93722a8420be66ef23ae2fbd43358b842ce56502d97edbc6098a6426819dc4466225867074873973348694a3027f5
+  checksum: 10c0/9e4d378e29c15ac8182c42e969e6ac2249edbffa9c096a79a083eb182802be14d4870fdc6da818c85f1104138ec2344c55b9f5458b95b7f0e92906448547036a
   languageName: node
   linkType: hard
 
