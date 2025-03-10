@@ -877,9 +877,9 @@ __metadata:
   linkType: hard
 
 "@tsd/typescript@npm:^5.6.2":
-  version: 5.7.3
-  resolution: "@tsd/typescript@npm:5.7.3"
-  checksum: 10c0/8ef3be52f30c6af53e2a239b3d04b92200f55ad654017547855db7943fb17ab1dab3efa7ed1060586b1ce4e4a4d23cec63863d8293b0c1c9c9f9bb2ac707d1b9
+  version: 5.8.2
+  resolution: "@tsd/typescript@npm:5.8.2"
+  checksum: 10c0/af507b6b761db11da53388c14e102301fc4d7ab77c3c05d0d85ca37be5af46929ff7d2d139d0b1d84053c774ecec587eaa9c200715be95d12996d6734f879794
   languageName: node
   linkType: hard
 
