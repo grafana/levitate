@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
         id: generate_token
@@ -27,7 +28,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           token: ${{ steps.generate_token.outputs.token }}
-          persist-credentials: false
+          # persist-credentials true required to push 
+          persist-credentials: true
 
       - name: Setup environment
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -48,6 +50,7 @@ jobs:
         run: |
           git config user.name 'grafana-delivery-bot[bot]'
           git config user.email '132647405+grafana-delivery-bot[bot]@users.noreply.github.com'
+
       - name: bump version
         run: npm version ${INPUT_VERSION}
         env:
