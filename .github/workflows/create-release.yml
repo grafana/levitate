@@ -51,8 +51,9 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const { GITHUB_REF } = process.env;
             await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: "${GITHUB_REF}",
+              tag_name: `${GITHUB_REF}`,
               generate_release_notes: true
             });
         env:
