@@ -2342,9 +2342,9 @@ __metadata:
   linkType: hard
 
 "diff@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "diff@npm:8.0.0"
-  checksum: 10c0/2e3ffd06423bf4e07ff89b12401b4f5034c3a3ce3732a4763ce32d4fcf903186e2e1788a2403ac7c814cc124fbce47283aad2bfe6cb251c1995012d53fe79df5
+  version: 8.0.1
+  resolution: "diff@npm:8.0.1"
+  checksum: 10c0/43ebbe63881d34067d77d7b9d16220f1efb8013e04be58c7748ab296d2a9637f49424c69477e36c81a53f2c347b396956966e708e1b5b4dde3620f2b4bb93d02
   languageName: node
   linkType: hard
 
