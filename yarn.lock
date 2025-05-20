@@ -390,6 +390,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     ora: "npm:8.2.0"
     prettier: "npm:^3.1.1"
+    tar: "npm:^7.4.3"
     tsc-watch: "npm:^6.3.1"
     tty-table: "npm:^4.1.5"
     typescript: "npm:5.8.3"
