@@ -2,7 +2,10 @@ on: # zizmor: ignore[cache-poisoning]
   push:
     tags:
       - 'v*'
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+  
 name: Create Release
 
 jobs:
