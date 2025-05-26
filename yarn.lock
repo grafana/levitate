@@ -391,7 +391,7 @@ __metadata:
     ora: "npm:8.2.0"
     prettier: "npm:^3.1.1"
     tar: "npm:^7.4.3"
-    tsc-watch: "npm:^6.3.1"
+    tsc-watch: "npm:^7.0.0"
     tty-table: "npm:^4.1.5"
     typescript: "npm:5.8.3"
     vitest: "npm:^3.1.4"
@@ -6181,7 +6181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string-argv@npm:^0.3.1":
+"string-argv@npm:^0.3.2":
   version: 0.3.2
   resolution: "string-argv@npm:0.3.2"
   checksum: 10c0/75c02a83759ad1722e040b86823909d9a2fc75d15dd71ec4b537c3560746e33b5f5a07f7332d1e3f88319909f82190843aa2f0a0d8c8d591ec08e93d5b8dec82
@@ -6545,19 +6545,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsc-watch@npm:^6.3.1":
-  version: 6.3.1
-  resolution: "tsc-watch@npm:6.3.1"
+"tsc-watch@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "tsc-watch@npm:7.0.0"
   dependencies:
-    cross-spawn: "npm:^7.0.3"
+    cross-spawn: "npm:^7.0.6"
     node-cleanup: "npm:^2.1.2"
     ps-tree: "npm:^1.2.0"
-    string-argv: "npm:^0.3.1"
+    string-argv: "npm:^0.3.2"
   peerDependencies:
     typescript: "*"
   bin:
     tsc-watch: dist/lib/tsc-watch.js
-  checksum: 10c0/481e93fcdc26a9895be54f4311866da57f843bf19710363dd238a0cf3f95b83bd51520205743a029e575bc2e44766cc9d23cf8b4724c76fa762439eb7c20bbe0
+  checksum: 10c0/37aa4f3021e028eddedd67b53f00b502f39a88370ddbbc693c61c5b9650aa6d70d4256b442def65b6b679f9dd8baa0c02d0b9d74ed441fdb03a89a2221f2e511
   languageName: node
   linkType: hard
 
