@@ -48,4 +48,13 @@ describe('Utils compare tests', () => {
     expect(Object.keys(comparison.additions).length).toBe(1);
     expect(Object.keys(comparison.removals).length).toBe(2);
   });
+
+  test('multiple files should not report false positives', async () => {
+    const fixturePath = path.resolve(__dirname, '../../../fixtures/compare/multi-files/');
+    const current = path.resolve(fixturePath, 'current', 'index.d.ts');
+    const prev = path.resolve(fixturePath, 'previous', 'index.d.ts');
+    const ignoredExports = {};
+    const comparison = compareExports(prev, current, ignoredExports);
+    expect(Object.keys(comparison.changes).length).toBe(0);
+  });
 });
