@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     include: ['**/*.test.ts'],
     globals: true,
+    forceRerunTriggers: ['**/fixtures/**/*'],
   },
 });
