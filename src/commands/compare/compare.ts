@@ -365,7 +365,6 @@ export function hasVariableChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevType = checker.getTypeAtLocation(prevDeclaration);
   const currentType = checker.getTypeAtLocation(currentDeclaration);
 
-  console.log('Do we even get here2?', prev.symbol.getName());
   return !checker.isTypeIdenticalTo(prevType, currentType);
 }
 
