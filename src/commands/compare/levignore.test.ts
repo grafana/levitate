@@ -28,11 +28,11 @@ describe('Levignore', () => {
     const comparison = testCompare(prev, current, ignoredExports);
 
     // SampleEnum itself changed
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(1);
+    expect(comparison).toHaveTypeAdditions(0);
 
     // SampleEnum.Remove was removed but ignored
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test.each([
@@ -63,11 +63,11 @@ describe('Levignore', () => {
 
     // SampleEnum itself changed that's 1 change. SampleEnum.Replace was changed
     // that's 2 changes but, ignored therefore: 1 change
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(1);
+    expect(comparison).toHaveTypeAdditions(0);
 
     // SampleEnum.Remove was removed but ignored
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test.each([
@@ -95,10 +95,10 @@ describe('Levignore', () => {
 
     const comparison = testCompare(prev, current, ignoredExports);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
 
     // SampleEnum.Remove was removed but ignored
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 });

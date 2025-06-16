@@ -22,7 +22,7 @@ export function generateHash() {
 export function getTypeChangesAsText(changes: Changes) {
   const exportNames = Object.keys(changes);
 
-  let output = `❌ Type changes (${exportNames.length})\n${'─'.repeat(80)}`;
+  let output = `Type changes (${exportNames.length}) explained:\n${'─'.repeat(80)}`;
 
   exportNames.forEach((exportName, index) => {
     const change = changes[exportName];
@@ -33,8 +33,8 @@ export function getTypeChangesAsText(changes: Changes) {
     const prevText = change.prev.declarations?.[0]?.getText() || 'No declaration found';
     const currentText = change.current.declarations?.[0]?.getText() || 'No declaration found';
 
-    output += `\n  Previous:\n    ${prevText.replace(/\n/g, '\n    ')}`;
-    output += `\n  Current:\n    ${currentText.replace(/\n/g, '\n    ')}`;
+    output += `\n\n    Previous:\n      ${prevText.replace(/\n/g, '\n    ')}`;
+    output += `\n    Current:\n      ${currentText.replace(/\n/g, '\n    ')}`;
 
     if (index < exportNames.length - 1) {
       output += `\n  ${'─'.repeat(78)}`;
@@ -49,11 +49,11 @@ export function getTypeChangesAsText(changes: Changes) {
 export function getTypeRemovalsAsText(removals: Exports) {
   const exportNames = Object.keys(removals);
 
-  let output = `❌ Type removals (${exportNames.length})\n${'─'.repeat(80)}`;
+  let output = `Types removed (${exportNames.length}):\n${'─'.repeat(80)}\n`;
 
   output += exportNames.map((exportName) => `- ${exportName}`).join('\n');
 
-  output += `\n\n${'─'.repeat(80)}\n\n`;
+  output += `\n${'─'.repeat(80)}\n\n`;
 
   return output;
 }
@@ -61,11 +61,11 @@ export function getTypeRemovalsAsText(removals: Exports) {
 export function getTypeAdditionsAsText(additions: Exports) {
   const exportNames = Object.keys(additions);
 
-  let output = `✅ Type additions (${exportNames.length})\n${'─'.repeat(80)}`;
+  let output = `Types added (${exportNames.length}):\n${'─'.repeat(80)}\n`;
 
   output += exportNames.map((exportName) => `+ ${exportName}`).join('\n');
 
-  output += `\n\n${'─'.repeat(80)}\n\n`;
+  output += `\n${'─'.repeat(80)}\n\n`;
 
   return output;
 }

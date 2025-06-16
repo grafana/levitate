@@ -18,9 +18,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('REMOVING INTERFACE - removing a previously exported interface should trigger removal', () => {
@@ -34,9 +34,9 @@ describe('Compare interfaces', () => {
     const current = ``;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(4); // 1 for the interface, 3 for the properties
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(4); // 1 for the interface, 3 for the properties
   });
 
   test('NEW OPTIONAL VARIABLE - adding a new optional interface variable should trigger an addition', () => {
@@ -57,9 +57,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   // If there is a new variable introduced to the interface then any class already extending that interface can break
@@ -81,9 +81,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(1); // adding "four"
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(1);
+    expect(comparison).toHaveTypeAdditions(1); // adding "four"
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('REMOVING A VARIABLE - removing a interface variable should trigger a removal', () => {
@@ -102,9 +102,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(1);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(1);
   });
 
   test('MAKING VARIABLE OPTIONAL - making a variable optional should not breaking change', () => {
@@ -124,9 +124,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('MAKING VARIABLE NOT OPTIONAL - making a previously optional variable to be not optional should trigger a breaking change', () => {
@@ -146,9 +146,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(1);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   // In case a class is already extending this interface then it can break
@@ -176,9 +176,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(1);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('REMOVING METHOD - removing a method should trigger a removal', () => {
@@ -201,9 +201,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(1);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(1);
   });
 
   test('MAKING METHOD OPTIONAL - making a method optional should not trigger a breaking change', () => {
@@ -229,9 +229,9 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('MAKING METHOD NOT OPTIONAL - making a previously optional method to be not optional should trigger a breaking change', () => {
@@ -255,8 +255,8 @@ describe('Compare interfaces', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(1);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 });

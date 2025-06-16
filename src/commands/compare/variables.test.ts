@@ -6,9 +6,9 @@ describe('Compare variables', () => {
     const current = `export const foo: string;`;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('CHANGE VARIABLE VALUE - changing the value of a variable should trigger a breaking change', () => {
@@ -17,8 +17,8 @@ describe('Compare variables', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['foo']);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('CHANGE VARIABLE TYPE - changing the type of a variable should trigger a breaking change', () => {
@@ -27,8 +27,8 @@ describe('Compare variables', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['foo']);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('RENAMING VARIABLE - renaming a variable should trigger a removal', () => {
@@ -38,9 +38,9 @@ describe('Compare variables', () => {
     const current = ``;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(1);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(1);
   });
 
   test('NEW VARIABLE - adding a new variable should trigger an addition', () => {
@@ -53,8 +53,8 @@ describe('Compare variables', () => {
       `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 });

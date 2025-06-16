@@ -16,9 +16,9 @@ describe('Compare types', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('CHANGE TYPE - changing a type should trigger a breaking change', () => {
@@ -52,8 +52,8 @@ describe('Compare types', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['Foo', 'Bar']);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('ADDING OPTIONAL TYPE - adding a new optional type should not trigger an addition', () => {
@@ -72,9 +72,9 @@ describe('Compare types', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('REMOVING DECLARE - removing a declare should not trigger a removal', () => {
@@ -92,8 +92,8 @@ describe('Compare types', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 });
