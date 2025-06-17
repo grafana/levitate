@@ -12,9 +12,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it('REMOVE FUNCTION - removing a previously exported function should trigger a removal', () => {
@@ -27,9 +27,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(1);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(1);
   });
 
   it('NEW FUNCTION - adding a new exported function should trigger an addition', () => {
@@ -44,9 +44,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it("CHANGE RETURN VALUE - changing a function's return value type should trigger a breaking change", () => {
@@ -58,8 +58,8 @@ describe('Compare functions', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['foo']);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it("CHANGE ARGUMENT - changing a function's argument should trigger a breaking change", () => {
@@ -78,8 +78,8 @@ describe('Compare functions', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['foo', 'foo2', 'foo4']);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it('REMOVE ARGUMENT - removing any argument of a function should trigger a breaking change', () => {
@@ -92,8 +92,8 @@ describe('Compare functions', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['foo']);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it('NEW ARGUMENT - adding a new positional argument to a function should trigger a breaking change', () => {
@@ -105,9 +105,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(1);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(1);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it('NEW OPTIONAL ARGUMENT - adding a new optional positional argument to a function should not trigger a breaking change', () => {
@@ -119,9 +119,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it("REMOVING DECLARE from a parameter's type should not trigger a removal", () => {
@@ -147,9 +147,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it('Changing the name of a function parmeter should not trigger a breaking change', () => {
@@ -165,9 +165,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   it('Adding an optional parameter to a function should not trigger a breaking change', () => {
@@ -194,9 +194,9 @@ describe('Compare functions', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   describe('Arrow functions', () => {
@@ -217,9 +217,9 @@ describe('Compare functions', () => {
     `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
 
     it('Detects changes when a non-optional parameter is added', () => {
@@ -240,9 +240,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
 
     it('Detect changes when a parameter is removed', () => {
@@ -262,9 +262,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
 
     it('Detects changes when a parameter is made optional', () => {
@@ -284,9 +284,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
 
     it('Detects changes when a parameter name is changed (inline)', () => {
@@ -298,9 +298,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
   });
 
@@ -345,9 +345,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
 
     it('Detect changes when a parameter is removed', function () {
@@ -367,9 +367,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
 
     it('Detects changes when a parameter is made optional', function () {
@@ -389,9 +389,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
 
     it('Detects changes when a parameter name is changed', function () {
@@ -403,9 +403,9 @@ describe('Compare functions', () => {
       `;
       const comparison = testCompare(prev, current);
 
-      expect(Object.keys(comparison.changes).length).toBe(1);
-      expect(Object.keys(comparison.additions).length).toBe(0);
-      expect(Object.keys(comparison.removals).length).toBe(0);
+      expect(comparison).toHaveTypeChanges(1);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
     });
   });
 });

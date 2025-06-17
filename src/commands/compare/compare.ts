@@ -345,6 +345,22 @@ export function hasVariableChanged(prev: SymbolMeta, current: SymbolMeta) {
   const prevDeclaration = prev.symbol.declarations[0] as ts.VariableDeclaration;
   const currentDeclaration = current.symbol.declarations[0] as ts.VariableDeclaration;
 
+  // fix for false positive reports in multiple files
+  if (prevDeclaration?.type && currentDeclaration?.type) {
+    const checker = prev.program.getTypeChecker();
+    const prevType = checker.getTypeFromTypeNode(prevDeclaration.type);
+    const currentType = checker.getTypeFromTypeNode(currentDeclaration.type);
+
+    // First check if types are identical
+    if (checker.isTypeIdenticalTo(prevType, currentType)) {
+      return false;
+    }
+
+    // If not identical, check if current type is assignable to previous type
+    // This allows for more flexible type changes (e.g., adding optional properties)
+    return !checker.isTypeAssignableTo(currentType, prevType);
+  }
+
   const checker = prev.program.getTypeChecker();
   const prevType = checker.getTypeAtLocation(prevDeclaration);
   const currentType = checker.getTypeAtLocation(currentDeclaration);

@@ -8,9 +8,7 @@
     "outDir": "dist",
     "noUnusedLocals": true,
     "target": "ES2022",
-    "types": [
-      "vitest/globals"
-    ]
+    "types": ["vitest/globals", "./vitest.d.ts"]
   },
   "exclude": [
     "./dist",

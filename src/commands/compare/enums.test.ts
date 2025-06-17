@@ -18,9 +18,9 @@ describe('Compare enums', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('REMOVING ENUM - removing a previously exported enum should trigger a removal', () => {
@@ -34,9 +34,9 @@ describe('Compare enums', () => {
     const current = ``;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(4);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(4);
   });
 
   test('NEW VALUE - adding a new value to an enum should trigger an addition', () => {
@@ -57,9 +57,9 @@ describe('Compare enums', () => {
     `;
     const comparison = testCompare(prev, current);
 
-    expect(Object.keys(comparison.changes).length).toBe(0);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(0);
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(0);
   });
 
   test('REMOVING VALUE - removing an existing value from an enum should trigger a change and a removal', () => {
@@ -79,8 +79,8 @@ describe('Compare enums', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['SampleEnum']);
-    expect(Object.keys(comparison.additions).length).toBe(0);
-    expect(Object.keys(comparison.removals).length).toBe(1);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(1);
   });
 
   test('RENAMING VALUE - renaming an existing value in an enum should trigger a change, an addition and a removal', () => {
@@ -111,7 +111,7 @@ describe('Compare enums', () => {
     const comparison = testCompare(prev, current);
 
     expect(Object.keys(comparison.changes)).toEqual(['SampleEnum', 'AnotherEnum', 'AnotherEnum.two']);
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(1);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(1);
   });
 });

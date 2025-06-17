@@ -29,7 +29,7 @@ describe('Utils compare tests', () => {
     const ignoredExports = {};
 
     const comparison = compareExports(old, newFile, ignoredExports);
-    expect(Object.keys(comparison.changes).length).toBe(1);
+    expect(comparison).toHaveTypeChanges(1);
   });
 
   test('Edge case with props suffix renaming', async () => {
@@ -45,7 +45,16 @@ describe('Utils compare tests', () => {
     expect(Object.keys(comparison.changes)).toEqual(['VizRepeater.componentDidUpdate']);
 
     // these are real detections
-    expect(Object.keys(comparison.additions).length).toBe(1);
-    expect(Object.keys(comparison.removals).length).toBe(2);
+    expect(comparison).toHaveTypeAdditions(1);
+    expect(comparison).toHaveTypeRemovals(2);
+  });
+
+  test('multiple files should not report false positives', async () => {
+    const fixturePath = path.resolve(__dirname, '../../../fixtures/compare/multi-files/');
+    const current = path.resolve(fixturePath, 'current', 'index.d.ts');
+    const prev = path.resolve(fixturePath, 'previous', 'index.d.ts');
+    const ignoredExports = {};
+    const comparison = compareExports(prev, current, ignoredExports);
+    expect(comparison).toHaveTypeChanges(0);
   });
 });
