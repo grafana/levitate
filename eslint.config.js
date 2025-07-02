@@ -12,7 +12,7 @@ gitignoreConfig.ignores = [...gitignoreConfig.ignores, '**/fixtures', '.yarn/rel
 export default [
   gitignoreConfig,
   { files: ['**/*.{ts,tsx,js,jsx}'] },
-  grafanaConfig,
+  ...grafanaConfig,
   {
     plugins: {
       'no-only-tests': noOnlyTests,
