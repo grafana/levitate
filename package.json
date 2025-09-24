@@ -12,6 +12,7 @@
   "type": "module",
   "bin": "dist/bin.js",
   "publishConfig": {
+    "access": "public",
     "bin": {
       "levitate": "./dist/bin.js"
     }
