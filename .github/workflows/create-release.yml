@@ -16,14 +16,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - id: get-secrets
-        uses: grafana/shared-workflows/actions/get-vault-secrets@a37de51f3d713a30a9e4b21bcdfbd38170020593 # v1.3.0
-        with:
-          # Secrets placed in the ci/repo/grafana/levitate in vault
-          repo_secrets: |
-            NPM_TOKEN=npm_token:npm_token
-          export_env: false
-
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
@@ -42,9 +34,7 @@ jobs:
         run: yarn build
 
       - name: Publish
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ fromJSON(steps.get-secrets.outputs.secrets).NPM_TOKEN }}
+        run: npm publish
 
   create-github-release:
     name: Create GitHub Release
