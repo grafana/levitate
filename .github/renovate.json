@@ -3,6 +3,11 @@
   "extends": [
     "github>grafana/grafana-community-team//renovate/renovate"
   ],
+  "ignorePaths": [
+    "**/fixtures/**/package.json",
+    "**/tests/**/package.json",
+    "**/test/**/package.json"
+  ],
   "packageRules": [
     {
       "matchManagers": [
@@ -13,10 +18,27 @@
     },
     {
       "matchManagers": [
-        "gomod"
+        "npm"
       ],
-      "groupName": "Go dependencies",
-      "description": "Group all Go module dependencies together"
+      "matchPackagePatterns": [
+        "^typescript$",
+        "^@tsd/",
+        "^@types/"
+      ],
+      "groupName": "TypeScript and type definitions",
+      "description": "Group TypeScript and type definitions"
+    },
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "excludePackagePatterns": [
+        "^typescript$",
+        "^@tsd/",
+        "^@types/"
+      ],
+      "groupName": "npm dependencies",
+      "description": "Group all other npm dependencies"
     }
   ],
   "labels": [
