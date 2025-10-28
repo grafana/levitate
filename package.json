@@ -55,7 +55,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@grafana/eslint-config": "8.2.0",
+    "@grafana/eslint-config": "9.0.0",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.13.20",
     "@types/debug": "4.1.12",
