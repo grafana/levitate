@@ -57,7 +57,7 @@
   "devDependencies": {
     "@grafana/eslint-config": "9.0.0",
     "@swc-node/register": "1.11.1",
-    "@swc/core": "1.13.20",
+    "@swc/core": "1.13.21",
     "@types/debug": "4.1.12",
     "@types/diff": "8.0.0",
     "@types/node-fetch": "2.6.13",
@@ -68,15 +68,15 @@
     "eslint": "9.38.0",
     "eslint-config-flat-gitignore": "2.1.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-jsdoc": "61.1.7",
+    "eslint-plugin-jsdoc": "61.1.9",
     "eslint-plugin-no-only-tests": "3.3.0",
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "7.0.0",
+    "eslint-plugin-react-hooks": "7.0.1",
     "nodemon": "3.1.10",
     "npm-run-all2": "8.0.4",
     "prettier": "3.6.2",
-    "vitest": "4.0.2"
+    "vitest": "4.0.4"
   },
   "nodemonConfig": {
     "watch": [
