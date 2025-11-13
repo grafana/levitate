@@ -572,7 +572,7 @@ __metadata:
     ora: "npm:9.0.0"
     prettier: "npm:3.6.2"
     tar: "npm:^7.4.3"
-    tty-table: "npm:^4.1.5"
+    tty-table: "npm:^5.0.0"
     typescript: "npm:5.9.3"
     vitest: "npm:4.0.5"
     yargs: "npm:^18.0.0"
@@ -5541,9 +5541,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tty-table@npm:^4.1.5":
-  version: 4.2.3
-  resolution: "tty-table@npm:4.2.3"
+"tty-table@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "tty-table@npm:5.0.0"
   dependencies:
     chalk: "npm:^4.1.2"
     csv: "npm:^5.5.3"
@@ -5554,7 +5554,7 @@ __metadata:
     yargs: "npm:^17.7.1"
   bin:
     tty-table: adapters/terminal-adapter.js
-  checksum: 10c0/408b75693a2b0bae8cd27940c42d9cd29539deb01d90314e708f34f49c80697a3bf55bf5573f02a8aa6dc3ddee78b9e1bcf9ae986d1ec77896ae1d0bd5efb071
+  checksum: 10c0/fa54cee2b2da662ffce0b3d939a63ae73f043511935a6cf918b1ce08f671e0e58179f091945a2e7120f6f301b5971f842f72646615caec0fc210436726e65fdc
   languageName: node
   linkType: hard
 
