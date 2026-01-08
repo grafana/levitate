@@ -62,7 +62,7 @@
     "@types/diff": "8.0.0",
     "@types/node-fetch": "2.6.13",
     "@types/tar": "6.1.13",
-    "@types/yargs": "17.0.34",
+    "@types/yargs": "17.0.35",
     "@typescript-eslint/eslint-plugin": "8.51.0",
     "@typescript-eslint/parser": "8.51.0",
     "eslint": "9.39.2",
