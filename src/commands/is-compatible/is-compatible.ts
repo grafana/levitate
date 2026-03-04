@@ -57,7 +57,7 @@ export async function isCompatible(
       if (incompatibilities.length > 0 && options.printIncompatibilities) {
         isPathCompatible = false;
         logInfo(chalk.yellow(`\nComparing ${pkgFrom} to ${pkgTo}`));
-        printIncompatibilities(incompatibilities, { markdown: options.markdown });
+        printIncompatibilities(incompatibilities, { markdown: options.markdown }, pkgFrom, pkgTo);
       }
     } catch (e) {
       logError('Could not process the package ' + pkg.name);
