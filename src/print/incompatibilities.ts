@@ -11,7 +11,9 @@ export function printIncompatibilities(
     markdown = false,
   }: {
     markdown?: boolean;
-  } = {}
+  } = {},
+  pkgFrom: string,
+  pkgTo: string
 ) {
   const count = Object.keys(incompatibilities).length;
   printSpacing(1);
@@ -42,19 +44,19 @@ export function printIncompatibilities(
   }
 
   for (const item of changes) {
+    logInfo(
+      chalk.white(counter + ')'),
+      chalk.yellow('Changed'),
+      chalk.cyan.bold('`' + item.name + '`'),
+      'used in',
+      '`' +
+        chalk.white(item.sourceFile.fileName) +
+        ':' +
+        chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1) +
+        '`'
+    );
     const detail = getIncompatibilityDescription(item);
     if (detail !== '') {
-      logInfo(
-        chalk.white(counter + ')'),
-        chalk.yellow('Changed'),
-        chalk.cyan.bold('`' + item.name + '`'),
-        'used in',
-        '`' +
-          chalk.white(item.sourceFile.fileName) +
-          ':' +
-          chalk.gray(ts.getLineAndCharacterOfPosition(item.sourceFile, item.codeIdentifier.getStart()).line + 1) +
-          '`'
-      );
       if (markdown) {
         logInfo('```diff');
       }
@@ -62,8 +64,13 @@ export function printIncompatibilities(
       if (markdown) {
         logInfo('```');
       }
-      counter++;
+    } else {
+      logInfo(
+        chalk.white('\tTo get more details run '),
+        chalk.cyan.bold(`\`npx @grafana/levitate@latest compare --prev ${pkgFrom} --current ${pkgTo} --json\``)
+      );
     }
+    counter++;
   }
 }
 
