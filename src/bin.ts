@@ -19,6 +19,19 @@ import { forceDebugExit } from './utils/debug.js';
 import { readLevignoreFile } from './utils.js';
 import { printJsonComparison } from './print/comparison-json.js';
 
+/**
+ * Exit with code, flushing stdout/stderr first when exiting with failure.
+ * In CI (non-TTY), Node buffers output; process.exit() can terminate before
+ * the buffer is flushed, so the job fails with no visible output.
+ */
+function flushAndExit(code: number): void {
+  if (code === 0) {
+    exit(code);
+  }
+  // Defer exit one tick so buffered stdout/stderr can flush (fixes "fail with no output" in CI)
+  setImmediate(() => exit(code));
+}
+
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
 if (process.env.DEBUG) {
   forceDebugExit();
@@ -70,7 +83,7 @@ yargs
           logError(chalk.bgRed.bold.white(' ERROR '));
           logError('Missing arguments. Please make sure to provide both the --prev and --current options.\n');
           yargs.showHelp();
-          exit(1);
+          flushAndExit(1);
         }
 
         if (json) {
@@ -91,14 +104,14 @@ yargs
         }
 
         if (isBreaking) {
-          exit(1);
+          flushAndExit(1);
         }
       } catch (e) {
         logInfo('');
         logInfo(chalk.bgRed.bold.white(' ERROR '));
         logInfo(e);
 
-        exit(1);
+        flushAndExit(1);
       }
     }
   )
@@ -157,7 +170,7 @@ yargs
           logInfo(
             '\nIf you think the compatibility issues are not a problem (e.g. only type changes), it is adviced to update the target list of packages to their latest version in your project.'
           );
-          exit(1);
+          flushAndExit(1);
         }
       } catch (e) {
         logError(chalk.bgRed.bold.white(' ERROR '));
@@ -169,7 +182,7 @@ yargs
         } else {
           logError(e.message);
         }
-        exit(1);
+        flushAndExit(1);
       }
     }
   )
@@ -256,6 +269,6 @@ yargs
   .command('$0', 'default command', (argv) => {
     logError(chalk.red('Unknown command:', chalk.blue(argv.argv['_'][0])));
     logInfo('Try running levitate with --help to see available commands.');
-    exit(1);
+    flushAndExit(1);
   })
   .help().argv;
