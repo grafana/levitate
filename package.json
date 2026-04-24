@@ -48,7 +48,7 @@
     "execa": "^9.5.3",
     "fast-glob": "^3.3.2",
     "node-fetch": "^3.3.2",
-    "ora": "9.0.0",
+    "ora": "9.3.0",
     "tar": "^7.4.3",
     "tty-table": "^5.0.0",
     "typescript": "5.9.3",
@@ -65,18 +65,18 @@
     "@types/yargs": "17.0.35",
     "@typescript-eslint/eslint-plugin": "8.51.0",
     "@typescript-eslint/parser": "8.51.0",
-    "eslint": "9.39.2",
-    "eslint-config-flat-gitignore": "2.1.0",
+    "eslint": "9.39.4",
+    "eslint-config-flat-gitignore": "2.3.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-jsdoc": "61.5.0",
+    "eslint-plugin-jsdoc": "61.7.1",
     "eslint-plugin-no-only-tests": "3.3.0",
-    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
-    "nodemon": "3.1.11",
+    "nodemon": "3.1.14",
     "npm-run-all2": "8.0.4",
     "prettier": "3.7.4",
-    "vitest": "4.0.16"
+    "vitest": "4.1.4"
   },
   "nodemonConfig": {
     "watch": [
