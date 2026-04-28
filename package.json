@@ -21,7 +21,7 @@
     "dist"
   ],
   "scripts": {
-    "setup-fixtures": "find ./fixtures -name package.json -not -path '*/node_modules/*' -execdir yarn install \\;",
+    "setup-fixtures": "find ./fixtures -name _package.json -not -path '*/node_modules/*' -execdir bash -c 'cp _package.json package.json && touch yarn.lock && yarn install' \\;",
     "test": "yarn setup-fixtures && yarn build && LEVITATE_SILENT=true yarn vitest",
     "test:ci": "yarn test run",
     "build": "tsc && chmod +x ./dist/bin.js",
