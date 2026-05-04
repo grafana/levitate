@@ -14,3 +14,9 @@ tmp
 **/.pnp.*
 
 .context
+
+# Fixture install artifacts. The committed `_package.json` files are copied to
+# `package.json` by `yarn setup-fixtures` so security scanners don't flag
+# transitive deps inside fixtures.
+fixtures/**/package.json
+fixtures/**/yarn.lock
