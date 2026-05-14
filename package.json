@@ -48,7 +48,7 @@
     "execa": "^9.5.3",
     "fast-glob": "^3.3.2",
     "node-fetch": "^3.3.2",
-    "ora": "9.3.0",
+    "ora": "9.4.0",
     "tar": "^7.4.3",
     "tty-table": "^5.0.0",
     "typescript": "5.9.3",
@@ -57,26 +57,26 @@
   "devDependencies": {
     "@grafana/eslint-config": "9.0.0",
     "@swc-node/register": "1.11.1",
-    "@swc/core": "1.15.8",
+    "@swc/core": "1.15.33",
     "@types/debug": "4.1.12",
     "@types/diff": "8.0.0",
     "@types/node-fetch": "2.6.13",
     "@types/tar": "6.1.13",
     "@types/yargs": "17.0.35",
-    "@typescript-eslint/eslint-plugin": "8.51.0",
-    "@typescript-eslint/parser": "8.51.0",
+    "@typescript-eslint/eslint-plugin": "8.59.3",
+    "@typescript-eslint/parser": "8.59.3",
     "eslint": "9.39.4",
     "eslint-config-flat-gitignore": "2.3.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-jsdoc": "61.7.1",
-    "eslint-plugin-no-only-tests": "3.3.0",
+    "eslint-plugin-no-only-tests": "3.4.0",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-hooks": "7.1.1",
     "nodemon": "3.1.14",
     "npm-run-all2": "8.0.4",
-    "prettier": "3.7.4",
-    "vitest": "4.1.4"
+    "prettier": "3.8.3",
+    "vitest": "4.1.6"
   },
   "nodemonConfig": {
     "watch": [
@@ -101,5 +101,5 @@
     "url": "https://github.com/grafana/levitate/issues"
   },
   "homepage": "https://github.com/grafana/levitate#readme",
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.14.1"
 }
