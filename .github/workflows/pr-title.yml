@@ -22,19 +22,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          types: |
-            feat
-            fix
-            perf
-            revert
-            chore
-            docs
-            style
-            refactor
-            test
-            build
-            ci
-          requireScope: false
           subjectPattern: ^(?![A-Z]).+$
           subjectPatternError: |
             The subject "{subject}" found in the pull request title "{title}"
