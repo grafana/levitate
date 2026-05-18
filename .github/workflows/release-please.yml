@@ -1,6 +1,6 @@
 name: Release Please
 
-on: # zizmor: ignore[cache-poisoning]
+on:
   push:
     branches:
       - main
@@ -50,7 +50,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'yarn'
+          package-manager-cache: false
 
       - name: Install dependencies
         if: ${{ steps.release.outputs.release_created }}
