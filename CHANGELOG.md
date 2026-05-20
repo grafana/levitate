@@ -2,8 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-
 ## [0.4.4] - 2022-08-25
 
 - Detect changes in function parameters direct dependencies. Note: this won't work with more parameter types. [137](https://github.com/grafana/levitate/pull/137)
