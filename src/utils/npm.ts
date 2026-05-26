@@ -1,4 +1,3 @@
-import { execa } from 'execa';
 import fs from 'fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
@@ -6,6 +5,7 @@ import path, { dirname } from 'path';
 import { extract } from 'tar/x';
 import os from 'os';
 import { NpmList, PackageWithVersion } from '../types.js';
+import { run } from './exec.js';
 import { pathExists } from './file.js';
 import { failSpinner, setSpinner, startSpinner, succeedSpinner } from './spinner.js';
 import { logDebug, logInfo } from './log.js';
@@ -72,8 +72,8 @@ export async function installNpmPackage(packageName: string) {
 
   try {
     process.chdir(tmpPackageFolder);
-    await execa('npm', ['init', '-y'], { nodePath: tmpPackageFolder });
-    await execa('npm', ['install', packageName], { nodePath: tmpPackageFolder });
+    await run('npm', ['init', '-y'], { cwd: tmpPackageFolder });
+    await run('npm', ['install', packageName], { cwd: tmpPackageFolder });
   } catch (error) {
     failSpinner(packageName, `Failed installing ${packageName}`);
   }
@@ -94,7 +94,7 @@ export async function removeTmpFolder(packageName: string) {
 
   // remove existing tmp files unless we are caching
   if (!shouldCacheExternal) {
-    await execa('rm', ['-rf', tmpPackageFolder]);
+    await fs.promises.rm(tmpPackageFolder, { recursive: true, force: true });
   }
 }
 
@@ -160,7 +160,7 @@ export async function downloadNpmPackageAsTarball(packageName: string) {
 export async function getPackageTarBallUrl(packageName: string) {
   setSpinner(packageName, `Fetching package tarball for ${packageName}`);
 
-  const { stdout } = await execa('npm', ['view', packageName, 'dist.tarball']);
+  const { stdout } = await run('npm', ['view', packageName, 'dist.tarball']);
 
   return stdout;
 }
@@ -211,7 +211,7 @@ export async function getNpmPackageDetails(
   version: string;
   _id: string;
 } | void> {
-  const result = await execa('npm', ['view', `${packageName}@${version}`, '--json']);
+  const result = await run('npm', ['view', `${packageName}@${version}`, '--json']);
   try {
     const details = JSON.parse(result.stdout);
     return details;
@@ -228,12 +228,11 @@ export async function getNpmPackageDetails(
 export async function getNpmPackageVersionFromProjectPath(path: string, pkgName: string): Promise<string | void> {
   let listJson = '';
   try {
-    const result = await execa('npm', ['list', '--json', '--depth', '0'], { cwd: dirname(path) });
+    const result = await run('npm', ['list', '--json', '--depth', '0'], { cwd: dirname(path) });
     listJson = result.stdout;
   } catch (e) {
-    //sometimes npm list fails with a parsing error
-    //but still returns valid json in the stdout.
-    listJson = e.stdout;
+    // sometimes npm list fails with a non-zero exit but still produces valid JSON on stdout
+    listJson = e.stdout ?? '';
   }
   try {
     const pkgInfo = JSON.parse(listJson) as NpmList;
