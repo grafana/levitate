@@ -10,6 +10,9 @@
   },
   "types": "dist/index.d.ts",
   "type": "module",
+  "engines": {
+    "node": ">=18.19"
+  },
   "bin": "dist/bin.js",
   "publishConfig": {
     "access": "public",
@@ -49,7 +52,6 @@
     "debug": "^4.3.2",
     "diff": "^8.0.0",
     "execa": "^9.5.3",
-    "node-fetch": "^3.3.2",
     "ora": "9.3.0",
     "tar": "^7.4.3",
     "tty-table": "^5.0.0",

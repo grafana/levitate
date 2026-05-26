@@ -1,6 +1,7 @@
 import { execa } from 'execa';
 import fs from 'fs';
-import fetch from 'node-fetch';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import path, { dirname } from 'path';
 import { extract } from 'tar/x';
 import os from 'os';
@@ -166,13 +167,10 @@ export async function getPackageTarBallUrl(packageName: string) {
 
 export async function downloadFile(url: string, path: string) {
   const res = await fetch(url);
-  const fileStream = fs.createWriteStream(path);
-
-  await new Promise((resolve, reject) => {
-    res.body.pipe(fileStream);
-    res.body.on('error', reject);
-    fileStream.on('finish', () => resolve(undefined));
-  });
+  if (!res.ok || !res.body) {
+    throw new Error(`Failed to download ${url}: ${res.status} ${res.statusText}`);
+  }
+  await pipeline(Readable.fromWeb(res.body), fs.createWriteStream(path));
 }
 
 export function getPackageJsonPath(packagePath: string): string {
