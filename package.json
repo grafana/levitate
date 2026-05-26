@@ -45,7 +45,6 @@
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stylistic/eslint-plugin-ts": "^4.2.0",
     "@tsd/typescript": "^5.6.2",
     "@types/node": "^24.0.1",
     "chalk": "^5.0.0",
@@ -59,6 +58,7 @@
   },
   "devDependencies": {
     "@grafana/eslint-config": "9.0.0",
+    "@stylistic/eslint-plugin-ts": "^4.2.0",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",
     "@types/debug": "4.1.12",
