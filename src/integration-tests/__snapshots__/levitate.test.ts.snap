@@ -1,0 +1,271 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Levitate > CLI surface (snapshots) > --help output > compare --help 1`] = `
+"levitate compare
+
+Compares the exports of packages.
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --prev     Previous package version - a name of an NPM package, a URL to a tar
+             ball or a local path pointing to a package directory or a single
+             file. (In case it is a directory make sure it contains an
+             \`index.d.ts\` type definition file.)
+                                             [string] [required] [default: null]
+  --current  Current package version - a name of an NPM package, a URL to a tar
+             ball or a local path pointing to a package directory or a single
+             file. (In case it is a directory make sure it contains an
+             \`index.d.ts\` type definition file.)
+                                             [string] [required] [default: null]
+  --json     Outputs a JSON string representation of the compatibility report.
+                                                      [boolean] [default: false]"
+`;
+
+exports[`Levitate > CLI surface (snapshots) > --help output > is-compatible --help 1`] = `
+"levitate is-compatible
+
+Checks for incompatibilities between the passed path and modules. It uses the
+modules versions extracted from npm list to compare.
+
+Options:
+  --version   Show version number                                      [boolean]
+  --help      Show help                                                [boolean]
+  --target    The target packages with versions to check compatibility. Comma
+              separated. e.g.: @grafana/data@latest,@grafana/ui@9.0.3
+                                                             [string] [required]
+  --path      Path to your module file to check. If this module imports other
+              modules, they'll be checked too.".             [string] [required]
+  --force     Force the check even if the target package is not installed.
+                                                      [boolean] [default: false]
+  --markdown  Output the result in a markdown-friendly format.
+                                                      [boolean] [default: false]"
+`;
+
+exports[`Levitate > CLI surface (snapshots) > --help output > list-exports --help 1`] = `
+"levitate list-exports
+
+Lists exported members of a TypeScript module.
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --path     Path to a root module file.     [string] [required] [default: null]"
+`;
+
+exports[`Levitate > CLI surface (snapshots) > --help output > list-imports --help 1`] = `
+"levitate list-imports
+
+Lists imports used by a TypeScript module.
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --path     Path to a root module file.     [string] [required] [default: null]
+  --verbose  Displays all occurances of an import if used.
+                                                      [boolean] [default: false]
+  --json     Prints a verbose list including occurances as a valid JSON string
+             representation.                          [boolean] [default: false]
+  --filters  A white-space separated list of package names to return import
+             information for.                                            [array]"
+`;
+
+exports[`Levitate > CLI surface (snapshots) > --help output > top-level --help 1`] = `
+"Try running levitate with --help to see available commands.
+levitate <cmd> [args]
+
+Commands:
+  levitate compare        Compares the exports of packages.
+  levitate is-compatible  Checks for incompatibilities between the passed path
+                          and modules. It uses the modules versions extracted
+                          from npm list to compare.
+  levitate list-imports   Lists imports used by a TypeScript module.
+  levitate list-exports   Lists exported members of a TypeScript module.
+  levitate                default command                              [default]
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]"
+`;
+
+exports[`Levitate > CLI surface (snapshots) > Missing required flags > compare with no flags 1`] = `
+{
+  "stderr": "levitate compare
+
+Compares the exports of packages.
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --prev     Previous package version - a name of an NPM package, a URL to a tar
+             ball or a local path pointing to a package directory or a single
+             file. (In case it is a directory make sure it contains an
+             \`index.d.ts\` type definition file.)
+                                             [string] [required] [default: null]
+  --current  Current package version - a name of an NPM package, a URL to a tar
+             ball or a local path pointing to a package directory or a single
+             file. (In case it is a directory make sure it contains an
+             \`index.d.ts\` type definition file.)
+                                             [string] [required] [default: null]
+  --json     Outputs a JSON string representation of the compatibility report.
+                                                      [boolean] [default: false]",
+  "stdout": "
+
+ ERROR 
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[1]" argument must be of type string. Received null
+    at Object.resolve (node:path:1257:7)
+    at resolvePackage (file://<REPO>/dist/utils/npm.js:23:28)
+    at Object.handler (file://<REPO>/dist/bin.js:81:40) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}",
+}
+`;
+
+exports[`Levitate > CLI surface (snapshots) > Missing required flags > compare with only --prev 1`] = `
+{
+  "stderr": "levitate compare
+
+Compares the exports of packages.
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --prev     Previous package version - a name of an NPM package, a URL to a tar
+             ball or a local path pointing to a package directory or a single
+             file. (In case it is a directory make sure it contains an
+             \`index.d.ts\` type definition file.)
+                                             [string] [required] [default: null]
+  --current  Current package version - a name of an NPM package, a URL to a tar
+             ball or a local path pointing to a package directory or a single
+             file. (In case it is a directory make sure it contains an
+             \`index.d.ts\` type definition file.)
+                                             [string] [required] [default: null]
+  --json     Outputs a JSON string representation of the compatibility report.
+                                                      [boolean] [default: false]",
+  "stdout": "",
+}
+`;
+
+exports[`Levitate > CLI surface (snapshots) > Missing required flags > is-compatible with no flags 1`] = `
+{
+  "stderr": "levitate is-compatible
+
+Checks for incompatibilities between the passed path and modules. It uses the
+modules versions extracted from npm list to compare.
+
+Options:
+  --version   Show version number                                      [boolean]
+  --help      Show help                                                [boolean]
+  --target    The target packages with versions to check compatibility. Comma
+              separated. e.g.: @grafana/data@latest,@grafana/ui@9.0.3
+                                                             [string] [required]
+  --path      Path to your module file to check. If this module imports other
+              modules, they'll be checked too.".             [string] [required]
+  --force     Force the check even if the target package is not installed.
+                                                      [boolean] [default: false]
+  --markdown  Output the result in a markdown-friendly format.
+                                                      [boolean] [default: false]
+
+Missing required arguments: target, path",
+  "stdout": "",
+}
+`;
+
+exports[`Levitate > CLI surface (snapshots) > Missing required flags > list-exports with no flags 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "levitate list-exports
+
+Lists exported members of a TypeScript module.
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --path     Path to a root module file.     [string] [required] [default: null]
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[1]" argument must be of type string. Received null
+    at Object.resolve (node:path:1257:7)
+    at resolvePackage (file://<REPO>/dist/utils/npm.js:23:28)
+    at Object.handler (file://<REPO>/dist/bin.js:227:32)
+    at file://<REPO>/node_modules/yargs/build/lib/command.js:245:54
+    at maybeAsyncResult (file://<REPO>/node_modules/yargs/build/lib/utils/maybe-async-result.js:9:15)
+    at CommandInstance.handleValidationAndGetResult (file://<REPO>/node_modules/yargs/build/lib/command.js:244:25)
+    at CommandInstance.applyMiddlewareAndGetResult (file://<REPO>/node_modules/yargs/build/lib/command.js:284:20)
+    at CommandInstance.runCommand (file://<REPO>/node_modules/yargs/build/lib/command.js:167:20)
+    at [runYargsParserAndExecuteCommands] (file://<REPO>/node_modules/yargs/build/lib/yargs-factory.js:1389:105)
+    at YargsInstance.parse (file://<REPO>/node_modules/yargs/build/lib/yargs-factory.js:704:63) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}",
+  "stdout": "",
+}
+`;
+
+exports[`Levitate > CLI surface (snapshots) > Missing required flags > list-imports with no flags 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "levitate list-imports
+
+Lists imports used by a TypeScript module.
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --path     Path to a root module file.     [string] [required] [default: null]
+  --verbose  Displays all occurances of an import if used.
+                                                      [boolean] [default: false]
+  --json     Prints a verbose list including occurances as a valid JSON string
+             representation.                          [boolean] [default: false]
+  --filters  A white-space separated list of package names to return import
+             information for.                                            [array]",
+  "stdout": "",
+}
+`;
+
+exports[`Levitate > CLI surface (snapshots) > Unknown command and bad input > no arguments at all 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "",
+  "stdout": "Try running levitate with --help to see available commands.",
+}
+`;
+
+exports[`Levitate > CLI surface (snapshots) > Unknown command and bad input > unknown subcommand 1`] = `
+{
+  "stderr": "",
+  "stdout": "Try running levitate with --help to see available commands.",
+}
+`;
+
+exports[`Levitate > CLI surface (snapshots) > list-imports flag handling > multiple --filters values (space-separated) 1`] = `
+"
+@grafana/data (11 imports)
+===============================
+	 DataQuery (1 occurances)
+	 DataSourceJsonData (1 occurances)
+	 DataQueryRequest (1 occurances)
+	 DataQueryResponse (1 occurances)
+	 DataSourceApi (1 occurances)
+	 DataSourceInstanceSettings (1 occurances)
+	 MutableDataFrame (1 occurances)
+	 FieldType (1 occurances)
+	 DataSourcePluginOptionsEditorProps (1 occurances)
+	 QueryEditorProps (1 occurances)
+	 DataSourcePlugin (1 occurances)
+
+@grafana/ui (4 imports)
+===============================
+	 Input (2 occurances)
+	 Field (2 occurances)
+	 Form (1 occurances)
+	 Button (1 occurances)"
+`;
+
+exports[`Levitate > CLI surface (snapshots) > list-imports flag handling > single --filters value 1`] = `
+"
+@grafana/ui (4 imports)
+===============================
+	 Input (2 occurances)
+	 Field (2 occurances)
+	 Form (1 occurances)
+	 Button (1 occurances)"
+`;
