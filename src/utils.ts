@@ -3,14 +3,6 @@ import path from 'path';
 import os from 'os';
 import { IgnoreExportChanges } from './types.js';
 
-export function pathExists(path: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    fs.access(path, fs.constants.R_OK, (err) => {
-      resolve(!err);
-    });
-  });
-}
-
 /**
  * The  format of a levignore.js file is:
  *
