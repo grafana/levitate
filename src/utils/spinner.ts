@@ -1,7 +1,7 @@
-import ora, { type Ora } from 'ora';
+import yoctoSpinner, { type Spinner } from 'yocto-spinner';
 import { isSilent } from './log.js';
 
-const SPINNERS: Record<string, Ora> = {};
+const SPINNERS: Record<string, Spinner> = {};
 
 export function startSpinner(name: string) {
   if (isSilent()) {
@@ -24,7 +24,7 @@ export function succeedSpinner(name: string, msg: string) {
     return;
   }
 
-  getSpinner(name).succeed(msg);
+  getSpinner(name).success(msg);
 }
 
 export function failSpinner(name: string, msg: string) {
@@ -32,12 +32,12 @@ export function failSpinner(name: string, msg: string) {
     return;
   }
 
-  getSpinner(name).fail(msg);
+  getSpinner(name).error(msg);
 }
 
-function getSpinner(name: string): Ora {
+function getSpinner(name: string): Spinner {
   if (!SPINNERS[name]) {
-    SPINNERS[name] = ora();
+    SPINNERS[name] = yoctoSpinner({ text: name });
   }
 
   return SPINNERS[name];

@@ -50,11 +50,11 @@
     "chalk": "^5.0.0",
     "debug": "^4.3.2",
     "diff": "^8.0.0",
-    "ora": "9.3.0",
     "tar": "^7.4.3",
     "tty-table": "^5.0.0",
     "typescript": "5.9.3",
-    "yargs": "^18.0.0"
+    "yargs": "^18.0.0",
+    "yocto-spinner": "^1.2.0"
   },
   "devDependencies": {
     "@grafana/eslint-config": "9.0.0",
