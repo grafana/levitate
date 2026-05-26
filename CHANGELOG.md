@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.17.3](https://github.com/grafana/levitate/compare/v0.17.2...v0.17.3) (2026-05-26)
+
+
+### Bug Fixes
+
+* adds changes even when detail is empty ([#1021](https://github.com/grafana/levitate/issues/1021)) ([42a5b5d](https://github.com/grafana/levitate/commit/42a5b5d73fa115a145b944320561412dd3dcd7e9))
+* **deps:** update dependency tty-table to v5 ([#1003](https://github.com/grafana/levitate/issues/1003)) ([de249ed](https://github.com/grafana/levitate/commit/de249edb6edf58803a29fc036537d855125ae800))
+* **deps:** update mature, high-confidence npm dependencies ([#1025](https://github.com/grafana/levitate/issues/1025)) ([17e9768](https://github.com/grafana/levitate/commit/17e9768e437759d4667a82cc33fa875f64c92f25))
+* flush stdout/stderr before exit in CI to prevent lost output ([#1022](https://github.com/grafana/levitate/issues/1022)) ([1a88dc2](https://github.com/grafana/levitate/commit/1a88dc21c889ad9b344363c96dc51f440014d9ca))
+* **release-please:** drop component prefix from tag name ([#1034](https://github.com/grafana/levitate/issues/1034)) ([544cb69](https://github.com/grafana/levitate/commit/544cb69d37f8d597c092564813a441b7e4b6ae43))
+
 ## [0.4.4] - 2022-08-25
 
 - Detect changes in function parameters direct dependencies. Note: this won't work with more parameter types. [137](https://github.com/grafana/levitate/pull/137)
