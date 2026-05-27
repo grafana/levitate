@@ -14,7 +14,7 @@ import { printExports } from './print/exports.js';
 import { areChangesBreaking, compareExports } from './commands/compare/compare.js';
 import { printComparison } from './print/comparison.js';
 import { isCompatible } from './commands/is-compatible/is-compatible.js';
-import { logError, logInfo } from './utils/log.js';
+import { logError, logInfo, isDebugEnabled } from './utils/log.js';
 import { forceDebugExit } from './utils/debug.js';
 import { readLevignoreFile } from './utils.js';
 import { printJsonComparison } from './print/comparison-json.js';
@@ -33,7 +33,7 @@ function flushAndExit(code: number): void {
 }
 
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
-if (process.env.DEBUG) {
+if (isDebugEnabled()) {
   forceDebugExit();
 }
 
@@ -174,7 +174,7 @@ yargs
         }
       } catch (e) {
         logError(chalk.bgRed.bold.white(' ERROR '));
-        if (process.env.DEBUG) {
+        if (isDebugEnabled()) {
           logError(e);
         } else if (e.code === 'ENOENT') {
           logError('path:', path);

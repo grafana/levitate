@@ -93,7 +93,7 @@ Levitate consists of two commands _compare_ and _list-imports_. Developing again
 
 ### Environment variables
 
-- Use `DEBUG=*` to display debugging messages
+- Use `NODE_DEBUG=levitate` to display debugging messages
 - Use `LEVITATE_CACHE=1` to re-use downloaded npm packages.
 
 ### Run with swc-node for faster iteration

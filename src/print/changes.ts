@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import Table from 'tty-table';
+import Table from 'cli-table3';
 import ts from '@tsd/typescript';
 import { Changes } from '../types.js';
 import { getSymbolDiff } from '../utils/diff.js';
@@ -17,36 +17,34 @@ export function printChanges(changes: Changes, prevProgram: ts.Program, currentP
     return;
   }
 
-  const table = Table(
-    [
-      { value: 'Property', width: 30, align: 'left', headerAlign: 'left' },
-      { value: 'Location', width: 40, align: 'left', headerAlign: 'left' },
-      { value: 'Diff', width: 90, align: 'left', headerAlign: 'left' },
-    ],
-    // @ts-ignore
-    [
-      ...Object.keys(changes).map((name) => {
-        const diff = getSymbolDiff({
-          prev: {
-            key: name,
-            symbol: changes[name].prev,
-            program: prevProgram,
-          },
-          current: {
-            key: name,
-            symbol: changes[name].current,
-            program: currentProgram,
-          },
-        });
+  const table = new Table({
+    head: ['Property', 'Location', 'Diff'],
+    colWidths: [30, 40, 90],
+    wordWrap: true,
+    wrapOnWordBoundary: false,
+    style: { head: [], border: [] },
+  });
 
-        return [
-          chalk.yellow.bold(name),
-          chalk.white(changes[name].current.declarations[0].getSourceFile().fileName),
-          diff,
-        ];
-      }),
-    ]
-  );
+  Object.keys(changes).forEach((name) => {
+    const diff = getSymbolDiff({
+      prev: {
+        key: name,
+        symbol: changes[name].prev,
+        program: prevProgram,
+      },
+      current: {
+        key: name,
+        symbol: changes[name].current,
+        program: currentProgram,
+      },
+    });
 
-  logInfo(table.render());
+    table.push([
+      chalk.yellow.bold(name),
+      chalk.white(changes[name].current.declarations[0].getSourceFile().fileName),
+      diff,
+    ]);
+  });
+
+  logInfo(table.toString());
 }
