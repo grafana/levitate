@@ -28,6 +28,9 @@ jobs:
       - name: Lint files
         run: yarn lint
 
+      - name: Run knip
+        run: yarn knip:ci
+
       - name: Run tests
         run: yarn test:ci
 

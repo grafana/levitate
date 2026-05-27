@@ -15,7 +15,7 @@ export function generateTmpFileWithContent(content: string) {
   return filename;
 }
 
-export function generateHash() {
+function generateHash() {
   return (Math.random() + 1).toString(36).substring(2);
 }
 
@@ -69,4 +69,3 @@ export function getTypeAdditionsAsText(additions: Exports) {
 
   return output;
 }
-

@@ -20,3 +20,5 @@ tmp
 # transitive deps inside fixtures.
 fixtures/**/package.json
 fixtures/**/yarn.lock
+
+.claude/docs
