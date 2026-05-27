@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import Table from 'tty-table';
+import Table from 'cli-table3';
 import { Exports } from '../types.js';
 import { logInfo } from '../utils/log.js';
 import { printHeading, printSpacing } from './utils.js';
@@ -15,21 +15,21 @@ export function printRemovals(removals: Exports) {
     return;
   }
 
-  const table = Table(
-    [
-      { value: 'Property', width: 30, align: 'left', headerAlign: 'left' },
-      { value: 'Previous location', width: 40, align: 'left', headerAlign: 'left' },
-      { value: 'Declaration', width: 90, align: 'left', headerAlign: 'left' },
-    ],
-    // @ts-ignore
-    [
-      ...Object.keys(removals).map((name) => [
-        chalk.red.bold(name),
-        chalk.white(removals[name].declarations[0].getSourceFile().fileName),
-        chalk.gray(removals[name].declarations[0].getText()),
-      ]),
-    ]
-  );
+  const table = new Table({
+    head: ['Property', 'Previous location', 'Declaration'],
+    colWidths: [30, 40, 90],
+    wordWrap: true,
+    wrapOnWordBoundary: false,
+    style: { head: [], border: [] },
+  });
 
-  logInfo(table.render());
+  Object.keys(removals).forEach((name) => {
+    table.push([
+      chalk.red.bold(name),
+      chalk.white(removals[name].declarations[0].getSourceFile().fileName),
+      chalk.gray(removals[name].declarations[0].getText()),
+    ]);
+  });
+
+  logInfo(table.toString());
 }
