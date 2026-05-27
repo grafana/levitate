@@ -113,9 +113,9 @@ Options:
 
  ERROR 
 TypeError [ERR_INVALID_ARG_TYPE]: The "paths[1]" argument must be of type string. Received null
-    at Object.resolve (node:path:1257:7)
-    at resolvePackage (file://<REPO>/dist/utils/npm.js:23:28)
-    at Object.handler (file://<REPO>/dist/bin.js:81:40) {
+    at Object.resolve (node:path:<LINE>:<COL>)
+    at resolvePackage (file://<REPO>/dist/utils/npm.js:<LINE>:<COL>)
+    at Object.handler (file://<REPO>/dist/bin.js:<LINE>:<COL>) {
   code: 'ERR_INVALID_ARG_TYPE'
 }",
 }
@@ -184,16 +184,16 @@ Options:
   --path     Path to a root module file.     [string] [required] [default: null]
 
 TypeError [ERR_INVALID_ARG_TYPE]: The "paths[1]" argument must be of type string. Received null
-    at Object.resolve (node:path:1257:7)
-    at resolvePackage (file://<REPO>/dist/utils/npm.js:23:28)
-    at Object.handler (file://<REPO>/dist/bin.js:227:32)
-    at file://<REPO>/node_modules/yargs/build/lib/command.js:245:54
-    at maybeAsyncResult (file://<REPO>/node_modules/yargs/build/lib/utils/maybe-async-result.js:9:15)
-    at CommandInstance.handleValidationAndGetResult (file://<REPO>/node_modules/yargs/build/lib/command.js:244:25)
-    at CommandInstance.applyMiddlewareAndGetResult (file://<REPO>/node_modules/yargs/build/lib/command.js:284:20)
-    at CommandInstance.runCommand (file://<REPO>/node_modules/yargs/build/lib/command.js:167:20)
-    at [runYargsParserAndExecuteCommands] (file://<REPO>/node_modules/yargs/build/lib/yargs-factory.js:1389:105)
-    at YargsInstance.parse (file://<REPO>/node_modules/yargs/build/lib/yargs-factory.js:704:63) {
+    at Object.resolve (node:path:<LINE>:<COL>)
+    at resolvePackage (file://<REPO>/dist/utils/npm.js:<LINE>:<COL>)
+    at Object.handler (file://<REPO>/dist/bin.js:<LINE>:<COL>)
+    at file://<REPO>/node_modules/yargs/build/lib/command.js:<LINE>:<COL>
+    at maybeAsyncResult (file://<REPO>/node_modules/yargs/build/lib/utils/maybe-async-result.js:<LINE>:<COL>)
+    at CommandInstance.handleValidationAndGetResult (file://<REPO>/node_modules/yargs/build/lib/command.js:<LINE>:<COL>)
+    at CommandInstance.applyMiddlewareAndGetResult (file://<REPO>/node_modules/yargs/build/lib/command.js:<LINE>:<COL>)
+    at CommandInstance.runCommand (file://<REPO>/node_modules/yargs/build/lib/command.js:<LINE>:<COL>)
+    at [runYargsParserAndExecuteCommands] (file://<REPO>/node_modules/yargs/build/lib/yargs-factory.js:<LINE>:<COL>)
+    at YargsInstance.parse (file://<REPO>/node_modules/yargs/build/lib/yargs-factory.js:<LINE>:<COL>) {
   code: 'ERR_INVALID_ARG_TYPE'
 }",
   "stdout": "",

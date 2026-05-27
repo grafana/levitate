@@ -1,5 +1,5 @@
 import path from 'path';
-import { execa } from 'execa';
+import { run } from '../utils/exec.js';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -18,50 +18,58 @@ const cliEnv = {
 // stable across checkouts and CI.
 function normalize(s: string): string {
   return s
+    .replace(/\r?\n$/, '')
     .replace(/file:\/\/[^\s)]+\/dist\//g, 'file://<REPO>/dist/')
     .replace(/file:\/\/[^\s)]+\/node_modules\//g, 'file://<REPO>/node_modules/')
-    .replace(/\b\d+\.\d+\.\d+ ms\b/g, '<DURATION>');
+    .replace(/:\d+:\d+(?=[)\s]|$)/g, ':<LINE>:<COL>');
 }
 
 async function invokeCli(args: string[], options: { cwd?: string } = {}) {
-  const result = await execa(nodeBinary, [levitateBinary, ...args], {
-    reject: false,
-    env: cliEnv,
-    cwd: options.cwd,
-  });
-  return {
-    stdout: normalize(result.stdout),
-    stderr: normalize(result.stderr),
-    exitCode: result.exitCode,
-  };
+  try {
+    const { stdout, stderr } = await run(nodeBinary, [levitateBinary, ...args], {
+      cwd: options.cwd,
+      env: cliEnv,
+    });
+    return {
+      stdout: normalize(stdout),
+      stderr: normalize(stderr),
+      exitCode: 0,
+    };
+  } catch (e: any) {
+    return {
+      stdout: normalize(e.stdout ?? ''),
+      stderr: normalize(e.stderr ?? ''),
+      exitCode: typeof e.code === 'number' ? e.code : 1,
+    };
+  }
 }
 
 describe('Levitate', () => {
   describe('Shows help texts', () => {
     it('Shows a help text for the compare command', async () => {
-      const { stdout } = await execa(nodeBinary, [levitateBinary, 'compare', '--help']);
+      const { stdout } = await run(nodeBinary, [levitateBinary, 'compare', '--help']);
       expect(stdout).toContain('Compares the exports of packages');
     });
 
     it('Shows a help text for the is-compatible command', async () => {
-      const { stdout } = await execa(nodeBinary, [levitateBinary, 'is-compatible', '--help']);
+      const { stdout } = await run(nodeBinary, [levitateBinary, 'is-compatible', '--help']);
       expect(stdout).toContain('Checks for incompatibilities between the passed path and modules');
     });
 
     it('Shows a help text for the list-exports command', async () => {
-      const { stdout } = await execa(nodeBinary, [levitateBinary, 'list-exports', '--help']);
+      const { stdout } = await run(nodeBinary, [levitateBinary, 'list-exports', '--help']);
       expect(stdout).toContain('Lists exported members of a TypeScript module');
     });
 
     it('Shows a help text for the list-imports command', async () => {
-      const { stdout } = await execa(nodeBinary, [levitateBinary, 'list-imports', '--help']);
+      const { stdout } = await run(nodeBinary, [levitateBinary, 'list-imports', '--help']);
       expect(stdout).toContain('Lists imports used by a TypeScript module.');
     });
   });
 
   describe('Base functionality works as expected', () => {
     it('Should not report changes between two identical packages', async () => {
-      const { stdout } = await execa(nodeBinary, [
+      const { stdout } = await run(nodeBinary, [
         levitateBinary,
         'compare',
         '--prev',
@@ -76,7 +84,7 @@ describe('Levitate', () => {
   describe('Levignore works as expected', () => {
     const levignoreFixturePath = path.resolve(__dirname, '../../fixtures/levignore');
     it("Doesn't report changes that are ignored by levignore", async () => {
-      const { stdout } = await execa(
+      const { stdout } = await run(
         nodeBinary,
         [levitateBinary, 'compare', '--prev', './package1', '--current', './package2'],
         {
@@ -94,7 +102,7 @@ describe('Levitate', () => {
 
       // this command will fail because compare will exit 1
       try {
-        await execa(
+        await run(
           nodeBinary,
           [levitateBinary, 'compare', '--prev', './bundle-old.ts', '--current', './bundle-new.ts', '--json'],
           {

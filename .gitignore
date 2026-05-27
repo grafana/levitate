@@ -14,3 +14,5 @@ tmp
 **/.pnp.*
 
 .context
+
+.claude/docs
