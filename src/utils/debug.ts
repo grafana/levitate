@@ -1,4 +1,5 @@
 import inspector from 'node:inspector';
+import { isDebugEnabled } from './log.js';
 
 /*
  * A strange combination of yargs and the nodejs debugger attached
@@ -6,7 +7,7 @@ import inspector from 'node:inspector';
  * but remains it connected. This fixes that issue.
  */
 export function forceDebugExit() {
-  if (process.env.DEBUG) {
+  if (isDebugEnabled()) {
     process.on('exit', () => {
       if (inspector.url()) {
         inspector.close();

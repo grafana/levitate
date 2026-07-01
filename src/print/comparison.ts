@@ -1,11 +1,11 @@
 import chalk from 'chalk';
+import Table from 'cli-table3';
 import { Comparison, Exports } from '../types.js';
 import { logDebug, logInfo } from '../utils/log.js';
 import { printChanges } from './changes.js';
 import { printRemovals } from './removals.js';
 import { printHeading, printSpacing } from './utils.js';
 import { printVerdict } from './veredict.js';
-import Table from 'tty-table';
 import { areChangesBreaking } from '../commands/compare/compare.js';
 
 export function printComparison({ changes, additions, removals, prevProgram, currentProgram }: Comparison) {
@@ -29,21 +29,21 @@ function printAdditions(additions: Exports) {
     return;
   }
 
-  const table = Table(
-    [
-      { value: 'Property', width: 30, align: 'left', headerAlign: 'left' },
-      { value: 'Location', width: 40, align: 'left', headerAlign: 'left' },
-      { value: 'Declaration', width: 90, align: 'left', headerAlign: 'left' },
-    ],
-    // @ts-ignore
-    [
-      ...Object.keys(additions).map((name) => [
-        chalk.green.bold(name),
-        chalk.white(additions[name].declarations[0].getSourceFile().fileName),
-        chalk.gray(additions[name].declarations[0].getText()),
-      ]),
-    ]
-  );
+  const table = new Table({
+    head: ['Property', 'Location', 'Declaration'],
+    colWidths: [30, 40, 90],
+    wordWrap: true,
+    wrapOnWordBoundary: false,
+    style: { head: [], border: [] },
+  });
 
-  logInfo(table.render());
+  Object.keys(additions).forEach((name) => {
+    table.push([
+      chalk.green.bold(name),
+      chalk.white(additions[name].declarations[0].getSourceFile().fileName),
+      chalk.gray(additions[name].declarations[0].getText()),
+    ]);
+  });
+
+  logInfo(table.toString());
 }

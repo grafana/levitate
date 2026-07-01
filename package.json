@@ -1,6 +1,6 @@
 {
   "name": "@grafana/levitate",
-  "version": "0.17.2",
+  "version": "0.17.3",
   "description": "A tool for helping to understand APIs exported and consumed by NPM packages (or any TypeScript code).",
   "exports": {
     ".": {
@@ -10,6 +10,9 @@
   },
   "types": "dist/index.d.ts",
   "type": "module",
+  "engines": {
+    "node": ">=18.19"
+  },
   "bin": "dist/bin.js",
   "publishConfig": {
     "access": "public",
@@ -21,7 +24,7 @@
     "dist"
   ],
   "scripts": {
-    "setup-fixtures": "find ./fixtures -name package.json -not -path '*/node_modules/*' -execdir yarn install \\;",
+    "setup-fixtures": "find ./fixtures -name _package.json -not -path '*/node_modules/*' -execdir bash -c 'cp _package.json package.json && touch yarn.lock && yarn install' \\;",
     "test": "yarn setup-fixtures && yarn build && LEVITATE_SILENT=true yarn vitest",
     "test:ci": "yarn test run",
     "build": "tsc && chmod +x ./dist/bin.js",
@@ -30,38 +33,32 @@
     "dev-imports": "nodemon --exec yarn run dev:imports",
     "dev:compare": "run-s build fixtures:compare",
     "dev:imports": "run-s build fixtures:imports",
-    "fixtures:compare": "DEBUG=* node ./dist/bin.js compare --prev @grafana/ui@canary --current @grafana/ui@latest",
-    "fixtures:imports": "DEBUG=* node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
+    "fixtures:compare": "NODE_DEBUG=levitate node ./dist/bin.js compare --prev @grafana/ui@canary --current @grafana/ui@latest",
+    "fixtures:imports": "NODE_DEBUG=levitate node ./dist/bin.js list-imports --path ./fixtures/imports/package/src/module.ts --filters @grafana/ui @grafana/data",
     "lint": "eslint",
-    "lint:fix": "yarn lint --fix && yarn prettier --write ./src"
+    "lint:fix": "yarn lint --fix && yarn prettier --write ./src",
+    "knip": "knip",
+    "knip:ci": "knip --reporter github-actions"
   },
   "keywords": [],
   "author": "Grafana Labs <team@grafana.com> (https://grafana.com)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stylistic/eslint-plugin-ts": "^4.2.0",
     "@tsd/typescript": "^5.6.2",
     "@types/node": "^24.0.1",
     "chalk": "^5.0.0",
-    "debug": "^4.3.2",
+    "cli-table3": "^0.6.5",
     "diff": "^8.0.0",
-    "execa": "^9.5.3",
-    "fast-glob": "^3.3.2",
-    "node-fetch": "^3.3.2",
-    "ora": "9.3.0",
     "tar": "^7.4.3",
-    "tty-table": "^5.0.0",
     "typescript": "5.9.3",
-    "yargs": "^18.0.0"
+    "yargs": "^18.0.0",
+    "yocto-spinner": "^1.2.0"
   },
   "devDependencies": {
     "@grafana/eslint-config": "9.0.0",
+    "@stylistic/eslint-plugin-ts": "^4.2.0",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",
-    "@types/debug": "4.1.12",
-    "@types/diff": "8.0.0",
-    "@types/node-fetch": "2.6.13",
-    "@types/tar": "6.1.13",
     "@types/yargs": "17.0.35",
     "@typescript-eslint/eslint-plugin": "8.51.0",
     "@typescript-eslint/parser": "8.51.0",
@@ -70,9 +67,9 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-jsdoc": "61.7.1",
     "eslint-plugin-no-only-tests": "3.3.0",
-    "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
+    "knip": "^6.14.2",
     "nodemon": "3.1.14",
     "npm-run-all2": "8.0.4",
     "prettier": "3.7.4",

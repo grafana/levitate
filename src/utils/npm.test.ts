@@ -1,5 +1,5 @@
 import path from 'path';
-import { execa } from 'execa';
+import { run } from './exec.js';
 import {
   getPackageJson,
   getPackageJsonPath,
@@ -10,7 +10,7 @@ import {
 } from './npm.js';
 import { fileURLToPath } from 'node:url';
 
-vi.mock('execa');
+vi.mock('./exec.js');
 
 // Using the projects package.json for testing
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -66,9 +66,8 @@ describe('Utils/NPM', () => {
 
   describe('resolveTargetPackages', () => {
     it('parses an array of packages with version and returns the serialized information', async () => {
-      //@ts-ignore
-      vi.mocked(execa).mockImplementation(async (...args) => {
-        const parsed = args[1][1].split('@');
+      vi.mocked(run).mockImplementation(async (_cmd, args) => {
+        const parsed = args[1].split('@');
         const version = parsed[parsed.length - 1];
         return {
           stdout: JSON.stringify({
@@ -117,8 +116,7 @@ describe('Utils/NPM', () => {
     });
 
     it('only returns the packages that can parse', async () => {
-      //@ts-ignore
-      vi.mocked(execa).mockRejectedValue('Not found');
+      vi.mocked(run).mockRejectedValue(new Error('Not found'));
       await expect(resolveTargetPackages('this will fail')).rejects.toThrow('Could not find package');
     });
   });

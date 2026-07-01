@@ -14,7 +14,7 @@ export function getExportInfo(rootFile: string): ExportsInfo {
   };
 }
 
-export function getExportedSymbolsForProgram(program: ts.Program): Exports {
+function getExportedSymbolsForProgram(program: ts.Program): Exports {
   const rootFileNames = program.getRootFileNames();
   let programExports = {};
 

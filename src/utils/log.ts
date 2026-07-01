@@ -1,6 +1,11 @@
-import getDebug from 'debug';
+import { debuglog } from 'node:util';
 
-export const logDebug = getDebug('levitate');
+export const logDebug = debuglog('levitate');
+
+export function isDebugEnabled(): boolean {
+  const namespaces = (process.env.NODE_DEBUG ?? '').split(/[\s,]+/);
+  return namespaces.includes('levitate') || namespaces.includes('*');
+}
 
 export const logError = (...args: any[]) => {
   if (!isSilent()) {
