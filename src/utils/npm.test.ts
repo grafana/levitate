@@ -5,7 +5,6 @@ import {
   getPackageJsonPath,
   getNpmDependencies,
   hasPackageJson,
-  parseMinGrafanaVersion,
   resolveTargetPackages,
 } from './npm.js';
 import { fileURLToPath } from 'node:url';
@@ -118,25 +117,6 @@ describe('Utils/NPM', () => {
     it('only returns the packages that can parse', async () => {
       vi.mocked(run).mockRejectedValue(new Error('Not found'));
       await expect(resolveTargetPackages('this will fail')).rejects.toThrow('Could not find package');
-    });
-  });
-
-  describe('parseMinGrafanaVersion()', () => {
-    it('should parse ">=10.0.0"', () => {
-      expect(parseMinGrafanaVersion('>=10.0.0')).toBe('10.0.0');
-    });
-
-    it('should parse ">=10.0.0 <11.0.0"', () => {
-      expect(parseMinGrafanaVersion('>=10.0.0 <11.0.0')).toBe('10.0.0');
-    });
-
-    it('should parse ">= 7.0.0"', () => {
-      expect(parseMinGrafanaVersion('>= 7.0.0')).toBe('7.0.0');
-    });
-
-    it('should return undefined for unparseable strings', () => {
-      expect(parseMinGrafanaVersion('latest')).toBeUndefined();
-      expect(parseMinGrafanaVersion('')).toBeUndefined();
     });
   });
 });

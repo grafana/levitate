@@ -303,12 +303,3 @@ async function resolvePackageVersion(pkg: string, version = 'latest'): Promise<s
     }
   } catch {}
 }
-
-/**
- * Parses the `grafanaDependency` string from plugin.json (e.g. ">=10.0.0", ">=10.0.0 <11.0.0")
- * and returns the minimum supported version.
- */
-export function parseMinGrafanaVersion(grafanaDependency: string): string | undefined {
-  const match = grafanaDependency.match(/>=\s*(\d+\.\d+\.\d+)/);
-  return match ? match[1] : undefined;
-}

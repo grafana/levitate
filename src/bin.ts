@@ -4,12 +4,11 @@ import _yargs from 'yargs';
 import chalk from 'chalk';
 import { getImportsInfo, getGroupedImports } from './compiler/imports.js';
 import { getListImportsCliArgs, CliError } from './utils/cli.js';
-import { resolvePackage, resolveTargetPackages, parseMinGrafanaVersion } from './utils/npm.js';
+import { resolvePackage, resolveTargetPackages } from './utils/npm.js';
 import { getExportInfo } from './compiler/exports.js';
 import { exit } from 'process';
 import { access } from 'fs/promises';
 import { constants } from 'fs';
-import { dirname, resolve } from 'path';
 import { printImports } from './print/imports.js';
 import { printExports } from './print/exports.js';
 import { areChangesBreaking, compareExports } from './commands/compare/compare.js';
@@ -17,7 +16,7 @@ import { printComparison } from './print/comparison.js';
 import { isCompatible } from './commands/is-compatible/is-compatible.js';
 import { logError, logInfo, isDebugEnabled } from './utils/log.js';
 import { forceDebugExit } from './utils/debug.js';
-import { readJsonFile, readLevignoreFile } from './utils.js';
+import { readLevignoreFile } from './utils.js';
 import { printJsonComparison } from './print/comparison-json.js';
 
 /**
@@ -36,36 +35,6 @@ function flushAndExit(code: number): void {
 // in DEBUG mode this allows the debugger to connect and disconnect more easily
 if (isDebugEnabled()) {
   forceDebugExit();
-}
-
-/**
- * Walks up from the given module path looking for `plugin.json` and extracts
- * the minimum Grafana version from `dependencies.grafanaDependency`.
- */
-async function detectMinGrafanaVersion(modulePath: string): Promise<string | undefined> {
-  let dir = resolve(dirname(modulePath));
-  const root = resolve('/');
-  while (dir !== root) {
-    const candidate = resolve(dir, 'plugin.json');
-    try {
-      await access(candidate, constants.R_OK);
-      const pluginConfig = readJsonFile(candidate);
-      const grafanaDependency = pluginConfig?.dependencies?.grafanaDependency;
-      if (grafanaDependency) {
-        const version = parseMinGrafanaVersion(grafanaDependency);
-        if (version) {
-          logInfo(`📌 Detected minimum Grafana version: ${chalk.yellow(version)} from ${candidate}`);
-          return version;
-        }
-      }
-      // Found plugin.json but couldn't extract version — stop searching
-      return undefined;
-    } catch {
-      // plugin.json not found at this level, keep walking up
-    }
-    dir = resolve(dir, '..');
-  }
-  return undefined;
 }
 
 const yargs = _yargs(process.argv.slice(2));
@@ -173,9 +142,14 @@ yargs
           type: 'boolean',
           default: false,
           describe: 'Output the result in a markdown-friendly format.',
+        })
+        .option('min-package-version', {
+          type: 'string',
+          describe:
+            'Minimum package version to use as the baseline for the compatibility check, instead of the installed version. Checks compatibility across the full range (min → target). e.g.: 10.0.0',
         });
     },
-    async function ({ target, path, force, markdown }) {
+    async function ({ target, path, force, markdown, minPackageVersion }) {
       try {
         // validate the path is accesible and readable
         await access(path, constants.R_OK);
@@ -184,13 +158,12 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
-        const minGrafanaVersion = await detectMinGrafanaVersion(path);
 
         const levignore = await readLevignoreFile(process.cwd());
         const isPathCompatible = await isCompatible(
           path,
           packages,
-          { printIncompatibilities: true, force, markdown, minGrafanaVersion },
+          { printIncompatibilities: true, force, markdown, minVersion: minPackageVersion },
           levignore
         );
         if (isPathCompatible) {

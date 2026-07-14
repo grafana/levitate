@@ -71,5 +71,4 @@ describe('is compatible command', () => {
     expect(result[2].change).toBeUndefined();
     expect(result[2].removal).not.toBeUndefined();
   });
-
 });

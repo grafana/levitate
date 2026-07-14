@@ -18,13 +18,13 @@ vi.mock('../../utils/typescript.js', () => ({
   createTsProgram: vi.fn().mockReturnValue({}),
 }));
 
-describe('isCompatible() with minGrafanaVersion', () => {
+describe('isCompatible() with minVersion', () => {
   beforeEach(() => {
     vi.mocked(getIncompatibilitiesBetweenPackages).mockReset().mockResolvedValue([]);
     vi.mocked(getNpmPackageVersionFromProjectPath).mockReset().mockResolvedValue('10.4.0');
   });
 
-  it('uses installed version as baseline when minGrafanaVersion is not provided', async () => {
+  it('uses installed version as baseline when minVersion is not provided', async () => {
     await isCompatible(
       '/fake/path',
       [{ name: '@grafana/data', version: 'latest' }],
@@ -40,11 +40,11 @@ describe('isCompatible() with minGrafanaVersion', () => {
     );
   });
 
-  it('uses minGrafanaVersion as baseline when provided', async () => {
+  it('uses minVersion as baseline when provided', async () => {
     await isCompatible(
       '/fake/path',
       [{ name: '@grafana/data', version: 'latest' }],
-      { printIncompatibilities: false, force: false, markdown: false, minGrafanaVersion: '9.5.0' },
+      { printIncompatibilities: false, force: false, markdown: false, minVersion: '9.5.0' },
       {}
     );
 
@@ -56,14 +56,14 @@ describe('isCompatible() with minGrafanaVersion', () => {
     );
   });
 
-  it('checks all packages with minGrafanaVersion as baseline', async () => {
+  it('checks all packages with minVersion as baseline', async () => {
     await isCompatible(
       '/fake/path',
       [
         { name: '@grafana/data', version: 'latest' },
         { name: '@grafana/ui', version: 'latest' },
       ],
-      { printIncompatibilities: false, force: false, markdown: false, minGrafanaVersion: '10.0.0' },
+      { printIncompatibilities: false, force: false, markdown: false, minVersion: '10.0.0' },
       {}
     );
 
@@ -88,7 +88,7 @@ describe('isCompatible() with minGrafanaVersion', () => {
     await isCompatible(
       '/fake/path',
       [{ name: '@grafana/data', version: 'latest' }],
-      { printIncompatibilities: false, force: false, markdown: false, minGrafanaVersion: '9.5.0' },
+      { printIncompatibilities: false, force: false, markdown: false, minVersion: '9.5.0' },
       {}
     );
 

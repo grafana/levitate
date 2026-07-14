@@ -13,7 +13,7 @@ export async function isCompatible(
     printIncompatibilities: boolean;
     force: boolean;
     markdown: boolean;
-    minGrafanaVersion?: string;
+    minVersion?: string;
   },
   ignoredExports: IgnoreExportChanges
 ): Promise<boolean> {
@@ -45,12 +45,12 @@ export async function isCompatible(
       installedPackageVersion = 'latest';
     }
 
-    // When a minimum Grafana version is known, use it as the baseline instead of the installed version.
+    // When a minimum version is provided, use it as the baseline instead of the installed version.
     // This checks compatibility across the full declared support range (min → target).
-    const baseVersion = options.minGrafanaVersion ?? installedPackageVersion;
-    if (options.minGrafanaVersion) {
+    const baseVersion = options.minVersion ?? installedPackageVersion;
+    if (options.minVersion) {
       logInfo(
-        `📌 Using minimum Grafana version ${chalk.yellow(options.minGrafanaVersion)} as baseline instead of installed ${chalk.yellow(installedPackageVersion)}`
+        `📌 Using minimum version ${chalk.yellow(options.minVersion)} as baseline instead of installed ${chalk.yellow(installedPackageVersion)}`
       );
     }
 
