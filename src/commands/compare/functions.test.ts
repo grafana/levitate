@@ -235,16 +235,8 @@ describe('Compare functions', () => {
     });
 
     it('COSMETIC EXPORT KEYWORD - a parameter type (interface) that only gains a leading `export` keyword due to bundling differences should not trigger a breaking change', () => {
-      // Reproduces https://github.com/grafana/levitate/issues/963: comparing
-      // @grafana/data@10.3.12 (a single API-Extractor-rolled-up dist/index.d.ts,
-      // where the interface's home declaration is a bare `interface X { ... }`)
-      // against @grafana/data@12.1.0 (per-file .d.ts output, where the same
-      // interface is declared as `export interface X { ... }`) flagged
-      // `PanelPlugin.useFieldConfig`'s parameter type (`SetFieldConfigOptionsArgs`)
-      // as changed, even though its shape never changed - only the `export`
-      // keyword did. This mirrors that shape (method returning `this`, a
-      // generic interface parameter with a default) as closely as possible
-      // in a self-contained fixture.
+      // Reproduces https://github.com/grafana/levitate/issues/963: a rolled-up vs.
+      // per-file .d.ts build can add an `export` keyword to an interface with no shape change.
       const prev = `
         interface SetFieldConfigOptionsArgs<TFieldConfigOptions = any> {
           standardOptions?: Partial<Record<string, { defaultValue?: any }>>;
