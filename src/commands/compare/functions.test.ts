@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+import { TMP_DIR } from '../../tests/test-utils.js';
 import { testCompare } from './utils.js';
 
 describe('Compare functions', () => {
@@ -197,6 +200,78 @@ describe('Compare functions', () => {
     expect(comparison).toHaveTypeChanges(0);
     expect(comparison).toHaveTypeAdditions(1);
     expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  describe('Cosmetic .d.ts emit differences (grafana/levitate#1041, #963)', () => {
+    it('COSMETIC TYPE-ONLY IMPORT MODIFIER - adding an inline `type` modifier to a type-only import of a parameter type should not trigger a breaking change', () => {
+      // Reproduces https://github.com/grafana/levitate/issues/1041:
+      // the type shape never changed, only whether the import specifier that
+      // brings it into scope is emitted as `Foo` or `type Foo`.
+      const helperFilename = path.join(TMP_DIR, 'cosmetic-import-type-modifier-helper.ts');
+      fs.writeFileSync(
+        helperFilename,
+        `
+          export interface PanelMigrationHandler {
+            (payload: unknown): void;
+          }
+        `
+      );
+
+      const prev = `
+        import { PanelMigrationHandler } from './cosmetic-import-type-modifier-helper';
+        export function setMigrationHandler(handler: PanelMigrationHandler): void {};
+      `;
+      const current = `
+        import { type PanelMigrationHandler } from './cosmetic-import-type-modifier-helper';
+        export function setMigrationHandler(handler: PanelMigrationHandler): void {};
+      `;
+      const comparison = testCompare(prev, current);
+
+      fs.unlinkSync(helperFilename);
+
+      expect(comparison).toHaveTypeChanges(0);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
+    });
+
+    it('COSMETIC EXPORT KEYWORD - a parameter type (interface) that only gains a leading `export` keyword due to bundling differences should not trigger a breaking change', () => {
+      // Reproduces https://github.com/grafana/levitate/issues/963: comparing
+      // @grafana/data@10.3.12 (a single API-Extractor-rolled-up dist/index.d.ts,
+      // where the interface's home declaration is a bare `interface X { ... }`)
+      // against @grafana/data@12.1.0 (per-file .d.ts output, where the same
+      // interface is declared as `export interface X { ... }`) flagged
+      // `PanelPlugin.useFieldConfig`'s parameter type (`SetFieldConfigOptionsArgs`)
+      // as changed, even though its shape never changed - only the `export`
+      // keyword did. This mirrors that shape (method returning `this`, a
+      // generic interface parameter with a default) as closely as possible
+      // in a self-contained fixture.
+      const prev = `
+        interface SetFieldConfigOptionsArgs<TFieldConfigOptions = any> {
+          standardOptions?: Partial<Record<string, { defaultValue?: any }>>;
+          disableStandardOptions?: string[];
+          useCustomConfig?: (builder: { addCustomEditor: (id: string) => void }) => void;
+        }
+        declare class PanelPlugin<TOptions = any, TFieldConfigOptions extends object = any> {
+          useFieldConfig(config?: SetFieldConfigOptionsArgs<TFieldConfigOptions>): this;
+        }
+        export { SetFieldConfigOptionsArgs, PanelPlugin };
+      `;
+      const current = `
+        export interface SetFieldConfigOptionsArgs<TFieldConfigOptions = any> {
+          standardOptions?: Partial<Record<string, { defaultValue?: any }>>;
+          disableStandardOptions?: string[];
+          useCustomConfig?: (builder: { addCustomEditor: (id: string) => void }) => void;
+        }
+        export declare class PanelPlugin<TOptions = any, TFieldConfigOptions extends object = any> {
+          useFieldConfig(config?: SetFieldConfigOptionsArgs<TFieldConfigOptions>): this;
+        }
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(comparison).toHaveTypeChanges(0);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
+    });
   });
 
   describe('Arrow functions', () => {
