@@ -202,7 +202,7 @@ describe('Compare functions', () => {
     expect(comparison).toHaveTypeRemovals(0);
   });
 
-  describe('Cosmetic .d.ts emit differences (grafana/levitate#1041, #963)', () => {
+  describe('Cosmetic .d.ts emit differences', () => {
     it('COSMETIC TYPE-ONLY IMPORT MODIFIER - adding an inline `type` modifier to a type-only import of a parameter type should not trigger a breaking change', () => {
       // Reproduces https://github.com/grafana/levitate/issues/1041:
       // the type shape never changed, only whether the import specifier that
