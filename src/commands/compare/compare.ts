@@ -201,11 +201,16 @@ export function getFunctionParametersDiff({
     // Compare parameter types, but allow if current types have optional fields
     if (ts.isTypeReferenceNode(currentParamType) && ts.isTypeReferenceNode(prevParamType)) {
       const prevType = checker.getTypeFromTypeNode(prevParamType);
-      const currentType = checker.getTypeFromTypeNode(currentParamType);
+      // currentParamType belongs to current.program, so it must be resolved with that program's checker
+      const currentType = current.program.getTypeChecker().getTypeFromTypeNode(currentParamType);
 
       // check if they have different texts as the base line
-      const currentParamSymbolText = removeComments(currentParamSymbol.declarations[0].getText());
-      const prevParamSymbolText = removeComments(prevParamSymbol.declarations[0].getText());
+      // strip modifiers (export/declare/type) first to ignore cosmetic .d.ts emit differences,
+      // then remove comments (order matters: removeComments() would mangle a bare `type Foo` fragment)
+      const currentParamSymbolText = removeComments(
+        stripLeadingModifiers(currentParamSymbol.declarations[0].getText())
+      );
+      const prevParamSymbolText = removeComments(stripLeadingModifiers(prevParamSymbol.declarations[0].getText()));
 
       if (currentParamSymbolText !== prevParamSymbolText) {
         // Use isTypeSubtypeOf to allow more flexible comparison between types
@@ -500,6 +505,13 @@ export function isPublic(declaration: ts.PropertyDeclaration) {
       (modifier) => modifier.kind === ts.SyntaxKind.ProtectedKeyword || modifier.kind === ts.SyntaxKind.PrivateKeyword
     )
   );
+}
+
+// Strips leading `export`/`declare`/`type`/`default` modifiers from declaration text,
+// so cosmetic .d.ts emit differences (e.g. an added `type` on an import, or a rolled-up
+// vs. per-file build adding `export`) aren't mistaken for real API changes.
+export function stripLeadingModifiers(text: string): string {
+  return text.replace(/^(?:export\s+|declare\s+|type\s+|default\s+)+/, '');
 }
 
 export function removeComments(code: string) {
