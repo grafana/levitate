@@ -142,9 +142,14 @@ yargs
           type: 'boolean',
           default: false,
           describe: 'Output the result in a markdown-friendly format.',
+        })
+        .option('min-package-version', {
+          type: 'string',
+          describe:
+            'Minimum package version to use as the baseline for the compatibility check, instead of the installed version. Checks compatibility across the full range (min → target). e.g.: 10.0.0',
         });
     },
-    async function ({ target, path, force, markdown }) {
+    async function ({ target, path, force, markdown, minPackageVersion }) {
       try {
         // validate the path is accesible and readable
         await access(path, constants.R_OK);
@@ -153,11 +158,12 @@ yargs
         if (packages.length === 0) {
           throw new Error('Target list of packages is empty or invalid');
         }
+
         const levignore = await readLevignoreFile(process.cwd());
         const isPathCompatible = await isCompatible(
           path,
           packages,
-          { printIncompatibilities: true, force, markdown },
+          { printIncompatibilities: true, force, markdown, minVersion: minPackageVersion },
           levignore
         );
         if (isPathCompatible) {
