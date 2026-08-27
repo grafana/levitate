@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.18.0](https://github.com/grafana/levitate/compare/v0.17.3...v0.18.0) (2026-08-27)
+
+
+### Features
+
+* **dependencies:** drop debug, tty-table; use util.debuglog, cli-table3 ([#1040](https://github.com/grafana/levitate/issues/1040)) ([25b96d0](https://github.com/grafana/levitate/commit/25b96d09d3685e50bb36467c97307207a73c397c))
+* **dependencies:** drop node-fetch, execa, ora; misplaced [@stylistic](https://github.com/stylistic) ([#1038](https://github.com/grafana/levitate/issues/1038)) ([cfd4041](https://github.com/grafana/levitate/commit/cfd4041c0167753909b936b57aa36e3a31b7a15f))
+
+
+### Bug Fixes
+
+* **compare:** ignore cosmetic `.d.ts` emit differences in parameter type diffing ([#1052](https://github.com/grafana/levitate/issues/1052)) ([876206c](https://github.com/grafana/levitate/commit/876206c1794cd5cafad06959f9ddaf5a5d290df6))
+* **fixtures:** rename package.json/yarn.lock to avoid security scan false positives ([#1026](https://github.com/grafana/levitate/issues/1026)) ([8ef9cfb](https://github.com/grafana/levitate/commit/8ef9cfb7bfcf34cddc6817f21e66879a5297e505)), closes [#594](https://github.com/grafana/levitate/issues/594)
+* **security/critical/:** update dependency tar to v7.5.21 [security] ([#1043](https://github.com/grafana/levitate/issues/1043)) ([32e83cf](https://github.com/grafana/levitate/commit/32e83cf7af40c5473c0b46f51dad5e49aea417f6))
+
 ## [0.17.3](https://github.com/grafana/levitate/compare/v0.17.2...v0.17.3) (2026-05-26)
 
 
