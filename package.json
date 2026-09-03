@@ -57,23 +57,23 @@
   "devDependencies": {
     "@grafana/eslint-config": "9.0.0",
     "@stylistic/eslint-plugin-ts": "^4.2.0",
-    "@swc-node/register": "1.11.1",
-    "@swc/core": "1.15.8",
+    "@swc-node/register": "1.12.1",
+    "@swc/core": "1.16.1",
     "@types/yargs": "17.0.35",
-    "@typescript-eslint/eslint-plugin": "8.51.0",
-    "@typescript-eslint/parser": "8.51.0",
-    "eslint": "9.39.4",
-    "eslint-config-flat-gitignore": "2.3.0",
+    "@typescript-eslint/eslint-plugin": "8.69.0",
+    "@typescript-eslint/parser": "8.69.0",
+    "eslint": "9.39.5",
+    "eslint-config-flat-gitignore": "2.4.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-jsdoc": "61.7.1",
-    "eslint-plugin-no-only-tests": "3.3.0",
+    "eslint-plugin-no-only-tests": "3.4.0",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-hooks": "7.1.1",
     "knip": "^6.14.2",
     "nodemon": "3.1.14",
     "npm-run-all2": "8.0.4",
-    "prettier": "3.7.4",
-    "vitest": "4.1.4"
+    "prettier": "3.9.6",
+    "vitest": "4.1.11"
   },
   "nodemonConfig": {
     "watch": [
@@ -98,5 +98,5 @@
     "url": "https://github.com/grafana/levitate/issues"
   },
   "homepage": "https://github.com/grafana/levitate#readme",
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.18.0"
 }
