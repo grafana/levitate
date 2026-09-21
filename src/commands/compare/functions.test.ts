@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+import { TMP_DIR } from '../../tests/test-utils.js';
 import { testCompare } from './utils.js';
 
 describe('Compare functions', () => {
@@ -197,6 +200,70 @@ describe('Compare functions', () => {
     expect(comparison).toHaveTypeChanges(0);
     expect(comparison).toHaveTypeAdditions(1);
     expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  describe('Cosmetic .d.ts emit differences', () => {
+    it('COSMETIC TYPE-ONLY IMPORT MODIFIER - adding an inline `type` modifier to a type-only import of a parameter type should not trigger a breaking change', () => {
+      // Reproduces https://github.com/grafana/levitate/issues/1041:
+      // the type shape never changed, only whether the import specifier that
+      // brings it into scope is emitted as `Foo` or `type Foo`.
+      const helperFilename = path.join(TMP_DIR, 'cosmetic-import-type-modifier-helper.ts');
+      fs.writeFileSync(
+        helperFilename,
+        `
+          export interface PanelMigrationHandler {
+            (payload: unknown): void;
+          }
+        `
+      );
+
+      const prev = `
+        import { PanelMigrationHandler } from './cosmetic-import-type-modifier-helper';
+        export function setMigrationHandler(handler: PanelMigrationHandler): void {};
+      `;
+      const current = `
+        import { type PanelMigrationHandler } from './cosmetic-import-type-modifier-helper';
+        export function setMigrationHandler(handler: PanelMigrationHandler): void {};
+      `;
+      const comparison = testCompare(prev, current);
+
+      fs.unlinkSync(helperFilename);
+
+      expect(comparison).toHaveTypeChanges(0);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
+    });
+
+    it('COSMETIC EXPORT KEYWORD - a parameter type (interface) that only gains a leading `export` keyword due to bundling differences should not trigger a breaking change', () => {
+      // Reproduces https://github.com/grafana/levitate/issues/963: a rolled-up vs.
+      // per-file .d.ts build can add an `export` keyword to an interface with no shape change.
+      const prev = `
+        interface SetFieldConfigOptionsArgs<TFieldConfigOptions = any> {
+          standardOptions?: Partial<Record<string, { defaultValue?: any }>>;
+          disableStandardOptions?: string[];
+          useCustomConfig?: (builder: { addCustomEditor: (id: string) => void }) => void;
+        }
+        declare class PanelPlugin<TOptions = any, TFieldConfigOptions extends object = any> {
+          useFieldConfig(config?: SetFieldConfigOptionsArgs<TFieldConfigOptions>): this;
+        }
+        export { SetFieldConfigOptionsArgs, PanelPlugin };
+      `;
+      const current = `
+        export interface SetFieldConfigOptionsArgs<TFieldConfigOptions = any> {
+          standardOptions?: Partial<Record<string, { defaultValue?: any }>>;
+          disableStandardOptions?: string[];
+          useCustomConfig?: (builder: { addCustomEditor: (id: string) => void }) => void;
+        }
+        export declare class PanelPlugin<TOptions = any, TFieldConfigOptions extends object = any> {
+          useFieldConfig(config?: SetFieldConfigOptionsArgs<TFieldConfigOptions>): this;
+        }
+      `;
+      const comparison = testCompare(prev, current);
+
+      expect(comparison).toHaveTypeChanges(0);
+      expect(comparison).toHaveTypeAdditions(0);
+      expect(comparison).toHaveTypeRemovals(0);
+    });
   });
 
   describe('Arrow functions', () => {
