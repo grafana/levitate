@@ -18,13 +18,13 @@ vi.mock('../../utils/typescript.js', () => ({
   createTsProgram: vi.fn().mockReturnValue({}),
 }));
 
-describe('isCompatible() with minVersion', () => {
+describe('isCompatible() with minPackageVersion', () => {
   beforeEach(() => {
     vi.mocked(getIncompatibilitiesBetweenPackages).mockReset().mockResolvedValue([]);
     vi.mocked(getNpmPackageVersionFromProjectPath).mockReset().mockResolvedValue('10.4.0');
   });
 
-  it('uses installed version as baseline when minVersion is not provided', async () => {
+  it('uses installed version as baseline when minPackageVersion is not provided', async () => {
     await isCompatible(
       '/fake/path',
       [{ name: '@grafana/data', version: 'latest' }],
@@ -40,11 +40,11 @@ describe('isCompatible() with minVersion', () => {
     );
   });
 
-  it('uses minVersion as baseline when provided', async () => {
+  it('uses minPackageVersion as baseline when provided', async () => {
     await isCompatible(
       '/fake/path',
       [{ name: '@grafana/data', version: 'latest' }],
-      { printIncompatibilities: false, force: false, markdown: false, minVersion: '9.5.0' },
+      { printIncompatibilities: false, force: false, markdown: false, minPackageVersion: '9.5.0' },
       {}
     );
 
@@ -56,14 +56,14 @@ describe('isCompatible() with minVersion', () => {
     );
   });
 
-  it('checks all packages with minVersion as baseline', async () => {
+  it('checks all packages with minPackageVersion as baseline', async () => {
     await isCompatible(
       '/fake/path',
       [
         { name: '@grafana/data', version: 'latest' },
         { name: '@grafana/ui', version: 'latest' },
       ],
-      { printIncompatibilities: false, force: false, markdown: false, minVersion: '10.0.0' },
+      { printIncompatibilities: false, force: false, markdown: false, minPackageVersion: '10.0.0' },
       {}
     );
 
@@ -88,7 +88,7 @@ describe('isCompatible() with minVersion', () => {
     await isCompatible(
       '/fake/path',
       [{ name: '@grafana/data', version: 'latest' }],
-      { printIncompatibilities: false, force: false, markdown: false, minVersion: '9.5.0' },
+      { printIncompatibilities: false, force: false, markdown: false, minPackageVersion: '9.5.0' },
       {}
     );
 

@@ -163,7 +163,7 @@ yargs
         const isPathCompatible = await isCompatible(
           path,
           packages,
-          { printIncompatibilities: true, force, markdown, minVersion: minPackageVersion },
+          { printIncompatibilities: true, force, markdown, minPackageVersion },
           levignore
         );
         if (isPathCompatible) {

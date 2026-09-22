@@ -13,7 +13,7 @@ export async function isCompatible(
     printIncompatibilities: boolean;
     force: boolean;
     markdown: boolean;
-    minVersion?: string;
+    minPackageVersion?: string;
   },
   ignoredExports: IgnoreExportChanges
 ): Promise<boolean> {
@@ -47,10 +47,10 @@ export async function isCompatible(
 
     // When a minimum version is provided, use it as the baseline instead of the installed version.
     // This checks compatibility across the full declared support range (min → target).
-    const baseVersion = options.minVersion ?? installedPackageVersion;
-    if (options.minVersion) {
+    const baseVersion = options.minPackageVersion ?? installedPackageVersion;
+    if (options.minPackageVersion) {
       logInfo(
-        `📌 Using minimum version ${chalk.yellow(options.minVersion)} as baseline instead of installed ${chalk.yellow(installedPackageVersion)}`
+        `📌 Using minimum version ${chalk.yellow(options.minPackageVersion)} as baseline instead of installed ${chalk.yellow(installedPackageVersion)}`
       );
     }
 
