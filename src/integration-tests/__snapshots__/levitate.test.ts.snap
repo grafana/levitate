@@ -29,17 +29,23 @@ Checks for incompatibilities between the passed path and modules. It uses the
 modules versions extracted from npm list to compare.
 
 Options:
-  --version   Show version number                                      [boolean]
-  --help      Show help                                                [boolean]
-  --target    The target packages with versions to check compatibility. Comma
-              separated. e.g.: @grafana/data@latest,@grafana/ui@9.0.3
+  --version              Show version number                           [boolean]
+  --help                 Show help                                     [boolean]
+  --target               The target packages with versions to check
+                         compatibility. Comma separated. e.g.:
+                         @grafana/data@latest,@grafana/ui@9.0.3
                                                              [string] [required]
-  --path      Path to your module file to check. If this module imports other
-              modules, they'll be checked too.".             [string] [required]
-  --force     Force the check even if the target package is not installed.
+  --path                 Path to your module file to check. If this module
+                         imports other modules, they'll be checked too.".
+                                                             [string] [required]
+  --force                Force the check even if the target package is not
+                         installed.                   [boolean] [default: false]
+  --markdown             Output the result in a markdown-friendly format.
                                                       [boolean] [default: false]
-  --markdown  Output the result in a markdown-friendly format.
-                                                      [boolean] [default: false]"
+  --min-package-version  Minimum package version to use as the baseline for the
+                         compatibility check, instead of the installed version.
+                         Checks compatibility across the full range (min →
+                         target). e.g.: 10.0.0                          [string]"
 `;
 
 exports[`Levitate > CLI surface (snapshots) > --help output > list-exports --help 1`] = `
@@ -154,17 +160,23 @@ Checks for incompatibilities between the passed path and modules. It uses the
 modules versions extracted from npm list to compare.
 
 Options:
-  --version   Show version number                                      [boolean]
-  --help      Show help                                                [boolean]
-  --target    The target packages with versions to check compatibility. Comma
-              separated. e.g.: @grafana/data@latest,@grafana/ui@9.0.3
+  --version              Show version number                           [boolean]
+  --help                 Show help                                     [boolean]
+  --target               The target packages with versions to check
+                         compatibility. Comma separated. e.g.:
+                         @grafana/data@latest,@grafana/ui@9.0.3
                                                              [string] [required]
-  --path      Path to your module file to check. If this module imports other
-              modules, they'll be checked too.".             [string] [required]
-  --force     Force the check even if the target package is not installed.
+  --path                 Path to your module file to check. If this module
+                         imports other modules, they'll be checked too.".
+                                                             [string] [required]
+  --force                Force the check even if the target package is not
+                         installed.                   [boolean] [default: false]
+  --markdown             Output the result in a markdown-friendly format.
                                                       [boolean] [default: false]
-  --markdown  Output the result in a markdown-friendly format.
-                                                      [boolean] [default: false]
+  --min-package-version  Minimum package version to use as the baseline for the
+                         compatibility check, instead of the installed version.
+                         Checks compatibility across the full range (min →
+                         target). e.g.: 10.0.0                          [string]
 
 Missing required arguments: target, path",
   "stdout": "",
