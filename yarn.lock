@@ -378,7 +378,7 @@ __metadata:
     "@stylistic/eslint-plugin-ts": "npm:^4.2.0"
     "@swc-node/register": "npm:1.11.1"
     "@swc/core": "npm:1.15.8"
-    "@tsd/typescript": "npm:^5.6.2"
+    "@tsd/typescript": "npm:^6.0.0"
     "@types/node": "npm:^24.0.1"
     "@types/yargs": "npm:17.0.35"
     "@typescript-eslint/eslint-plugin": "npm:8.51.0"
@@ -1166,10 +1166,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsd/typescript@npm:^5.6.2":
-  version: 5.9.3
-  resolution: "@tsd/typescript@npm:5.9.3"
-  checksum: 10c0/1419e6fe468b245e3eb18f837514d68905b475884a4a8540b134ba848c9b4fdf56cd0692b0289dc92aa3d7cc2868e75ef32994a99fd0f16161650aeee8005218
+"@tsd/typescript@npm:^6.0.0":
+  version: 6.0.3
+  resolution: "@tsd/typescript@npm:6.0.3"
+  checksum: 10c0/c42796c68f2eeb87ebf15a99315963ed517dd2b0effb2dfcf46d3dec00b85774f08e3d8f7c039a7b14faf20dea111227534a201678ee78aff4a1e095f8df342c
   languageName: node
   linkType: hard
 
