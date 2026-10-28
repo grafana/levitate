@@ -378,8 +378,8 @@ __metadata:
     "@stylistic/eslint-plugin-ts": "npm:^4.2.0"
     "@swc-node/register": "npm:1.11.1"
     "@swc/core": "npm:1.15.8"
-    "@tsd/typescript": "npm:^5.6.2"
-    "@types/node": "npm:^24.0.1"
+    "@tsd/typescript": "npm:^6.0.0"
+    "@types/node": "npm:^26.0.0"
     "@types/yargs": "npm:17.0.35"
     "@typescript-eslint/eslint-plugin": "npm:8.51.0"
     "@typescript-eslint/parser": "npm:8.51.0"
@@ -1166,10 +1166,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsd/typescript@npm:^5.6.2":
-  version: 5.9.3
-  resolution: "@tsd/typescript@npm:5.9.3"
-  checksum: 10c0/1419e6fe468b245e3eb18f837514d68905b475884a4a8540b134ba848c9b4fdf56cd0692b0289dc92aa3d7cc2868e75ef32994a99fd0f16161650aeee8005218
+"@tsd/typescript@npm:^6.0.0":
+  version: 6.0.3
+  resolution: "@tsd/typescript@npm:6.0.3"
+  checksum: 10c0/c42796c68f2eeb87ebf15a99315963ed517dd2b0effb2dfcf46d3dec00b85774f08e3d8f7c039a7b14faf20dea111227534a201678ee78aff4a1e095f8df342c
   languageName: node
   linkType: hard
 
@@ -1212,12 +1212,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.0.1":
-  version: 24.12.4
-  resolution: "@types/node@npm:24.12.4"
+"@types/node@npm:^26.0.0":
+  version: 26.6.5
+  resolution: "@types/node@npm:26.6.5"
   dependencies:
-    undici-types: "npm:~7.16.0"
-  checksum: 10c0/d2c36b78b6050d8677769fa05a32243061675e81ddc2bb43955d91a671af3465506ef2731a24c0c9ab42b6b679bd5c1513de45bbe9ea278c2c07ee63b564b61b
+    undici-types: "npm:~8.9.0"
+  checksum: 10c0/4f791f69466ace7842c09e7bef96cb1ddbb65cf3db916ef7e84f0e2b2a17220b6b816dc7539d01520cadfb17ed7169b8214910900493e0a83be8bc7d124ec20a
   languageName: node
   linkType: hard
 
@@ -5179,10 +5179,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~7.16.0":
-  version: 7.16.0
-  resolution: "undici-types@npm:7.16.0"
-  checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
+"undici-types@npm:~8.9.0":
+  version: 8.9.0
+  resolution: "undici-types@npm:8.9.0"
+  checksum: 10c0/51c712c20c087368f62c6fc0f2bc49fa76bfe5dec28ff01584bb677ff29b0622569783c02d43e151143808c48c0503f804093bd2c491b10f2a830138034cb451
   languageName: node
   linkType: hard
 
