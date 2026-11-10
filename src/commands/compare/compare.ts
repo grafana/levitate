@@ -178,7 +178,8 @@ export function getFunctionParametersDiff({
 
     // Same parameter whose type only gained trailing type arguments (e.g. `Args<T>` -> `Args<T, U>`).
     // This is compatible as long as each added argument fills a type parameter that did not exist before
-    // (or matches its previous default), and the referenced type itself did not change in a breaking way.
+    // (or matches its previous default), the previous annotation is assignable to the current one when both
+    // are resolved against the current types, and the referenced type itself did not change in a breaking way.
     const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
     if (
       prevParamSymbol &&
@@ -189,6 +190,11 @@ export function getFunctionParametersDiff({
       const currentRefSymbol = resolveAlias(currentParamSymbol, current.program);
       if (
         overridesPreviousDefaults(prevDeclaration.parameters[i], currentDeclaration.parameters[i], prevRefSymbol) ||
+        !isAssignableUnderCurrentTypes(
+          prevDeclaration.parameters[i],
+          currentDeclaration.parameters[i],
+          current.program
+        ) ||
         hasChanged(
           { key: prev.key, symbol: prevRefSymbol, program: prev.program },
           { key: current.key, symbol: currentRefSymbol, program: current.program }
@@ -330,7 +336,7 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
       {
         key: memberName.toString(),
         symbol: currentMember,
-        program: prev.program,
+        program: current.program,
       }
     );
 
@@ -446,7 +452,7 @@ export function hasClassChanged(prev: SymbolMeta, current: SymbolMeta) {
       {
         key: memberName.toString(),
         symbol: currentMember,
-        program: prev.program,
+        program: current.program,
       }
     );
 
@@ -587,6 +593,63 @@ function overridesPreviousDefaults(
   }
 
   return false;
+}
+
+// Returns TRUE if a value typed with the previous parameter annotation (e.g. `Args<string>`) is assignable to
+// the current annotation (e.g. `Args<string, number>`), with both resolved against the current program.
+// The two programs can't be compared with one type checker, so this appends a pair of interfaces to the
+// current declaration's source file, recompiles it, and looks for errors in the appended code:
+//
+//   interface __LevitateTarget<T> { value: Args<string, number>; }
+//   interface __LevitateSource<T> extends __LevitateTarget<T> { value: Args<string>; }
+function isAssignableUnderCurrentTypes(
+  prev: ts.ParameterDeclaration,
+  current: ts.ParameterDeclaration,
+  currentProgram: ts.Program
+) {
+  const sourceFile = current.getSourceFile();
+  const typeParameters = getEnclosingTypeParameters(current);
+  const declared = typeParameters.length ? `<${typeParameters.map((param) => param.getText()).join(', ')}>` : '';
+  const names = typeParameters.length ? `<${typeParameters.map((param) => param.name.getText()).join(', ')}>` : '';
+  const check = [
+    '',
+    `interface __LevitateTarget${declared} { value: ${current.type.getText()}; }`,
+    `interface __LevitateSource${declared} extends __LevitateTarget${names} { value: ${prev.type.getText()}; }`,
+  ].join('\n');
+
+  const options = currentProgram.getCompilerOptions();
+  const host = ts.createCompilerHost(options);
+  const getSourceFile = host.getSourceFile;
+  host.getSourceFile = (fileName, languageVersion, ...rest) =>
+    fileName === sourceFile.fileName
+      ? ts.createSourceFile(fileName, sourceFile.text + check, languageVersion, true)
+      : getSourceFile(fileName, languageVersion, ...rest);
+
+  const program = ts.createProgram({
+    rootNames: currentProgram.getRootFileNames(),
+    options,
+    host,
+    oldProgram: currentProgram,
+  });
+  const checkedFile = program.getSourceFile(sourceFile.fileName);
+  if (!checkedFile || checkedFile.text.length === sourceFile.text.length) {
+    return false;
+  }
+
+  return !program.getSemanticDiagnostics(checkedFile).some((d) => (d.start ?? 0) >= sourceFile.text.length);
+}
+
+// Type parameters in scope at a node, outermost first (e.g. a class's and then its method's).
+function getEnclosingTypeParameters(node: ts.Node): ts.TypeParameterDeclaration[] {
+  const typeParameters: ts.TypeParameterDeclaration[] = [];
+  for (let parent = node.parent; parent; parent = parent.parent) {
+    const declared = (parent as ts.SignatureDeclaration | ts.ClassLikeDeclaration | ts.InterfaceDeclaration)
+      .typeParameters;
+    if (declared) {
+      typeParameters.unshift(...declared);
+    }
+  }
+  return typeParameters;
 }
 
 // Returns TRUE if the previous type parameters are still in the same positions,
