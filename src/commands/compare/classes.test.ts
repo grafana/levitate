@@ -558,4 +558,56 @@ describe('Compare classes', () => {
     expect(Object.keys(comparison.additions)).toEqual(['Args.TContextOptions', 'Args.required']);
     expect(comparison).toHaveTypeRemovals(0);
   });
+
+  test('passing a type argument that differs from the previous default should trigger a change', () => {
+    const prev = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string>): void;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string, number>): void;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['Foo', 'Foo.bar']);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('passing a type argument equal to the previous default should not trigger a change', () => {
+    const prev = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string>): void;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string, string>): void;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
 });

@@ -295,4 +295,22 @@ describe('Compare interfaces', () => {
     expect(Object.keys(comparison.additions)).toEqual(['Foo.U']);
     expect(comparison).toHaveTypeRemovals(0);
   });
+
+  test('inserting a defaulted type parameter before existing ones should trigger a change', () => {
+    const prev = `
+      export interface Foo<T = string> {
+        data: T;
+      }
+    `;
+    const current = `
+      export interface Foo<U = unknown, T = string> {
+        data: T;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['Foo']);
+    expect(Object.keys(comparison.additions)).toEqual(['Foo.U']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
 });

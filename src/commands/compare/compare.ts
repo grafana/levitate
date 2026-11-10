@@ -177,15 +177,21 @@ export function getFunctionParametersDiff({
     }
 
     // Same parameter whose type only gained trailing type arguments (e.g. `Args<T>` -> `Args<T, U>`).
-    // This is compatible as long as the referenced type itself did not change in a breaking way.
-    if (hasOnlyAddedTypeArguments(prevDeclaration.parameters[i], currentDeclaration.parameters[i])) {
-      const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+    // This is compatible as long as each added argument fills a type parameter that did not exist before
+    // (or matches its previous default), and the referenced type itself did not change in a breaking way.
+    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+    if (
+      prevParamSymbol &&
+      currentParamSymbol &&
+      hasOnlyAddedTypeArguments(prevDeclaration.parameters[i], currentDeclaration.parameters[i])
+    ) {
+      const prevRefSymbol = resolveAlias(prevParamSymbol, prev.program);
+      const currentRefSymbol = resolveAlias(currentParamSymbol, current.program);
       if (
-        prevParamSymbol &&
-        currentParamSymbol &&
+        overridesPreviousDefaults(prevDeclaration.parameters[i], currentDeclaration.parameters[i], prevRefSymbol) ||
         hasChanged(
-          { key: prev.key, symbol: resolveAlias(prevParamSymbol, prev.program), program: prev.program },
-          { key: current.key, symbol: resolveAlias(currentParamSymbol, current.program), program: current.program }
+          { key: prev.key, symbol: prevRefSymbol, program: prev.program },
+          { key: current.key, symbol: currentRefSymbol, program: current.program }
         )
       ) {
         return {
@@ -204,7 +210,6 @@ export function getFunctionParametersDiff({
       removeComments(currentDeclaration.parameters[i].getText()) !==
       removeComments(prevDeclaration.parameters[i].getText())
     ) {
-      const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
       return {
         prev: prevParamSymbol,
         prevProgram: prev.program,
@@ -215,7 +220,6 @@ export function getFunctionParametersDiff({
     }
 
     const currentParamType = currentDeclaration.parameters[i]?.type || undefined;
-    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
 
     // native types (e.g. MouseEvent) don't have declarations
     if (!currentParamSymbol.declarations || !prevParamSymbol.declarations) {
@@ -357,9 +361,13 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
       continue;
     }
 
-    // New type parameter with a default -> existing references like `Foo<A>` still resolve
+    // New type parameter with a default, appended after the existing ones
+    // -> existing references like `Foo<A>` still resolve to the same type
     if (currentMember.flags & ts.SymbolFlags.TypeParameter) {
-      if ((currentMember.declarations?.[0] as ts.TypeParameterDeclaration)?.default) {
+      if (
+        (currentMember.declarations?.[0] as ts.TypeParameterDeclaration)?.default &&
+        hasOnlyAppendedTypeParameters(prev.symbol, current.symbol)
+      ) {
         continue;
       }
       return true;
@@ -558,6 +566,44 @@ function hasOnlyAddedTypeArguments(prev: ts.ParameterDeclaration, current: ts.Pa
   const currentArgs = (current.type.typeArguments ?? []).map((arg) => arg.getText());
 
   return currentArgs.length > prevArgs.length && prevArgs.every((arg, i) => arg === currentArgs[i]);
+}
+
+// Returns TRUE if a type argument added to the parameter's type fills a type parameter that already
+// existed with a different default, e.g. `Args<string>` -> `Args<string, number>` for `Args<T, U = string>`.
+function overridesPreviousDefaults(
+  prev: ts.ParameterDeclaration,
+  current: ts.ParameterDeclaration,
+  prevRefSymbol: ts.Symbol
+) {
+  const prevArgs = (prev.type as ts.TypeReferenceNode).typeArguments ?? [];
+  const currentArgs = (current.type as ts.TypeReferenceNode).typeArguments ?? [];
+  const prevTypeParameters = getTypeParameters(prevRefSymbol);
+
+  for (let i = prevArgs.length; i < currentArgs.length; i++) {
+    const prevTypeParameter = prevTypeParameters[i];
+    if (prevTypeParameter && prevTypeParameter.default?.getText() !== currentArgs[i].getText()) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// Returns TRUE if the previous type parameters are still in the same positions,
+// e.g. `Foo<T>` -> `Foo<T, U = unknown>`, but not `Foo<T>` -> `Foo<U = unknown, T>`.
+function hasOnlyAppendedTypeParameters(prev: ts.Symbol, current: ts.Symbol) {
+  const prevNames = getTypeParameters(prev).map((param) => param.name.getText());
+  const currentNames = getTypeParameters(current).map((param) => param.name.getText());
+
+  return prevNames.every((name, i) => name === currentNames[i]);
+}
+
+function getTypeParameters(symbol: ts.Symbol): readonly ts.TypeParameterDeclaration[] {
+  const declaration = symbol.declarations?.find(
+    (d) => ts.isInterfaceDeclaration(d) || ts.isTypeAliasDeclaration(d) || ts.isClassDeclaration(d)
+  ) as ts.InterfaceDeclaration | ts.TypeAliasDeclaration | ts.ClassDeclaration | undefined;
+
+  return declaration?.typeParameters ?? [];
 }
 
 function resolveAlias(symbol: ts.Symbol, program: ts.Program) {
