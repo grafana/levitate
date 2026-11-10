@@ -22,6 +22,7 @@ export async function getIncompatibilitiesBetweenPackages(
   for (const [sourceFile, usages] of usagePerSourceFile) {
     const incompatibilitiesInFile = getIncompatibilitiesFromComparison({
       sourceFile,
+      checker: projectProgram.getTypeChecker(),
       usages,
       comparison: exportsComparison,
     });
@@ -33,18 +34,20 @@ export async function getIncompatibilitiesBetweenPackages(
 
 export function getIncompatibilitiesFromComparison({
   sourceFile,
+  checker,
   usages,
   comparison,
 }: {
   usages: Record<string, ts.Identifier>;
   sourceFile: ts.SourceFile;
+  checker: ts.TypeChecker;
   comparison: Comparison;
 }): IncompatibilityInfo[] {
   const incompatibilities: IncompatibilityInfo[] = [];
   for (const change of Object.keys(comparison.changes)) {
     if (usages[change]) {
       const identifier = usages[change];
-      if (usesOnlyStableProperties(sourceFile, identifier, comparison.changes[change])) {
+      if (usesOnlyStableProperties(sourceFile, checker, identifier, comparison.changes[change])) {
         continue;
       }
       incompatibilities.push({
@@ -71,7 +74,12 @@ export function getIncompatibilitiesFromComparison({
   return incompatibilities;
 }
 
-function usesOnlyStableProperties(sourceFile: ts.SourceFile, identifier: ts.Identifier, change: Change): boolean {
+function usesOnlyStableProperties(
+  sourceFile: ts.SourceFile,
+  checker: ts.TypeChecker,
+  identifier: ts.Identifier,
+  change: Change
+): boolean {
   if (
     !ts.isImportSpecifier(identifier.parent) ||
     identifier.parent.propertyName ||
@@ -87,6 +95,21 @@ function usesOnlyStableProperties(sourceFile: ts.SourceFile, identifier: ts.Iden
     identifier.parent.parent.elements.some((element) => element.propertyName?.text === identifier.text)
   ) {
     return false;
+  }
+  const importSymbol = checker.getSymbolAtLocation(identifier);
+  if (!importSymbol) {
+    return false;
+  }
+  function referencesImport(node: ts.Identifier): boolean {
+    // Shorthand names resolve to the object literal property, not the binding they read.
+    const symbol = ts.isShorthandPropertyAssignment(node.parent)
+      ? checker.getShorthandAssignmentValueSymbol(node.parent)
+      : checker.getSymbolAtLocation(node);
+    if (symbol) {
+      return symbol === importSymbol;
+    }
+    // Unresolved names are treated as references unless they cannot refer to a binding, e.g. properties of `any`.
+    return !(ts.isPropertyAccessExpression(node.parent) && node.parent.name === node);
   }
   let used = false;
   let safe = true;
@@ -105,7 +128,12 @@ function usesOnlyStableProperties(sourceFile: ts.SourceFile, identifier: ts.Iden
         safe = false;
       }
     }
-    if (ts.isIdentifier(node) && node.text === identifier.text && !ts.findAncestor(node, ts.isImportDeclaration)) {
+    if (
+      ts.isIdentifier(node) &&
+      node.text === identifier.text &&
+      !ts.findAncestor(node, ts.isImportDeclaration) &&
+      referencesImport(node)
+    ) {
       used = true;
       safe = safe && isStablePropertyPath(node, change);
     }

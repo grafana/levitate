@@ -20,6 +20,7 @@ function incompatibilities(currentAPI: string, body: string) {
   const usages = getPackageUsage(program, getExportInfo(previousFile), 'testing-module').get(sourceFile)!;
   return getIncompatibilitiesFromComparison({
     sourceFile,
+    checker: program.getTypeChecker(),
     usages,
     comparison: compareExports(previousFile, currentFile, {}),
   }).map(({ name }) => name);
@@ -35,8 +36,13 @@ describe('Object property compatibility', () => {
     }
   );
 
-  it('does not let unrelated imports disable the fix', () => {
-    expect(incompatibilities(withoutUnused, `import React from 'react'; config.stable;`)).toEqual([]);
+  it.each([
+    `import React from 'react';`,
+    'const o = { config: 1 };',
+    'declare const p: any; p.config;',
+    'function f(config: any) { return config; }',
+  ])('ignores unrelated code: %s', (body) => {
+    expect(incompatibilities(withoutUnused, `config.stable; ${body}`)).toEqual([]);
   });
 
   it.each([
@@ -63,6 +69,7 @@ describe('Object property compatibility', () => {
     'consume(config)',
     'const copy = { ...config }',
     'const copy = config',
+    'const copy = { config }',
     'const { stable } = config',
     'config[key]',
     'Object.values(config.nested)',
