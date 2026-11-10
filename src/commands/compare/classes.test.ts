@@ -508,4 +508,169 @@ describe('Compare classes', () => {
     expect(comparison).toHaveTypeAdditions(0);
     expect(comparison).toHaveTypeRemovals(0);
   });
+
+  test('adding a defaulted type argument to a method parameter type should not trigger a change', () => {
+    const prev = `
+      export interface Args<T = any> {
+        custom?: (builder: T) => void;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions>): this;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, TContextOptions = unknown> {
+        custom?: (builder: T) => void;
+        showIf?: (options: TContextOptions) => boolean;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions, TOptions>): this;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(comparison).toHaveTypeChanges(0);
+    expect(Object.keys(comparison.additions)).toEqual(['Args.TContextOptions', 'Args.showIf']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('adding a type argument to a method parameter type whose type changed in a breaking way should trigger a change', () => {
+    const prev = `
+      export interface Args<T = any> {
+        custom?: (builder: T) => void;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions>): this;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, TContextOptions = unknown> {
+        custom?: (builder: T) => void;
+        required: TContextOptions;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions, TOptions>): this;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['Args', 'PanelPlugin', 'PanelPlugin.useFieldConfig']);
+    expect(Object.keys(comparison.additions)).toEqual(['Args.TContextOptions', 'Args.required']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('passing a type argument that differs from the previous default should trigger a change', () => {
+    const prev = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string>): void;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string, number>): void;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['Foo', 'Foo.bar']);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('passing a type argument equal to the previous default should not trigger a change', () => {
+    const prev = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string>): void;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string, string>): void;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(comparison).toHaveTypeChanges(0);
+    expect(comparison).toHaveTypeAdditions(0);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('passing a type argument for a new type parameter that narrows an existing member should trigger a change', () => {
+    const prev = `
+      export interface Args<T = any> {
+        data: T;
+        extra: string;
+      }
+      export declare class Foo {
+        bar(config: Args<string>): void;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, U = string> {
+        data: T;
+        extra: U;
+      }
+      export declare class Foo {
+        bar(config: Args<string, number>): void;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['Foo', 'Foo.bar']);
+    expect(Object.keys(comparison.additions)).toEqual(['Args.U']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('forwarding a new type parameter to another generic that only gained optional members should not trigger a change', () => {
+    const prev = `
+      export interface Inner {
+        label?: string;
+      }
+      export interface Args<T = any> {
+        inner?: Inner;
+        custom?: (builder: T) => void;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions>): this;
+      }
+    `;
+    const current = `
+      export interface Inner<TContextOptions = unknown> {
+        label?: string;
+        showIf?: (options: TContextOptions) => boolean;
+      }
+      export interface Args<T = any, TContextOptions = unknown> {
+        inner?: Inner<TContextOptions>;
+        custom?: (builder: T) => void;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions, TOptions>): this;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(comparison).toHaveTypeChanges(0);
+    expect(Object.keys(comparison.additions)).toEqual([
+      'Inner.TContextOptions',
+      'Inner.showIf',
+      'Args.TContextOptions',
+    ]);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
 });
