@@ -177,9 +177,9 @@ export function getFunctionParametersDiff({
     }
 
     // Same parameter whose type only gained trailing type arguments (e.g. `Args<T>` -> `Args<T, U>`).
-    // This is compatible as long as each added argument fills a type parameter that did not exist before
-    // (or matches its previous default), the previous annotation is assignable to the current one when both
-    // are resolved against the current types, and the referenced type itself did not change in a breaking way.
+    // This is compatible as long as the previous annotation (resolved against the previous declaration of
+    // the referenced type) is assignable to the current one, and the referenced type itself did not change
+    // in a breaking way.
     const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
     if (
       prevParamSymbol &&
@@ -189,10 +189,10 @@ export function getFunctionParametersDiff({
       const prevRefSymbol = resolveAlias(prevParamSymbol, prev.program);
       const currentRefSymbol = resolveAlias(currentParamSymbol, current.program);
       if (
-        overridesPreviousDefaults(prevDeclaration.parameters[i], currentDeclaration.parameters[i], prevRefSymbol) ||
-        !isAssignableUnderCurrentTypes(
+        !isAssignableFromPreviousType(
           prevDeclaration.parameters[i],
           currentDeclaration.parameters[i],
+          prevRefSymbol,
           current.program
         ) ||
         hasChanged(
@@ -574,47 +574,52 @@ function hasOnlyAddedTypeArguments(prev: ts.ParameterDeclaration, current: ts.Pa
   return currentArgs.length > prevArgs.length && prevArgs.every((arg, i) => arg === currentArgs[i]);
 }
 
-// Returns TRUE if a type argument added to the parameter's type fills a type parameter that already
-// existed with a different default, e.g. `Args<string>` -> `Args<string, number>` for `Args<T, U = string>`.
-function overridesPreviousDefaults(
-  prev: ts.ParameterDeclaration,
-  current: ts.ParameterDeclaration,
-  prevRefSymbol: ts.Symbol
-) {
-  const prevArgs = (prev.type as ts.TypeReferenceNode).typeArguments ?? [];
-  const currentArgs = (current.type as ts.TypeReferenceNode).typeArguments ?? [];
-  const prevTypeParameters = getTypeParameters(prevRefSymbol);
-
-  for (let i = prevArgs.length; i < currentArgs.length; i++) {
-    const prevTypeParameter = prevTypeParameters[i];
-    if (prevTypeParameter && prevTypeParameter.default?.getText() !== currentArgs[i].getText()) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 // Returns TRUE if a value typed with the previous parameter annotation (e.g. `Args<string>`) is assignable to
-// the current annotation (e.g. `Args<string, number>`), with both resolved against the current program.
-// The two programs can't be compared with one type checker, so this appends a pair of interfaces to the
-// current declaration's source file, recompiles it, and looks for errors in the appended code:
+// the current annotation (e.g. `Args<string, number>`).
+// The two programs can't be compared with one type checker, so this appends a renamed copy of the previous
+// declaration of the referenced type and a pair of interfaces to the current declaration's source file,
+// recompiles it, and looks for errors in the appended code:
 //
+//   interface __LevitatePrevious_Args<T> { data: T; }
 //   interface __LevitateTarget<T> { value: Args<string, number>; }
-//   interface __LevitateSource<T> extends __LevitateTarget<T> { value: Args<string>; }
-function isAssignableUnderCurrentTypes(
+//   interface __LevitateSource<T> extends __LevitateTarget<T> { value: __LevitatePrevious_Args<string>; }
+//
+// Types referenced from inside the previous declaration still resolve to their current versions.
+function isAssignableFromPreviousType(
   prev: ts.ParameterDeclaration,
   current: ts.ParameterDeclaration,
+  prevRefSymbol: ts.Symbol,
   currentProgram: ts.Program
 ) {
+  const previousName = `__LevitatePrevious_${prevRefSymbol.getName()}`;
+  const previousDeclarations = (prevRefSymbol.declarations ?? [])
+    .filter(
+      (d): d is ts.InterfaceDeclaration | ts.TypeAliasDeclaration | ts.ClassDeclaration =>
+        (ts.isInterfaceDeclaration(d) || ts.isTypeAliasDeclaration(d) || ts.isClassDeclaration(d)) && Boolean(d.name)
+    )
+    .map((d) => {
+      const text = d.getText();
+      const nameStart = d.name.getStart() - d.getStart();
+      return text.slice(0, nameStart) + previousName + text.slice(nameStart + d.name.getText().length);
+    });
+  if (previousDeclarations.length === 0) {
+    return false;
+  }
+
+  const prevTypeArguments = (prev.type as ts.TypeReferenceNode).typeArguments ?? [];
+  const previousType = prevTypeArguments.length
+    ? `${previousName}<${prevTypeArguments.map((arg) => arg.getText()).join(', ')}>`
+    : previousName;
+
   const sourceFile = current.getSourceFile();
   const typeParameters = getEnclosingTypeParameters(current);
   const declared = typeParameters.length ? `<${typeParameters.map((param) => param.getText()).join(', ')}>` : '';
   const names = typeParameters.length ? `<${typeParameters.map((param) => param.name.getText()).join(', ')}>` : '';
   const check = [
     '',
+    ...previousDeclarations,
     `interface __LevitateTarget${declared} { value: ${current.type.getText()}; }`,
-    `interface __LevitateSource${declared} extends __LevitateTarget${names} { value: ${prev.type.getText()}; }`,
+    `interface __LevitateSource${declared} extends __LevitateTarget${names} { value: ${previousType}; }`,
   ].join('\n');
 
   const options = currentProgram.getCompilerOptions();
