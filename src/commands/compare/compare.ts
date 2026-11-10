@@ -176,6 +176,29 @@ export function getFunctionParametersDiff({
       };
     }
 
+    // Same parameter whose type only gained trailing type arguments (e.g. `Args<T>` -> `Args<T, U>`).
+    // This is compatible as long as the referenced type itself did not change in a breaking way.
+    if (hasOnlyAddedTypeArguments(prevDeclaration.parameters[i], currentDeclaration.parameters[i])) {
+      const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+      if (
+        prevParamSymbol &&
+        currentParamSymbol &&
+        hasChanged(
+          { key: prev.key, symbol: resolveAlias(prevParamSymbol, prev.program), program: prev.program },
+          { key: current.key, symbol: resolveAlias(currentParamSymbol, current.program), program: current.program }
+        )
+      ) {
+        return {
+          prev: prevParamSymbol,
+          prevProgram: prev.program,
+          current: currentParamSymbol,
+          currentProgram: current.program,
+          type: ChangeType.PARAMETER_TYPE,
+        };
+      }
+      continue;
+    }
+
     // Changed parameter at the old position
     if (
       removeComments(currentDeclaration.parameters[i].getText()) !==
@@ -332,6 +355,14 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
     // It is not a new member, we already took care of it
     if (prevMember) {
       continue;
+    }
+
+    // New type parameter with a default -> existing references like `Foo<A>` still resolve
+    if (currentMember.flags & ts.SymbolFlags.TypeParameter) {
+      if ((currentMember.declarations?.[0] as ts.TypeParameterDeclaration)?.default) {
+        continue;
+      }
+      return true;
     }
 
     // New optional member -> does not need to be implemented so it is not a breaking change
@@ -505,6 +536,32 @@ export function isPublic(declaration: ts.PropertyDeclaration) {
       (modifier) => modifier.kind === ts.SyntaxKind.ProtectedKeyword || modifier.kind === ts.SyntaxKind.PrivateKeyword
     )
   );
+}
+
+// Returns TRUE if both parameters are the same apart from type arguments appended to the
+// parameter's type reference, e.g. `config?: Args<T>` -> `config?: Args<T, U>`.
+function hasOnlyAddedTypeArguments(prev: ts.ParameterDeclaration, current: ts.ParameterDeclaration) {
+  if (
+    prev.name.getText() !== current.name.getText() ||
+    Boolean(prev.questionToken) !== Boolean(current.questionToken) ||
+    Boolean(prev.dotDotDotToken) !== Boolean(current.dotDotDotToken) ||
+    !prev.type ||
+    !current.type ||
+    !ts.isTypeReferenceNode(prev.type) ||
+    !ts.isTypeReferenceNode(current.type) ||
+    prev.type.typeName.getText() !== current.type.typeName.getText()
+  ) {
+    return false;
+  }
+
+  const prevArgs = (prev.type.typeArguments ?? []).map((arg) => arg.getText());
+  const currentArgs = (current.type.typeArguments ?? []).map((arg) => arg.getText());
+
+  return currentArgs.length > prevArgs.length && prevArgs.every((arg, i) => arg === currentArgs[i]);
+}
+
+function resolveAlias(symbol: ts.Symbol, program: ts.Program) {
+  return symbol.flags & ts.SymbolFlags.Alias ? program.getTypeChecker().getAliasedSymbol(symbol) : symbol;
 }
 
 // Strips leading `export`/`declare`/`type`/`default` modifiers from declaration text,

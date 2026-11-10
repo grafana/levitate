@@ -259,4 +259,40 @@ describe('Compare interfaces', () => {
     expect(comparison).toHaveTypeAdditions(0);
     expect(comparison).toHaveTypeRemovals(0);
   });
+
+  test('adding a type parameter with a default should not trigger a change', () => {
+    const prev = `
+      export interface Foo<T = any> {
+        data: T;
+      }
+    `;
+    const current = `
+      export interface Foo<T = any, U = unknown> {
+        data: T;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(comparison).toHaveTypeChanges(0);
+    expect(Object.keys(comparison.additions)).toEqual(['Foo.U']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('adding a type parameter without a default should trigger a change', () => {
+    const prev = `
+      export interface Foo<T = any> {
+        data: T;
+      }
+    `;
+    const current = `
+      export interface Foo<T = any, U> {
+        data: T;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['Foo']);
+    expect(Object.keys(comparison.additions)).toEqual(['Foo.U']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
 });

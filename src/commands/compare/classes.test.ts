@@ -508,4 +508,54 @@ describe('Compare classes', () => {
     expect(comparison).toHaveTypeAdditions(0);
     expect(comparison).toHaveTypeRemovals(0);
   });
+
+  test('adding a defaulted type argument to a method parameter type should not trigger a change', () => {
+    const prev = `
+      export interface Args<T = any> {
+        custom?: (builder: T) => void;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions>): this;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, TContextOptions = unknown> {
+        custom?: (builder: T) => void;
+        showIf?: (options: TContextOptions) => boolean;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions, TOptions>): this;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(comparison).toHaveTypeChanges(0);
+    expect(Object.keys(comparison.additions)).toEqual(['Args.TContextOptions', 'Args.showIf']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
+
+  test('adding a type argument to a method parameter type whose type changed in a breaking way should trigger a change', () => {
+    const prev = `
+      export interface Args<T = any> {
+        custom?: (builder: T) => void;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions>): this;
+      }
+    `;
+    const current = `
+      export interface Args<T = any, TContextOptions = unknown> {
+        custom?: (builder: T) => void;
+        required: TContextOptions;
+      }
+      export declare class PanelPlugin<TOptions = any, TFieldConfigOptions = any> {
+        useFieldConfig(config?: Args<TFieldConfigOptions, TOptions>): this;
+      }
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['Args', 'PanelPlugin', 'PanelPlugin.useFieldConfig']);
+    expect(Object.keys(comparison.additions)).toEqual(['Args.TContextOptions', 'Args.required']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
 });
