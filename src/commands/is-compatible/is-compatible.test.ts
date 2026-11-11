@@ -54,7 +54,12 @@ describe('is compatible command', () => {
       'test-module'
     );
     const usages = usagePerSourceFile.values().next().value;
-    const result = getIncompatibilitiesFromComparison({ sourceFile, comparison, usages: usages });
+    const result = getIncompatibilitiesFromComparison({
+      sourceFile,
+      checker: projectProgram.getTypeChecker(),
+      comparison,
+      usages: usages,
+    });
     expect(result).toHaveLength(3);
     //Foo had changed
     expect(result[0]).toMatchObject({ name: 'Foo', sourceFile });
