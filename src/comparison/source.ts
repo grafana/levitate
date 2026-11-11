@@ -74,68 +74,35 @@ export function getIncompatibilitiesFromComparison({
   return incompatibilities;
 }
 
+const PRIMITIVE_TYPE_FLAGS = ts.TypeFlags.String | ts.TypeFlags.Number | ts.TypeFlags.Boolean;
+const PLAIN_TYPE_NODE_KINDS = [
+  ts.SyntaxKind.StringKeyword,
+  ts.SyntaxKind.NumberKeyword,
+  ts.SyntaxKind.BooleanKeyword,
+  ts.SyntaxKind.TypeLiteral,
+];
+
 function usesOnlyStableProperties(
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker,
   identifier: ts.Identifier,
   change: Change
 ): boolean {
-  if (
-    !ts.isImportSpecifier(identifier.parent) ||
-    identifier.parent.propertyName ||
-    !(change.prev.flags & ts.SymbolFlags.Variable) ||
-    !(change.current.flags & ts.SymbolFlags.Variable)
-  ) {
-    return false;
-  }
-  const declaration = ts.findAncestor(identifier, ts.isImportDeclaration)!;
-  const moduleName = (declaration.moduleSpecifier as ts.StringLiteral).text;
-  if (
-    declaration.importClause?.name ||
-    identifier.parent.parent.elements.some((element) => element.propertyName?.text === identifier.text)
-  ) {
-    return false;
-  }
+  const importDeclaration = getPlainNamedImportDeclaration(identifier);
   const importSymbol = checker.getSymbolAtLocation(identifier);
-  if (!importSymbol) {
+  if (!importDeclaration || !importSymbol || !isVariableInBothVersions(change)) {
     return false;
   }
-  function referencesImport(node: ts.Identifier): boolean {
-    // Shorthand names resolve to the object literal property, not the binding they read.
-    const symbol = ts.isShorthandPropertyAssignment(node.parent)
-      ? checker.getShorthandAssignmentValueSymbol(node.parent)
-      : checker.getSymbolAtLocation(node);
-    if (symbol) {
-      return symbol === importSymbol;
-    }
-    // Unresolved names are treated as references unless they cannot refer to a binding, e.g. properties of `any`.
-    return !(ts.isPropertyAccessExpression(node.parent) && node.parent.name === node);
-  }
+  const moduleName = (importDeclaration.moduleSpecifier as ts.StringLiteral).text;
+
   let used = false;
   let safe = true;
   function visit(node: ts.Node) {
-    // Other references to the package may consume the export through another binding.
-    if (ts.isStringLiteralLike(node) && node.text === moduleName && node.parent !== declaration) {
+    if (referencesModuleOutside(node, moduleName, importDeclaration!)) {
       safe = false;
-    }
-    if (
-      ts.isCallExpression(node) &&
-      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
-        (ts.isIdentifier(node.expression) && node.expression.text === 'require'))
-    ) {
-      const argument = node.arguments[0];
-      if (!argument || !ts.isStringLiteralLike(argument) || argument.text === moduleName) {
-        safe = false;
-      }
-    }
-    if (
-      ts.isIdentifier(node) &&
-      node.text === identifier.text &&
-      !ts.findAncestor(node, ts.isImportDeclaration) &&
-      referencesImport(node)
-    ) {
+    } else if (ts.isIdentifier(node) && referencesImport(checker, node, importSymbol!)) {
       used = true;
-      safe = safe && isStablePropertyPath(node, change);
+      safe = isStablePropertyPath(node, change);
     }
     if (safe) {
       ts.forEachChild(node, visit);
@@ -145,70 +112,137 @@ function usesOnlyStableProperties(
   return safe && used;
 }
 
-function isStablePropertyPath(identifier: ts.Identifier, change: Change): boolean {
-  const checkers = [change.prevProgram.getTypeChecker(), change.currentProgram.getTypeChecker()];
-  let types = [change.prev, change.current].map((symbol, index) =>
-    checkers[index].getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!)
+function getPlainNamedImportDeclaration(identifier: ts.Identifier): ts.ImportDeclaration | undefined {
+  const specifier = identifier.parent;
+  if (!ts.isImportSpecifier(specifier) || specifier.propertyName) {
+    return undefined;
+  }
+  const declaration = ts.findAncestor(specifier, ts.isImportDeclaration)!;
+  const hasDefaultImport = Boolean(declaration.importClause?.name);
+  const isAlsoImportedUnderAlias = specifier.parent.elements.some(
+    (element) => element.propertyName?.text === identifier.text
   );
-  if (
-    types.some((type) => !(type.flags & ts.TypeFlags.Object)) ||
-    [change.prev, change.current].some(
-      (symbol, index) => !isPlainPathType((symbol.valueDeclaration as ts.VariableDeclaration)?.type, checkers[index])
-    )
-  ) {
+  return hasDefaultImport || isAlsoImportedUnderAlias ? undefined : declaration;
+}
+
+function isVariableInBothVersions(change: Change): boolean {
+  return Boolean(change.prev.flags & ts.SymbolFlags.Variable && change.current.flags & ts.SymbolFlags.Variable);
+}
+
+function referencesModuleOutside(node: ts.Node, moduleName: string, importDeclaration: ts.ImportDeclaration): boolean {
+  if (ts.isStringLiteralLike(node)) {
+    return node.text === moduleName && node.parent !== importDeclaration;
+  }
+  if (!isDynamicImportOrRequire(node)) {
     return false;
   }
-  let expression: ts.Node = identifier;
-  while (types.every((type) => type.flags & ts.TypeFlags.Object)) {
-    const access = expression.parent;
-    if (!ts.isPropertyAccessExpression(access) || access.expression !== expression || access.questionDotToken) {
-      return false;
-    }
-    const members = types.map((type, index) => checkers[index].getPropertyOfType(type, access.name.text));
-    const declarations = members.map((member) => member?.valueDeclaration ?? member?.declarations?.[0]);
-    if (
-      members.some((member) => !member || member.flags & (ts.SymbolFlags.Optional | ts.SymbolFlags.Transient)) ||
-      declarations.some(
-        (node, index) =>
-          !node ||
-          !(ts.isPropertySignature(node) || ts.isPropertyDeclaration(node)) ||
-          !isPlainPathType(node.type, checkers[index])
-      )
-    ) {
-      return false;
-    }
-    const modifiers = declarations.map((node) => ts.getCombinedModifierFlags(node!));
-    if (
-      modifiers[0] !== modifiers[1] ||
-      modifiers.some((flags) => flags & (ts.ModifierFlags.Private | ts.ModifierFlags.Protected))
-    ) {
-      return false;
-    }
-    types = members.map((member, index) => checkers[index].getTypeOfSymbolAtLocation(member!, declarations[index]!));
-    expression = access;
-  }
+  const argument = node.arguments[0];
+  return !argument || !ts.isStringLiteralLike(argument) || argument.text === moduleName;
+}
+
+function isDynamicImportOrRequire(node: ts.Node): node is ts.CallExpression {
   return (
-    types[0].flags === types[1].flags &&
-    Boolean(types[0].flags & (ts.TypeFlags.String | ts.TypeFlags.Number | ts.TypeFlags.Boolean))
+    ts.isCallExpression(node) &&
+    (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+      (ts.isIdentifier(node.expression) && node.expression.text === 'require'))
   );
 }
 
-function isPlainPathType(node: ts.TypeNode | undefined, checker: ts.TypeChecker): boolean {
+function referencesImport(checker: ts.TypeChecker, node: ts.Identifier, importSymbol: ts.Symbol): boolean {
+  if (node.text !== importSymbol.name || ts.findAncestor(node, ts.isImportDeclaration)) {
+    return false;
+  }
+  const symbol = ts.isShorthandPropertyAssignment(node.parent)
+    ? checker.getShorthandAssignmentValueSymbol(node.parent)
+    : checker.getSymbolAtLocation(node);
+  if (symbol) {
+    return symbol === importSymbol;
+  }
+  return !isPropertyAccessName(node);
+}
+
+function isPropertyAccessName(node: ts.Identifier): boolean {
+  return ts.isPropertyAccessExpression(node.parent) && node.parent.name === node;
+}
+
+function isStablePropertyPath(identifier: ts.Identifier, change: Change): boolean {
+  const prevChecker = change.prevProgram.getTypeChecker();
+  const currentChecker = change.currentProgram.getTypeChecker();
+  let prevType = getPlainObjectVariableType(prevChecker, change.prev);
+  let currentType = getPlainObjectVariableType(currentChecker, change.current);
+  if (!prevType || !currentType) {
+    return false;
+  }
+
+  let expression: ts.Node = identifier;
+  while (isObjectType(prevType) && isObjectType(currentType)) {
+    const access = getPlainPropertyAccess(expression);
+    if (!access) {
+      return false;
+    }
+    const prevMember = getPlainMember(prevChecker, prevType, access.name.text);
+    const currentMember = getPlainMember(currentChecker, currentType, access.name.text);
+    if (!prevMember || !currentMember || prevMember.modifiers !== currentMember.modifiers) {
+      return false;
+    }
+    prevType = prevMember.type;
+    currentType = currentMember.type;
+    expression = access;
+  }
+  return prevType.flags === currentType.flags && Boolean(prevType.flags & PRIMITIVE_TYPE_FLAGS);
+}
+
+function getPlainObjectVariableType(checker: ts.TypeChecker, symbol: ts.Symbol): ts.Type | undefined {
+  const declaration = symbol.valueDeclaration as ts.VariableDeclaration;
+  const type = checker.getTypeOfSymbolAtLocation(symbol, declaration);
+  return isObjectType(type) && isPlainTypeNode(checker, declaration?.type) ? type : undefined;
+}
+
+function isObjectType(type: ts.Type): boolean {
+  return Boolean(type.flags & ts.TypeFlags.Object);
+}
+
+function getPlainPropertyAccess(expression: ts.Node): ts.PropertyAccessExpression | undefined {
+  const access = expression.parent;
+  const isPlainAccess =
+    ts.isPropertyAccessExpression(access) && access.expression === expression && !access.questionDotToken;
+  return isPlainAccess ? access : undefined;
+}
+
+function getPlainMember(
+  checker: ts.TypeChecker,
+  type: ts.Type,
+  name: string
+): { type: ts.Type; modifiers: ts.ModifierFlags } | undefined {
+  const member = checker.getPropertyOfType(type, name);
+  if (!member || member.flags & (ts.SymbolFlags.Optional | ts.SymbolFlags.Transient)) {
+    return undefined;
+  }
+  const declaration = member.valueDeclaration ?? member.declarations?.[0];
+  if (
+    !declaration ||
+    !(ts.isPropertySignature(declaration) || ts.isPropertyDeclaration(declaration)) ||
+    !isPlainTypeNode(checker, declaration.type)
+  ) {
+    return undefined;
+  }
+  const modifiers = ts.getCombinedModifierFlags(declaration);
+  if (modifiers & (ts.ModifierFlags.Private | ts.ModifierFlags.Protected)) {
+    return undefined;
+  }
+  return { type: checker.getTypeOfSymbolAtLocation(member, declaration), modifiers };
+}
+
+function isPlainTypeNode(checker: ts.TypeChecker, node: ts.TypeNode | undefined): boolean {
   if (!node) {
     return false;
   }
-  // Comparison programs disable strictNullChecks, so resolved types alone can hide nullable unions.
   if (!ts.isTypeReferenceNode(node)) {
-    return [
-      ts.SyntaxKind.StringKeyword,
-      ts.SyntaxKind.NumberKeyword,
-      ts.SyntaxKind.BooleanKeyword,
-      ts.SyntaxKind.TypeLiteral,
-    ].includes(node.kind);
+    return PLAIN_TYPE_NODE_KINDS.includes(node.kind);
   }
   let symbol = checker.getSymbolAtLocation(node.typeName);
-  if (symbol?.flags & ts.SymbolFlags.Alias) {
+  if (symbol && symbol.flags & ts.SymbolFlags.Alias) {
     symbol = checker.getAliasedSymbol(symbol);
   }
-  return Boolean(symbol?.flags & (ts.SymbolFlags.Class | ts.SymbolFlags.Interface));
+  return Boolean(symbol && symbol.flags & (ts.SymbolFlags.Class | ts.SymbolFlags.Interface));
 }
