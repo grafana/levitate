@@ -73,7 +73,7 @@
     "nodemon": "3.1.14",
     "npm-run-all2": "8.0.4",
     "prettier": "3.7.4",
-    "vitest": "4.1.4"
+    "vitest": "4.1.11"
   },
   "nodemonConfig": {
     "watch": [
