@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.18.1](https://github.com/grafana/levitate/compare/v0.18.0...v0.18.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* **comparison:** check the property paths that are actually read by consumers ([#1056](https://github.com/grafana/levitate/issues/1056)) ([c3ac5f3](https://github.com/grafana/levitate/commit/c3ac5f3fd9989cd443b609046696a87b31a04f5d))
+
 ## [0.18.0](https://github.com/grafana/levitate/compare/v0.17.3...v0.18.0) (2026-09-24)
 
 
