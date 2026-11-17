@@ -154,7 +154,9 @@ function referencesImport(checker: ts.TypeChecker, node: ts.Identifier, importSy
   }
   const symbol = ts.isShorthandPropertyAssignment(node.parent)
     ? checker.getShorthandAssignmentValueSymbol(node.parent)
-    : checker.getSymbolAtLocation(node);
+    : ts.isExportSpecifier(node.parent)
+      ? checker.getExportSpecifierLocalTargetSymbol(node.parent)
+      : checker.getSymbolAtLocation(node);
   if (symbol) {
     return symbol === importSymbol;
   }

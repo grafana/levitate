@@ -74,6 +74,7 @@ describe('Object property compatibility', () => {
     'config[key]',
     'Object.values(config.nested)',
     'config?.stable',
+    'export { config }',
     `import { config as other } from 'testing-module'; other.unused;`,
     `import * as runtime from 'testing-module'; runtime['config'].unused;`,
     `import runtime from 'testing-module'; runtime['config'].unused;`,
