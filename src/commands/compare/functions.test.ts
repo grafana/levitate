@@ -475,4 +475,24 @@ describe('Compare functions', () => {
       expect(comparison).toHaveTypeRemovals(0);
     });
   });
+
+  it('Switching an existing member to a new type parameter that defaults to any should trigger a breaking change', () => {
+    const prev = `
+      export interface Args<T> {
+        data: T;
+      }
+      export declare function use(config: Args<string>): void;
+    `;
+    const current = `
+      export interface Args<T, U = any> {
+        data: U;
+      }
+      export declare function use(config: Args<string, number>): void;
+    `;
+    const comparison = testCompare(prev, current);
+
+    expect(Object.keys(comparison.changes)).toEqual(['use']);
+    expect(Object.keys(comparison.additions)).toEqual(['Args.U']);
+    expect(comparison).toHaveTypeRemovals(0);
+  });
 });

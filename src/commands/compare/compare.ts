@@ -176,12 +176,46 @@ export function getFunctionParametersDiff({
       };
     }
 
+    // Same parameter whose type only gained trailing type arguments (e.g. `Args<T>` -> `Args<T, U>`).
+    // This is compatible as long as the previous annotation (resolved against the previous declaration of
+    // the referenced type) is assignable to the current one, and the referenced type itself did not change
+    // in a breaking way.
+    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
+    if (
+      prevParamSymbol &&
+      currentParamSymbol &&
+      hasOnlyAddedTypeArguments(prevDeclaration.parameters[i], currentDeclaration.parameters[i])
+    ) {
+      const prevRefSymbol = resolveAlias(prevParamSymbol, prev.program);
+      const currentRefSymbol = resolveAlias(currentParamSymbol, current.program);
+      if (
+        !isAssignableFromPreviousType(
+          prevDeclaration.parameters[i],
+          currentDeclaration.parameters[i],
+          prevRefSymbol,
+          current.program
+        ) ||
+        hasChanged(
+          { key: prev.key, symbol: prevRefSymbol, program: prev.program },
+          { key: current.key, symbol: currentRefSymbol, program: current.program }
+        )
+      ) {
+        return {
+          prev: prevParamSymbol,
+          prevProgram: prev.program,
+          current: currentParamSymbol,
+          currentProgram: current.program,
+          type: ChangeType.PARAMETER_TYPE,
+        };
+      }
+      continue;
+    }
+
     // Changed parameter at the old position
     if (
       removeComments(currentDeclaration.parameters[i].getText()) !==
       removeComments(prevDeclaration.parameters[i].getText())
     ) {
-      const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
       return {
         prev: prevParamSymbol,
         prevProgram: prev.program,
@@ -192,7 +226,6 @@ export function getFunctionParametersDiff({
     }
 
     const currentParamType = currentDeclaration.parameters[i]?.type || undefined;
-    const currentParamSymbol = getSymbolFromParameter(currentDeclaration.parameters[i], current.program);
 
     // native types (e.g. MouseEvent) don't have declarations
     if (!currentParamSymbol.declarations || !prevParamSymbol.declarations) {
@@ -303,7 +336,7 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
       {
         key: memberName.toString(),
         symbol: currentMember,
-        program: prev.program,
+        program: current.program,
       }
     );
 
@@ -332,6 +365,18 @@ function hasInterfaceChanged(prev: SymbolMeta, current: SymbolMeta) {
     // It is not a new member, we already took care of it
     if (prevMember) {
       continue;
+    }
+
+    // New type parameter with a default, appended after the existing ones
+    // -> existing references like `Foo<A>` still resolve to the same type
+    if (currentMember.flags & ts.SymbolFlags.TypeParameter) {
+      if (
+        (currentMember.declarations?.[0] as ts.TypeParameterDeclaration)?.default &&
+        hasOnlyAppendedTypeParameters(prev.symbol, current.symbol)
+      ) {
+        continue;
+      }
+      return true;
     }
 
     // New optional member -> does not need to be implemented so it is not a breaking change
@@ -407,7 +452,7 @@ export function hasClassChanged(prev: SymbolMeta, current: SymbolMeta) {
       {
         key: memberName.toString(),
         symbol: currentMember,
-        program: prev.program,
+        program: current.program,
       }
     );
 
@@ -505,6 +550,132 @@ export function isPublic(declaration: ts.PropertyDeclaration) {
       (modifier) => modifier.kind === ts.SyntaxKind.ProtectedKeyword || modifier.kind === ts.SyntaxKind.PrivateKeyword
     )
   );
+}
+
+// Returns TRUE if both parameters are the same apart from type arguments appended to the
+// parameter's type reference, e.g. `config?: Args<T>` -> `config?: Args<T, U>`.
+function hasOnlyAddedTypeArguments(prev: ts.ParameterDeclaration, current: ts.ParameterDeclaration) {
+  if (
+    prev.name.getText() !== current.name.getText() ||
+    Boolean(prev.questionToken) !== Boolean(current.questionToken) ||
+    Boolean(prev.dotDotDotToken) !== Boolean(current.dotDotDotToken) ||
+    !prev.type ||
+    !current.type ||
+    !ts.isTypeReferenceNode(prev.type) ||
+    !ts.isTypeReferenceNode(current.type) ||
+    prev.type.typeName.getText() !== current.type.typeName.getText()
+  ) {
+    return false;
+  }
+
+  const prevArgs = (prev.type.typeArguments ?? []).map((arg) => arg.getText());
+  const currentArgs = (current.type.typeArguments ?? []).map((arg) => arg.getText());
+
+  return currentArgs.length > prevArgs.length && prevArgs.every((arg, i) => arg === currentArgs[i]);
+}
+
+// Returns TRUE if a value typed with the previous parameter annotation (e.g. `Args<string>`) is assignable to
+// the current annotation (e.g. `Args<string, number>`).
+// The two programs can't be compared with one type checker, so this appends a renamed copy of the previous
+// declaration of the referenced type and a pair of interfaces to the current declaration's source file,
+// recompiles it, and looks for errors in the appended code:
+//
+//   interface __LevitatePrevious_Args<T> { data: T; }
+//   interface __LevitateTarget<T> { value: Args<string, number>; }
+//   interface __LevitateSource<T> extends __LevitateTarget<T> { value: __LevitatePrevious_Args<string>; }
+//
+// Types referenced from inside the previous declaration still resolve to their current versions.
+function isAssignableFromPreviousType(
+  prev: ts.ParameterDeclaration,
+  current: ts.ParameterDeclaration,
+  prevRefSymbol: ts.Symbol,
+  currentProgram: ts.Program
+) {
+  const previousName = `__LevitatePrevious_${prevRefSymbol.getName()}`;
+  const previousDeclarations = (prevRefSymbol.declarations ?? [])
+    .filter(
+      (d): d is ts.InterfaceDeclaration | ts.TypeAliasDeclaration | ts.ClassDeclaration =>
+        (ts.isInterfaceDeclaration(d) || ts.isTypeAliasDeclaration(d) || ts.isClassDeclaration(d)) && Boolean(d.name)
+    )
+    .map((d) => {
+      const text = d.getText();
+      const nameStart = d.name.getStart() - d.getStart();
+      return text.slice(0, nameStart) + previousName + text.slice(nameStart + d.name.getText().length);
+    });
+  if (previousDeclarations.length === 0) {
+    return false;
+  }
+
+  const prevTypeArguments = (prev.type as ts.TypeReferenceNode).typeArguments ?? [];
+  const previousType = prevTypeArguments.length
+    ? `${previousName}<${prevTypeArguments.map((arg) => arg.getText()).join(', ')}>`
+    : previousName;
+
+  const sourceFile = current.getSourceFile();
+  const typeParameters = getEnclosingTypeParameters(current);
+  const declared = typeParameters.length ? `<${typeParameters.map((param) => param.getText()).join(', ')}>` : '';
+  const names = typeParameters.length ? `<${typeParameters.map((param) => param.name.getText()).join(', ')}>` : '';
+  const check = [
+    '',
+    ...previousDeclarations,
+    `interface __LevitateTarget${declared} { value: ${current.type.getText()}; }`,
+    `interface __LevitateSource${declared} extends __LevitateTarget${names} { value: ${previousType}; }`,
+  ].join('\n');
+
+  const options = currentProgram.getCompilerOptions();
+  const host = ts.createCompilerHost(options);
+  const getSourceFile = host.getSourceFile;
+  host.getSourceFile = (fileName, languageVersion, ...rest) =>
+    fileName === sourceFile.fileName
+      ? ts.createSourceFile(fileName, sourceFile.text + check, languageVersion, true)
+      : getSourceFile(fileName, languageVersion, ...rest);
+
+  const program = ts.createProgram({
+    rootNames: currentProgram.getRootFileNames(),
+    options,
+    host,
+    oldProgram: currentProgram,
+  });
+  const checkedFile = program.getSourceFile(sourceFile.fileName);
+  if (!checkedFile || checkedFile.text.length === sourceFile.text.length) {
+    return false;
+  }
+
+  return !program.getSemanticDiagnostics(checkedFile).some((d) => (d.start ?? 0) >= sourceFile.text.length);
+}
+
+// Type parameters in scope at a node, outermost first (e.g. a class's and then its method's).
+function getEnclosingTypeParameters(node: ts.Node): ts.TypeParameterDeclaration[] {
+  const typeParameters: ts.TypeParameterDeclaration[] = [];
+  for (let parent = node.parent; parent; parent = parent.parent) {
+    const declared = (parent as ts.SignatureDeclaration | ts.ClassLikeDeclaration | ts.InterfaceDeclaration)
+      .typeParameters;
+    if (declared) {
+      typeParameters.unshift(...declared);
+    }
+  }
+  return typeParameters;
+}
+
+// Returns TRUE if the previous type parameters are still in the same positions,
+// e.g. `Foo<T>` -> `Foo<T, U = unknown>`, but not `Foo<T>` -> `Foo<U = unknown, T>`.
+function hasOnlyAppendedTypeParameters(prev: ts.Symbol, current: ts.Symbol) {
+  const prevNames = getTypeParameters(prev).map((param) => param.name.getText());
+  const currentNames = getTypeParameters(current).map((param) => param.name.getText());
+
+  return prevNames.every((name, i) => name === currentNames[i]);
+}
+
+function getTypeParameters(symbol: ts.Symbol): readonly ts.TypeParameterDeclaration[] {
+  const declaration = symbol.declarations?.find(
+    (d) => ts.isInterfaceDeclaration(d) || ts.isTypeAliasDeclaration(d) || ts.isClassDeclaration(d)
+  ) as ts.InterfaceDeclaration | ts.TypeAliasDeclaration | ts.ClassDeclaration | undefined;
+
+  return declaration?.typeParameters ?? [];
+}
+
+function resolveAlias(symbol: ts.Symbol, program: ts.Program) {
+  return symbol.flags & ts.SymbolFlags.Alias ? program.getTypeChecker().getAliasedSymbol(symbol) : symbol;
 }
 
 // Strips leading `export`/`declare`/`type`/`default` modifiers from declaration text,
